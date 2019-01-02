@@ -1,0 +1,25 @@
+﻿.error{
+    text-transform: none !important;
+    font-size: 12px !important;
+    color: red !important;
+}
+
+div.dataTables_wrapper div.dataTables_filter label{
+    padding-right: 16px;
+}
+
+div.dataTables_wrapper div.dataTables_length label{
+    padding-left: 16px;
+}
+
+.pagination>li:last-child>a, .pagination>li:last-child>span{
+    margin-right: 16px;
+}
+
+div.dataTables_wrapper div.dataTables_info{
+    margin-left: 16px;
+}
+
+.modal-backdrop {
+  z-index: -2;
+}

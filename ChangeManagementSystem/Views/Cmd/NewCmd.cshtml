@@ -1,0 +1,134 @@
+﻿@model ChangeManagementSystem.Models.ChangeManagementModels
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">Change Management Document</h4>
+                    <p class="category">Kindly fill-in the needed informations regarding the Change Document</p>
+                </div>
+                <div class="content">
+                    <form method="post" id="newChangeDocumentForm">
+                        @Html.AntiForgeryToken()
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="changeObjective">Objective</label>
+                                        @*<textarea class="form-control form-control-sm" id="changeObjective" name="changeObjective" rows="3"></textarea>*@
+                                        @Html.TextAreaFor(c => c.ChangeObjective, new { @class = "form-control form-control-sm", id = "changeObjective" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="changeType">Type</label>
+                                        @*@Html.DropDownListFor(c => c.ChangeType, new SelectList(Enum.GetValues(typeof(changeObjective)), "Id", "Name"), "", new { @class = "form-control" })*@
+                                        <select class="form-control form-control-sm" id="changeType" name="ChangeType">
+                                            <option value="1">Corrective Patch</option>
+                                            <option value="2">New Function</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="changeRequirements">Management Requirement</label>
+                                        @*<textarea class="form-control form-control-sm" id="changeRequirement" name="changeRequirement" rows="3"></textarea>*@
+                                        @Html.TextAreaFor(c => c.ChangeRequirements, new { @class = "form-control form-control-sm", id = "changeRequirements" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="affectedAreasApp">Application(s)</label>
+                                        <input type="text" class="form-control form-control-sm" id="affectedAreasApp" name="affectedAreasApp">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="affectedAreasDb">Database & Table(s)</label>
+                                        <input type="text" class="form-control form-control-sm" id="affectedAreasDb" name="affectedAreasDb">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="affectedAreasServer">Server(s)/ IP(s)</label>
+                                        <input type="text" class="form-control form-control-sm" id="affectedAreasServer" name="affectedAreasServer">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3 text-right">
+                                    <button type="button" class="btn btn-fill btn-primary btn-sm text-right" id="insertAffectedArea">Add to the list</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="content table-responsive table-full-width">
+                                        <table class="table table-hover table-striped text-center" id="affectedAreasTable">
+                                            <thead class="text-center">
+                                                <tr>
+                                                    <th class="text-center">Application</th>
+                                                    <th class="text-center">Database</th>
+                                                    <th class="text-center">Server</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-6" style="margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <fieldset class="fieldset">
+                                            <legend style="border: none; display:block; width:100%; font-size: 0px;"><label style="margin-bottom: 8px;text-align: left;">Request Evaluation</label></legend>
+
+                                            <label class="radio-inline" style="margin-right: 60px;text-align: center;"><input type="radio" name="evaluationRadio" id="highRadio">High</label>
+                                            <label class="radio-inline" style="margin-right: 60px;text-align: center;"><input type="radio" name="evaluationRadio" id="mediumRadio">Medium</label>
+                                            <label class="radio-inline" style="margin-right: 60px;text-align: center;"><input type="radio" name="evaluationRadio" id="lowRadio">Low</label>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="affectedAreasApp">Target Implementation Date and Time</label>
+                                        @*<input type="datetime-local" class="form-control form-control-sm" id="affectedAreasApp" name="affectedAreasApp">*@
+                                        @Html.TextBoxFor(c => c.TargetImplementation, new { @class = "form-control form-control-sm", id = "targetImplementation", type = "datetime-local" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col text-right">
+                                    <button type="button" class="btn btn-fill btn-success" id="btnSave">Add New Change Document</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

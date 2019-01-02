@@ -1,0 +1,48 @@
+﻿@using ChangeManagementSystem.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+        <section id="loginForm"> <h2>LOG IN</h2>
+<form action="/" class="form-horizontal" method="post" role="form"><input name="__RequestVerificationToken" type="hidden" value="AyyuCmQdYMnll5TxMEEyEZdzglUjm4_NH5chbMusxJOQ63LeuyCgNowjJsW7qH1OJ2jSwFB2jaJDkCGFugAri1UHGTOwe1k-ik67ssuH7FI1">                <h4>Use a local account to log in.</h4>
+                <hr>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="Email"> Email</label><div class="col-md-10"><input class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-required="The Email field is required." id="Email" name="Email" type="text" value=""> <span class="field-validation-valid text-danger" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="Password">Password</label>
+                    <div class="col-md-10">
+                        <input class="form-control" data-val="true" data-val-required="The Password field is required." id="Password" name="Password" type="password"> <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="checkbox">
+                            <input data-val="true" data-val-required="The Remember me? field is required." id="RememberMe" name="RememberMe" type="checkbox" value="true"><input name="RememberMe" type="hidden" value="false"> <label for="RememberMe" class="" contenteditable="true">Remember me?</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        
+                        <a href="/Dashboard/Index" class="btn btn-info btn-fill pull-right">Log in</a>
+                    </div>
+                </div> </form> </section>
+    </div>
+    <div class="col-md-3">
+        @*<section id="socialLoginForm">
+            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </section>*@
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
