@@ -29,7 +29,8 @@
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a href="@Url.Action("Index", "Home")" class="simple-text">
-                        <img src="~/Content/img/favicon.png" alt="CMS Icon" width="32px" /><span style="font-size:15px;text-transform:capitalize;">Change Management System</span>
+                        @*<img src="~/Content/img/favicon.png" alt="CMS Icon" width="32px" />*@
+                        <span style="font-size:16px;text-transform:capitalize;">Change Management System</span>
                     </a>
                 </div>
                 <ul class="nav">
@@ -172,6 +173,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/bootstrapnotify")
     @Scripts.Render("~/bundles/lightbootstrap")
+    @Scripts.Render("~/bundles/dateformat")
     @Scripts.Render("~/bundles/site")
     @RenderSection("scripts", required: false)
 </html>

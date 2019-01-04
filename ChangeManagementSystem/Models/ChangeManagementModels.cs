@@ -38,6 +38,14 @@ namespace ChangeManagementSystem.Models
         [Display(Name = "TARGET IMPLEMENTATION DATE AND TIME")]
         public DateTime TargetImplementation { get; set; }
 
+        [Required(ErrorMessage = "Requestor is required")]
+        [Display(Name = "REQUESTOR")]
+        public string Requestor { get; set; }
+
+        [Required(ErrorMessage = "Sign-off is required")]
+        [Display(Name = "CHANGE MANAGEMENT SIGN-OFF")]
+        public string SignOff { get; set; }
+
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

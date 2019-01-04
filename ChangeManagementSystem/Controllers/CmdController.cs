@@ -6,6 +6,9 @@ using System.Web.Mvc;
 using ChangeManagementSystem.Models;
 using ChangeManagementSystem;
 using System.Data.Entity;
+using CrystalDecisions.CrystalReports.Engine;
+using System.IO;
+using System.Globalization;
 
 namespace ChangeManagementSystem.Controllers
 {
@@ -43,6 +46,7 @@ namespace ChangeManagementSystem.Controllers
             cmdModel.CreatedAt = DateTime.Now;
             cmdModel.UpdatedAt = DateTime.Now;
             cmdModel.DeletedAt = null;
+            cmdModel.Requestor = "Kobe Bryant- Shooting Guard";
             _context.ChangeManagements.Add(cmdModel);
 
             _context.SaveChanges();
@@ -84,7 +88,8 @@ namespace ChangeManagementSystem.Controllers
                 cmdRecord.ChangeRequirements = cmdModel.ChangeRequirements;
                 cmdRecord.AffectedAreas = cmdModel.AffectedAreas;
                 cmdRecord.ChangeEvaluation = cmdModel.ChangeEvaluation;
-                cmdRecord.TargetImplementation = DateTime.Now;
+                cmdRecord.TargetImplementation = cmdModel.TargetImplementation;
+                cmdRecord.SignOff = cmdModel.SignOff;
                 cmdRecord.UpdatedAt = DateTime.Now;
             }
 
@@ -105,6 +110,39 @@ namespace ChangeManagementSystem.Controllers
             }
 
             return RedirectToAction("All");
+        }
+
+        public ActionResult ExportCmd(int id)
+        {
+            var from = DateTime.Parse("10/01/2011");
+
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Path.Combine(Server.MapPath("~/Reports/CmdReport.rpt")));
+
+            rd.SetDataSource(_context.ChangeManagements.Where(c => c.Id == id).Select(c => new
+            {
+                CmdNo = c.CmdNo,
+                ChangeObjective = c.ChangeObjective,
+                ChangeType = c.ChangeType,
+                ChangeRequirements = c.ChangeRequirements,
+                AffectedAreas = c.AffectedAreas,
+                ChangeEvaluation = c.ChangeEvaluation,
+                TargetImplementation = c.TargetImplementation,
+                Requestor = c.Requestor,
+                SignOff = c.SignOff,
+                CreatedAt = c.CreatedAt ?? from,
+                UpdatedAt = c.UpdatedAt ?? from,
+                DeletedAt = c.DeletedAt ?? from,
+            }).ToList());
+            
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+
+
+            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            stream.Seek(0, SeekOrigin.Begin);
+            return File(stream, "application/pdf", DateTime.UtcNow.ToShortDateString()+".pdf");  
         }
     }
 }

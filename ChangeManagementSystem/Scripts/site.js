@@ -17,7 +17,27 @@
         "info": false
     });
 
+    $('#signOffTable').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false
+    });
+
+    $('#signOffTableView').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false
+    });
+
+    $('#signOffTableEdit').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false
+    });    
+
     getList();
+
+    getLatestCmdList();
 
 
     //validations
@@ -166,18 +186,40 @@ $(document).ready(function () {
             ]).draw(false);
         }
     });
+
+    var t1 = $('#signOffTable').DataTable();
+
+    $('#insertSignOff').on('click', function () {
+        if ($("#signOffName").val() === "" && $("#signOffRole").val() === "") {
+            console.log("");
+        }
+        else {
+            t1.row.add([
+                $('#signOffName').val(),
+                $('#signOffRole').val()
+            ]).draw(false);
+        }
+    });
 });
 
 $(document).on("hide.bs.modal", "#viewCmdInfoModal", function () {
     var t = $('#affectedAreasTableView').DataTable();
 
     t.clear().draw();
+
+    var t1 = $('#signOffTableView').DataTable();
+
+    t1.clear().draw();
 });
 
 $(document).on("hide.bs.modal", "#editCmdInfoModal", function () {
     var t = $('#affectedAreasTableEdit').DataTable();
 
     t.clear().draw();
+
+    var t1 = $('#signOffTableEdit').DataTable();
+
+    t1.clear().draw();
 });
 
 $(document).on("click", "#btnSave", function () {
@@ -197,6 +239,7 @@ $(document).on("click", "#btnSave", function () {
                 ChangeEvaluation: changeEvaluation,
                 TargetImplementation: $("#targetImplementation").val(),
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newChangeDocumentForm").val(),
+                SignOff: JSON.stringify(tableToJSON($("#signOffTable"))),
             },
             success: function (da) {
                 $.notify({
@@ -240,7 +283,10 @@ $(document).on("click", "#btnView", function () {
 
     var id = $(this).attr("data-id");
 
+    $("#btnGenerate").attr("data-generate-id", id);
+
     var t = $('#affectedAreasTableView').DataTable();
+    var t1 = $('#signOffTableView').DataTable();
 
     $.ajax({
         type: "GET",
@@ -251,6 +297,8 @@ $(document).on("click", "#btnView", function () {
             var cmdDetails = JSON.parse(jsonStringified);
 
             var affectedAreaDetails = JSON.parse(cmdDetails.AffectedAreas);
+
+            var signOffDetails = JSON.parse(cmdDetails.SignOff);
 
             $("#changeObjectiveView").val(cmdDetails.ChangeObjective);
             $("#changeTypeView").val(cmdDetails.ChangeType);
@@ -271,13 +319,36 @@ $(document).on("click", "#btnView", function () {
                 ]).draw(false);
             }
             $("#requestEvaluationView").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
-            $("#targetImplementationView").val(cmdDetails.TargetImplementation);
+            var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
+            var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy HH:MM");
+            $("#targetImplementationView").val(targetImplementationDate);
+            $("#requestorView").val(cmdDetails.Requestor);
+
+
+            var j;
+            var resultSignOff = {};
+            for (j = 0; j < signOffDetails.length; j++) {
+                var objectInResponse = signOffDetails[j];
+                var name = objectInResponse.Name;
+                var role = objectInResponse.Role;
+
+                t1.row.add([
+                    name,
+                    role
+                ]).draw(false);
+            }
         },
         error: function () {
             alert("Error while retrieving data of :" + id);
         }
     });
 });
+
+$(document).on("click", "#btnGenerate", function () {
+    var id = $(this).attr("data-generate-id")
+    window.location.href = "/Cmd/ExportCmd?id=" + id
+});
+
 
 $(document).on("click", "#btnEdit", function () {
     $("#editCmdInfoModal").focus();
@@ -287,6 +358,7 @@ $(document).on("click", "#btnEdit", function () {
     $("#btnUpdate").attr("data-edit-id", id);
 
     var t = $('#affectedAreasTableEdit').DataTable();
+    var t1 = $('#signOffTableEdit').DataTable();
 
     $.ajax({
         type: "GET",
@@ -297,6 +369,8 @@ $(document).on("click", "#btnEdit", function () {
             var cmdDetails = JSON.parse(jsonStringified);
 
             var affectedAreaDetails = JSON.parse(cmdDetails.AffectedAreas);
+
+            var signOffDetails = JSON.parse(cmdDetails.SignOff);
 
             $("#changeObjectiveEdit").val(cmdDetails.ChangeObjective);
             $("#changeTypeEdit").val(cmdDetails.ChangeType);
@@ -316,8 +390,25 @@ $(document).on("click", "#btnEdit", function () {
                     server
                 ]).draw(false);
             }
-            $("#requestEvaluationEdit").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
-            $("#targetImplementationEdit").val(cmdDetails.TargetImplementation);
+            console.log(cmdDetails.ChangeEvaluation);
+            $("#requestEvaluationEdit").val((cmdDetails.ChangeEvaluation == 1 ? $("#highRadioEdit").prop("checked", true) : (cmdDetails.ChangeEvaluation == 2 ? $("#mediumRadioEdit").prop("checked", true) : $("#lowRadioEdit").prop("checked", true))));
+            var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
+            var targetImplementationDate = nowDate.format("yyyy-mm-dd'T'HH:MM:ss");
+            $("#targetImplementationEdit").val(targetImplementationDate);
+
+
+            var j;
+            var resultSignOff = {};
+            for (j = 0; j < signOffDetails.length; j++) {
+                var objectInResponse = signOffDetails[j];
+                var name = objectInResponse.Name;
+                var role = objectInResponse.Role;
+
+                t1.row.add([
+                    name,
+                    role
+                ]).draw(false);
+            }
         },
         error: function () {
             alert("Error while retrieving data of :" + id);
@@ -343,6 +434,7 @@ $(document).on("click", "#btnUpdate", function () {
                 AffectedAreas: JSON.stringify(tableToJSON($("#affectedAreasTableEdit"))),
                 ChangeEvaluation: changeEvaluation,
                 TargetImplementation: $("#targetImplementationEdit").val(),
+                SignOff: JSON.stringify(tableToJSON($("#signOffTableEdit"))),
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#editChangeDocumentForm").val(),
             },
             success: function (da) {
@@ -428,10 +520,7 @@ function getList() {
         },
         columns: [
             {
-                data: "Id",
-                render: function (data) {
-                    return "John Doe";
-                }
+                data: "Requestor"
             },
             {
                 data: "ChangeType",
@@ -448,7 +537,7 @@ function getList() {
             {
                 data: "TargetImplementation",
                 render: function (data) {
-                    return new Date(parseInt(data.substr(6)));
+                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
@@ -475,8 +564,25 @@ function getList() {
     });
 }
 
+function getLatestCmdList() {
+    var table = $("#latestCmdTable").DataTable({
+        ajax: {
+            url: "/Cmd/GetAll",
+            dataSrc: "",
+            success: function (da) {
+                console.log(da);
+            },
+            error: function (da) {
+                console.log(da+ "error");
+            }
+
+        }
+    });
+}
+
 function clearInputsNewCmd() {
     var t = $('#affectedAreasTable').DataTable();
+    var t1 = $('#signOffTable').DataTable();
 
     $("#changeObjective").val("");
     $("#changeType").val(1);
@@ -489,6 +595,9 @@ function clearInputsNewCmd() {
     $("#mediumRadio").prop('checked', false);
     $("#lowRadio").prop('checked', false);
     $("#targetImplementation").val("");
+    $('#signOffName').val("");
+    $('#signOffRole').val("");
+    t1.clear().draw();
 }
 
 function redrawDt() {

@@ -31,6 +31,9 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/datatable").Include(
                       "~/Scripts/datatables.min.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/dateformat").Include(
+                      "~/Scripts/date.format.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/site").Include(
                       "~/Scripts/site.js"));
 
