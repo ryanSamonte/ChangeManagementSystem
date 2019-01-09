@@ -557,6 +557,13 @@ function getList() {
             {
                 data: "Id",
                 render: function (data) {
+
+                    return "<input type='button' class='btn btn-fill btn-success editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit' value='Set as Implemented' style='width:100%;'/>";
+                }
+            },
+            {
+                data: "Id",
+                render: function (data) {
                     return "<input type='button' class='btn btn-fill btn-danger deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete' value='Delete' style='width:100%;'/>";
                 }
             }

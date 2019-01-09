@@ -16,14 +16,14 @@ namespace ChangeManagementSystem.Reports {
     using CrystalDecisions.CrystalReports.Engine;
     
     
-    public class CmdReport : ReportClass {
+    public class CmdReportJson : ReportClass {
         
-        public CmdReport() {
+        public CmdReportJson() {
         }
         
         public override string ResourceName {
             get {
-                return "CmdReport.rpt";
+                return "CmdReportJson.rpt";
             }
             set {
                 // Do nothing
@@ -41,7 +41,7 @@ namespace ChangeManagementSystem.Reports {
         
         public override string FullResourceName {
             get {
-                return "ChangeManagementSystem.Reports.CmdReport.rpt";
+                return "ChangeManagementSystem.Reports.CmdReportJson.rpt";
             }
             set {
                 // Do nothing
@@ -74,7 +74,7 @@ namespace ChangeManagementSystem.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection1 {
+        public CrystalDecisions.CrystalReports.Engine.Section Section4 {
             get {
                 return this.ReportDefinition.Sections[3];
             }
@@ -82,81 +82,9 @@ namespace ChangeManagementSystem.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection2 {
-            get {
-                return this.ReportDefinition.Sections[4];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection3 {
-            get {
-                return this.ReportDefinition.Sections[5];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection4 {
-            get {
-                return this.ReportDefinition.Sections[6];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection5 {
-            get {
-                return this.ReportDefinition.Sections[7];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection6 {
-            get {
-                return this.ReportDefinition.Sections[8];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection7 {
-            get {
-                return this.ReportDefinition.Sections[9];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection8 {
-            get {
-                return this.ReportDefinition.Sections[10];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section DetailSection9 {
-            get {
-                return this.ReportDefinition.Sections[11];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section4 {
-            get {
-                return this.ReportDefinition.Sections[12];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public CrystalDecisions.CrystalReports.Engine.Section Section5 {
             get {
-                return this.ReportDefinition.Sections[13];
+                return this.ReportDefinition.Sections[4];
             }
         }
         
@@ -170,7 +98,7 @@ namespace ChangeManagementSystem.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_Server {
+        public CrystalDecisions.Shared.IParameterField Parameter_Database {
             get {
                 return this.DataDefinition.ParameterFields[1];
             }
@@ -178,25 +106,17 @@ namespace ChangeManagementSystem.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_Database {
+        public CrystalDecisions.Shared.IParameterField Parameter_Server {
             get {
                 return this.DataDefinition.ParameterFields[2];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_SignOffInfo {
-            get {
-                return this.DataDefinition.ParameterFields[3];
             }
         }
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedCmdReport : Component, ICachedReport {
+    public class CachedCmdReportJson : Component, ICachedReport {
         
-        public CachedCmdReport() {
+        public CachedCmdReportJson() {
         }
         
         [Browsable(false)]
@@ -233,7 +153,7 @@ namespace ChangeManagementSystem.Reports {
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            CmdReport rpt = new CmdReport();
+            CmdReportJson rpt = new CmdReportJson();
             rpt.Site = this.Site;
             return rpt;
         }
