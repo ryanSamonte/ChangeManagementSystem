@@ -46,6 +46,10 @@ namespace ChangeManagementSystem.Models
         [Display(Name = "CHANGE MANAGEMENT SIGN-OFF")]
         public string SignOff { get; set; }
 
+        public bool IsImplemented { get; set; }
+
+        public DateTime? ImplementedAt { get; set; }
+
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

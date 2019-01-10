@@ -161,6 +161,18 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.cs" />
+    <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.Designer.cs">
+      <DependentUpon>201901090730292_AddIsImplementedColumnIntoCMDTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901100138055_AddImplementedAtColumnAtChangeManagementTable.cs" />
+    <Compile Include="Migrations\201901100138055_AddImplementedAtColumnAtChangeManagementTable.Designer.cs">
+      <DependentUpon>201901100138055_AddImplementedAtColumnAtChangeManagementTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901100303157_AddNameAndJobRoleInUsersTable.cs" />
+    <Compile Include="Migrations\201901100303157_AddNameAndJobRoleInUsersTable.Designer.cs">
+      <DependentUpon>201901100303157_AddNameAndJobRoleInUsersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AffectedAreasModels.cs" />
     <Compile Include="Reports\CmdReport.cs">
       <AutoGen>True</AutoGen>
@@ -293,6 +305,8 @@
     <Content Include="Views\Cmd\AllCmd.cshtml" />
     <Content Include="Views\Cmd\NewCmd.cshtml" />
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
+    <Content Include="Views\Cmd\HistoryCmd.cshtml" />
+    <Content Include="Views\Account\All.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -305,6 +319,15 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.resx">
+      <DependentUpon>201901090730292_AddIsImplementedColumnIntoCMDTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901100138055_AddImplementedAtColumnAtChangeManagementTable.resx">
+      <DependentUpon>201901100138055_AddImplementedAtColumnAtChangeManagementTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901100303157_AddNameAndJobRoleInUsersTable.resx">
+      <DependentUpon>201901100303157_AddNameAndJobRoleInUsersTable.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\CmdReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>CmdReport.cs</LastGenOutput>

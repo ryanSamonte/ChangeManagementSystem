@@ -21,6 +21,7 @@ namespace ChangeManagementSystem.Controllers
         public string Server;
     }
 
+    [Authorize]
     public class CmdController : Controller
     {
 
@@ -57,7 +58,9 @@ namespace ChangeManagementSystem.Controllers
             cmdModel.CreatedAt = DateTime.Now;
             cmdModel.UpdatedAt = DateTime.Now;
             cmdModel.DeletedAt = null;
+            cmdModel.ImplementedAt = null;
             cmdModel.Requestor = "Kobe Bryant- Shooting Guard";
+            cmdModel.IsImplemented = false;
             _context.ChangeManagements.Add(cmdModel);
 
             _context.SaveChanges();
@@ -74,7 +77,7 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetAll()
         {
-            var CmdList = _context.ChangeManagements.ToList();
+            var CmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).ToList();
 
             return Json(CmdList, JsonRequestBehavior.AllowGet);
         }
@@ -116,9 +119,27 @@ namespace ChangeManagementSystem.Controllers
 
             if (cmdRecord != null)
             {
-                _context.Entry(cmdRecord).State = EntityState.Deleted;
-                _context.SaveChanges();
+                cmdRecord.DeletedAt = DateTime.Now;
             }
+
+            _context.Entry(cmdRecord).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return RedirectToAction("All");
+        }
+
+        public ActionResult Implement(int id)
+        {
+            var cmdRecord = _context.ChangeManagements.Where(c => c.Id == id).FirstOrDefault();
+
+            if (cmdRecord != null)
+            {
+                cmdRecord.IsImplemented = true;
+                cmdRecord.ImplementedAt = DateTime.Now;
+            }
+
+            _context.Entry(cmdRecord).State = EntityState.Modified;
+            _context.SaveChanges();
 
             return RedirectToAction("All");
         }
@@ -212,6 +233,20 @@ namespace ChangeManagementSystem.Controllers
             Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
             stream.Seek(0, SeekOrigin.Begin);
             return File(stream, "application/pdf", DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToLocalTime().ToShortTimeString() + ".pdf");
+        }
+
+        public ActionResult History()
+        {
+            ViewBag.Current = "Change Document History";
+
+            return View("HistoryCmd");
+        }
+
+        public ActionResult GetAllHistory()
+        {
+            var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented == true && c.DeletedAt == null).ToList();
+
+            return Json(cmdListHistory, JsonRequestBehavior.AllowGet);
         }
     }
 }

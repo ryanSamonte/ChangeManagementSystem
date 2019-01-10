@@ -37,6 +37,10 @@
 
     getList();
 
+    getHistoryList();
+
+    getAccountList();
+
     getLatestCmdList();
 
 
@@ -499,6 +503,77 @@ $(document).on("click", "#btnDelete", function () {
         return false;
 });
 
+$(document).on("click", "#btnImplement", function () {
+    var id = $(this).attr("data-id");
+
+    if (confirm("Are you sure to set this Change Document as implemented?") == true) {
+        $.ajax({
+            method: "POST",
+            url: "/Cmd/Implement?id=" + id,
+            success: function (da) {
+                redrawDt();
+            },
+            error: function (da) {
+                alert('Error encountered!');
+            }
+        });
+    }
+    else
+        return false;
+});
+
+$(document).on("click", "#btnInsertAccount", function () {
+    $.ajax({
+        method: "POST",
+        url: "/Account/Register",
+        data: {
+            Lastname: $("#Lastname").val(),
+            Firstname: $("#Firstname").val(),
+            UserName: $("#Email").val(),
+            Email: $("#Email").val(),
+            Password: $("#Password").val(),
+            ConfirmPassword: $("#ConfirmPassword").val(),
+            JobRole: $("#JobRole").val(),
+            __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newUserAccountForm").val(),
+        },
+        success: function (da) {
+            var table = $("#accountList").DataTable();
+
+            $.notify({
+                icon: "pe-7s-check",
+                message: "User account successfully added!"
+
+            }, {
+                type: 'success',
+                timer: 4000,
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                }
+            });
+
+            clearInputsNewCmd();
+            $("#insertUserAccountModal .close").click();
+            table.destroy();
+            getAccountList();
+        },
+        error: function (da) {
+            $.notify({
+                icon: "pe-7s-close-circle",
+                message: "Error"
+
+            }, {
+                type: 'danger',
+                timer: 4000,
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                }
+            });
+        }
+    });
+});
+
 function tableToJSON(tblObj) {
     var data = [];
     var $headers = $(tblObj).find("th");
@@ -558,7 +633,95 @@ function getList() {
                 data: "Id",
                 render: function (data) {
 
-                    return "<input type='button' class='btn btn-fill btn-success editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit' value='Set as Implemented' style='width:100%;'/>";
+                    return "<input type='button' class='btn btn-fill btn-success implementButton' data-id=" + data + " name='implementButton' id='btnImplement' value='Set as Implemented' style='width:100%;'/>";
+                }
+            },
+            {
+                data: "Id",
+                render: function (data) {
+                    return "<input type='button' class='btn btn-fill btn-danger deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete' value='Delete' style='width:100%;'/>";
+                }
+            }
+        ]
+    });
+}
+
+function getHistoryList() {
+    var table = $("#cmdHistoryList").DataTable({
+        ajax: {
+            url: "/Cmd/GetAllHistory",
+            dataSrc: "",
+        },
+        columns: [
+            {
+                data: "Requestor"
+            },
+            {
+                data: "ChangeType",
+                render: function (data) {
+                    return data == 1 ? "Corrective Patch" : "New Function";
+                }
+            },
+            {
+                data: "ChangeEvaluation",
+                render: function (data) {
+                    return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
+                }
+            },
+            {
+                data: "TargetImplementation",
+                render: function (data) {
+                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
+                }
+            },
+            {
+                data: "ImplementedAt",
+                render: function (data) {
+                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
+                }
+            },
+            {
+                data: "Id",
+                render: function (data) {
+
+                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
+                }
+            }
+        ]
+    });
+}
+
+function getAccountList() {
+    var table = $("#accountList").DataTable({
+        ajax: {
+            url: "/Account/GetAll",
+            dataSrc: "",
+        },
+        columns: [
+            {
+                data: "Lastname",
+                render: function (data, type, full, meta) {
+                    return full.Firstname + " " + full.Lastname;
+                }
+            },
+            {
+                data: "Email"
+            },
+            {
+                data: "JobRole"
+            },
+            {
+                data: "Id",
+                render: function (data) {
+
+                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
+                }
+            },
+            {
+                data: "Id",
+                render: function (data) {
+
+                    return "<input type='button' class='btn btn-fill btn-warning editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit' value='Edit' style='width:100%;'/>";
                 }
             },
             {

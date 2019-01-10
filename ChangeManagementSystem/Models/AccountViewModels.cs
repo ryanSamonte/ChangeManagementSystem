@@ -54,6 +54,15 @@ namespace ChangeManagementSystem.Models
     public class RegisterViewModel
     {
         [Required]
+        public string Lastname { get; set; }
+
+        [Required]
+        public string Firstname { get; set; }
+
+        [Required]
+        public int JobRole { get; set; }
+
+        
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

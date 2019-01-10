@@ -18,9 +18,11 @@ namespace ChangeManagementSystem.Controllers
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
+        private readonly ApplicationDbContext _context;
 
         public AccountController()
         {
+            _context = new ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager)
@@ -37,6 +39,19 @@ namespace ChangeManagementSystem.Controllers
             {
                 _userManager = value;
             }
+        }
+
+        public ActionResult All()
+        {
+            ViewBag.Current = "Manage User Account";
+            return View();
+        }
+
+        public ActionResult GetAll()
+        {
+            var userAccountList = _context.Users.ToList();
+
+            return Json(userAccountList, JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -71,7 +86,7 @@ namespace ChangeManagementSystem.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return RedirectToAction("LogIn");
         }
 
         //
@@ -91,7 +106,13 @@ namespace ChangeManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser() { 
+                    UserName = model.Email, 
+                    Email = model.Email,
+                    Lastname = model.Lastname,
+                    Firstname = model.Firstname,
+                    JobRole = model.JobRole
+                };
                 IdentityResult result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -103,7 +124,7 @@ namespace ChangeManagementSystem.Controllers
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("All", "Account");
                 }
                 else
                 {
@@ -438,7 +459,7 @@ namespace ChangeManagementSystem.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //
@@ -462,6 +483,7 @@ namespace ChangeManagementSystem.Controllers
             if (disposing && UserManager != null)
             {
                 UserManager.Dispose();
+                _context.Dispose();
                 UserManager = null;
             }
             base.Dispose(disposing);
