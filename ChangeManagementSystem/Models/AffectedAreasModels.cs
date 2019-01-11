@@ -28,8 +28,9 @@ namespace ChangeManagementSystem.Models
         public DateTime TargetImplementation { get; set; }
 
 
-        public string Requestor { get; set; }
+        public string RequestorName { get; set; }
 
+        public string RequestorRole { get; set; }
 
         public string SignOff { get; set; }
 

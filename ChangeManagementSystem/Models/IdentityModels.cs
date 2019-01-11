@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChangeManagementSystem.Models
 {
@@ -17,7 +18,10 @@ namespace ChangeManagementSystem.Models
         public string Firstname { get; set; }
 
         [Required]
-        public int JobRole { get; set; }
+        public int JobRoleId { get; set; }
+
+        [ForeignKey("JobRoleId")]
+        public virtual JobRoleModels JobRoles { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -31,6 +35,8 @@ namespace ChangeManagementSystem.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<ChangeManagementModels> ChangeManagements { get; set; }
+        public DbSet<JobRoleModels> JobRoles { get; set; }
+
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

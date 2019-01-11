@@ -14,7 +14,7 @@ using ChangeManagementSystem.Models;
 
 namespace ChangeManagementSystem.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
@@ -41,9 +41,28 @@ namespace ChangeManagementSystem.Controllers
             }
         }
 
+        //[Authorize(Roles = AccountRoleName.Administrator)]
         public ActionResult All()
         {
             ViewBag.Current = "Manage User Account";
+
+            //Get the value from database and then set it to ViewBag to pass it View
+            IEnumerable<SelectListItem> items = _context.JobRoles.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.JobRoleName
+
+            });
+
+            IEnumerable<SelectListItem> roles = _context.Roles.Select(c => new SelectListItem
+            {
+                Value = c.Name,
+                Text = c.Name
+            });
+
+            ViewBag.JobRole = items;
+            ViewBag.AccountRole = roles;
+
             return View();
         }
 
@@ -90,14 +109,6 @@ namespace ChangeManagementSystem.Controllers
         }
 
         //
-        // GET: /Account/Register
-        [AllowAnonymous]
-        public ActionResult Register()
-        {
-            return View();
-        }
-
-        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -111,7 +122,7 @@ namespace ChangeManagementSystem.Controllers
                     Email = model.Email,
                     Lastname = model.Lastname,
                     Firstname = model.Firstname,
-                    JobRole = model.JobRole
+                    JobRoleId = model.JobRoleId
                 };
                 IdentityResult result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -123,9 +134,13 @@ namespace ChangeManagementSystem.Controllers
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
+      
+                    await UserManager.AddToRoleAsync(user.Id, model.AccountRole);
                     return RedirectToAction("All", "Account");
                 }
+
+
+
                 else
                 {
                     AddErrors(result);

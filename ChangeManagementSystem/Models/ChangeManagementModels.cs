@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChangeManagementSystem.Models
 {
@@ -40,7 +41,10 @@ namespace ChangeManagementSystem.Models
 
         [Required(ErrorMessage = "Requestor is required")]
         [Display(Name = "REQUESTOR")]
-        public string Requestor { get; set; }
+        public string RequestorId { get; set; }
+
+        [ForeignKey("RequestorId")]
+        public virtual ApplicationUser ApplicationUser { get; set; }
 
         [Required(ErrorMessage = "Sign-off is required")]
         [Display(Name = "CHANGE MANAGEMENT SIGN-OFF")]

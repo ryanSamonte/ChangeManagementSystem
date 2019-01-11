@@ -1,4 +1,28 @@
 ﻿$(document).ready(function () {
+    $("#signOffName").autocomplete({
+        source: function (request, response) {
+            var role = "";
+            $.ajax({
+                url: "/Cmd/UserList",
+                type: "POST",
+                dataType: "json",
+                data: { Prefix: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Firstname + " " + item.Lastname + " -- " + item.JobRoleName,
+                            value: item.Firstname + " " + item.Lastname + " -- " + item.JobRoleName,
+                        };
+                    }))
+                }
+            })
+        }
+        //messages: {
+        //    noResults: "", results: ""
+        //}
+    });
+
+
     $('#affectedAreasTable').DataTable({
         "paging": false,
         "ordering": false,
@@ -326,19 +350,17 @@ $(document).on("click", "#btnView", function () {
             var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
             var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy HH:MM");
             $("#targetImplementationView").val(targetImplementationDate);
-            $("#requestorView").val(cmdDetails.Requestor);
+            $("#requestorView").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
 
 
             var j;
             var resultSignOff = {};
             for (j = 0; j < signOffDetails.length; j++) {
                 var objectInResponse = signOffDetails[j];
-                var name = objectInResponse.Name;
-                var role = objectInResponse.Role;
+                var name = objectInResponse.Reviewer
 
                 t1.row.add([
-                    name,
-                    role
+                    name
                 ]).draw(false);
             }
         },
@@ -533,7 +555,8 @@ $(document).on("click", "#btnInsertAccount", function () {
             Email: $("#Email").val(),
             Password: $("#Password").val(),
             ConfirmPassword: $("#ConfirmPassword").val(),
-            JobRole: $("#JobRole").val(),
+            JobRoleId: $("#JobRole").val(),
+            AccountRole: $("#AccountRole").val(),
             __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newUserAccountForm").val(),
         },
         success: function (da) {
@@ -595,7 +618,11 @@ function getList() {
         },
         columns: [
             {
-                data: "Requestor"
+                data: "ApplicationUser.Lastname",
+                render: function (data, type, full, meta) {
+                    return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
+                }
+                
             },
             {
                 data: "ChangeType",
@@ -654,7 +681,10 @@ function getHistoryList() {
         },
         columns: [
             {
-                data: "Requestor"
+                data: "ApplicationUser.Lastname",
+                render: function (data, type, full, meta) {
+                    return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
+                }
             },
             {
                 data: "ChangeType",
@@ -708,7 +738,7 @@ function getAccountList() {
                 data: "Email"
             },
             {
-                data: "JobRole"
+                data: "JobRoles.JobRoleName"
             },
             {
                 data: "Id",

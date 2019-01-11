@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity
+@using ChangeManagementSystem.Models
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,12 +61,15 @@
                             <p>CMD History</p>
                         </a>
                     </li>
+
+                    @if(User.IsInRole(AccountRoleName.Administrator)){
                     <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
                         <a href="@Url.Action("All", "Account")">
                             <i class="pe-7s-id"></i>
                             <p>User Account</p>
                         </a>
-                    </li>
+                    </li>   
+                    }
                 </ul>
             </div>
         </div>
@@ -194,6 +198,7 @@
     @Scripts.Render("~/bundles/bootstrapnotify")
     @Scripts.Render("~/bundles/lightbootstrap")
     @Scripts.Render("~/bundles/dateformat")
+    @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/site")
     @RenderSection("scripts", required: false)
 </html>

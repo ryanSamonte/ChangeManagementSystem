@@ -34,6 +34,9 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/dateformat").Include(
                       "~/Scripts/date.format.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                      "~/Scripts/jquery-ui.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/site").Include(
                       "~/Scripts/site.js"));
 
@@ -42,6 +45,7 @@ namespace ChangeManagementSystem
                       "~/Content/animate.min.css",
                       "~/Content/light-bootstrap-dashboard.css",
                       "~/Content/datatables.min.css",
+                      "~/Content/jquery-ui.css",
                       "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/peicon").Include(

@@ -60,8 +60,9 @@ namespace ChangeManagementSystem.Models
         public string Firstname { get; set; }
 
         [Required]
-        public int JobRole { get; set; }
+        public int JobRoleId { get; set; }
 
+        public string AccountRole { get; set; }
         
         [EmailAddress]
         [Display(Name = "Email")]

@@ -90,15 +90,23 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="JobRole">Job Role</label>
-                                        <select class="form-control form-control-sm" id="JobRole" name="JobRole">
+                                        @*<select class="form-control form-control-sm" id="JobRole" name="JobRole">
                                             <option value="1">Business Analyst</option>
                                             <option value="2">Business Analyst1</option>
                                             <option value="3">Business Analyst2</option>
                                             <option value="4">Business Analyst3</option>
-                                        </select>
+                                        </select>*@
+                                        @Html.DropDownList("JobRole", (IEnumerable<SelectListItem>)ViewBag.JobRole, new { @class="form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="AccountRole">Account Role</label>
+                                        @Html.DropDownList("AccountRole", (IEnumerable<SelectListItem>)ViewBag.AccountRole, new { @class = "form-control" })
                                     </div>
                                 </div>
                             </div>

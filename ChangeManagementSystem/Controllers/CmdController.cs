@@ -10,6 +10,7 @@ using CrystalDecisions.CrystalReports.Engine;
 using System.IO;
 using System.Globalization;
 using Newtonsoft.Json;
+using Microsoft.AspNet.Identity;
 
 namespace ChangeManagementSystem.Controllers
 {
@@ -21,7 +22,7 @@ namespace ChangeManagementSystem.Controllers
         public string Server;
     }
 
-    [Authorize]
+    //[Authorize]
     public class CmdController : Controller
     {
 
@@ -45,6 +46,19 @@ namespace ChangeManagementSystem.Controllers
             return View("NewCmd");
         }
 
+        public JsonResult UserList(string prefix)
+        {
+            var users = new List<ApplicationUser>();
+ 
+            users = _context.Users.ToList();
+
+            var userList = (from u in users
+                            where u.Firstname.StartsWith(prefix)
+                            select new {u.Lastname, u.Firstname, u.JobRoles.JobRoleName});
+
+            return Json(userList, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Save(ChangeManagementModels cmdModel)
@@ -52,14 +66,14 @@ namespace ChangeManagementSystem.Controllers
             Random generator = new Random();
             //String r = generator.Next(0, 99999).ToString("D5");
 
-            string r = DateTime.UtcNow.ToLocalTime().Hour.ToString() + DateTime.UtcNow.ToLocalTime().Minute.ToString() + DateTime.UtcNow.ToLocalTime().Second.ToString(); 
+            string r = DateTime.UtcNow.ToLocalTime().Hour.ToString() + DateTime.UtcNow.ToLocalTime().Minute.ToString() + DateTime.UtcNow.ToLocalTime().Second.ToString();
 
             cmdModel.CmdNo = "CMD-" + DateTime.Now.Year.ToString() + "-" + r;
             cmdModel.CreatedAt = DateTime.Now;
             cmdModel.UpdatedAt = DateTime.Now;
             cmdModel.DeletedAt = null;
             cmdModel.ImplementedAt = null;
-            cmdModel.Requestor = "Kobe Bryant- Shooting Guard";
+            cmdModel.RequestorId = User.Identity.GetUserId();
             cmdModel.IsImplemented = false;
             _context.ChangeManagements.Add(cmdModel);
 
@@ -154,6 +168,7 @@ namespace ChangeManagementSystem.Controllers
             var cmdModel = new List<AffectedAreasModels>();
             string jsonAffectedArea = "";
             string jsonSignOff = "";
+            DateTime targetImplementation = new DateTime();
 
             var appList = new List<string>();
             var dbList = new List<string>();
@@ -165,37 +180,45 @@ namespace ChangeManagementSystem.Controllers
             var signoffRoleList = new List<string>();
             var signoffDateList = new List<string>();
 
-            cmdModel = _context.ChangeManagements.Where(c => c.Id == id).Select(c => new AffectedAreasModels()
-            {
-                CmdNo = c.CmdNo,
-                ChangeObjective = c.ChangeObjective,
-                ChangeType = c.ChangeType,
-                ChangeRequirements = c.ChangeRequirements,
-                AffectedAreas = c.AffectedAreas,
-                ChangeEvaluation = c.ChangeEvaluation,
-                TargetImplementation = c.TargetImplementation,
-                Requestor = c.Requestor,
-                SignOff = c.SignOff,
-                CreatedAt = c.CreatedAt ?? from,
-                UpdatedAt = c.UpdatedAt ?? from,
-                DeletedAt = c.DeletedAt ?? from,
-            }).ToList();
+            cmdModel = _context.Users
+                .Join(_context.ChangeManagements
+                , users => users.Id
+                , cmd => cmd.RequestorId,
+                (users, cmd) => new { User = users, Cmd = cmd })
+                .Where(UserCmd => UserCmd.Cmd.Id == id)
+                .Select(UserCmd => new AffectedAreasModels()
+                {
+                    CmdNo = UserCmd.Cmd.CmdNo,
+                    ChangeObjective = UserCmd.Cmd.ChangeObjective,
+                    ChangeType = UserCmd.Cmd.ChangeType,
+                    ChangeRequirements = UserCmd.Cmd.ChangeRequirements,
+                    AffectedAreas = UserCmd.Cmd.AffectedAreas,
+                    ChangeEvaluation = UserCmd.Cmd.ChangeEvaluation,
+                    TargetImplementation = UserCmd.Cmd.TargetImplementation,
+                    RequestorName = UserCmd.User.Firstname + " " + UserCmd.User.Lastname,
+                    RequestorRole = UserCmd.User.JobRoles.JobRoleName,
+                    SignOff = UserCmd.Cmd.SignOff,
+                    CreatedAt = UserCmd.Cmd.CreatedAt ?? from,
+                    UpdatedAt = UserCmd.Cmd.UpdatedAt ?? from,
+                    DeletedAt = UserCmd.Cmd.DeletedAt ?? from,
+                }).ToList();
 
             foreach (var cmdModelItem in cmdModel)
             {
                 jsonAffectedArea = cmdModelItem.AffectedAreas;
                 jsonSignOff = cmdModelItem.SignOff;
+                targetImplementation = cmdModelItem.TargetImplementation;
             }
 
             dynamic dynObj = JsonConvert.DeserializeObject(jsonAffectedArea);
             dynamic dynObjSignOff = JsonConvert.DeserializeObject(jsonSignOff);
-            
+
             var appValue = "";
             var dbValue = "";
             var serverValue = "";
 
             var signoffInfoValue = "";
-            
+
             rd.SetDataSource(cmdModel);
 
             foreach (var dynObjItem in dynObj)
@@ -209,23 +232,28 @@ namespace ChangeManagementSystem.Controllers
             dbValue = string.Join("\n\n", dbList);
             serverValue = string.Join("\n\n", serverList);
 
+
+
             foreach (var dynObjSignOffItem in dynObjSignOff)
             {
                 signoffInfoList.Add("REVIEWED BY:\n");
                 signoffInfoList.Add("Signature:");
-                signoffInfoList.Add("Printed Name: " + dynObjSignOffItem["Name"].ToString());
-                signoffInfoList.Add("Role: " + dynObjSignOffItem["Role"].ToString());
+                signoffInfoList.Add("Printed Name: " + dynObjSignOffItem["Reviewer"].ToString());
+                signoffInfoList.Add("Role: " + dynObjSignOffItem["Reviewer"].ToString());
                 signoffInfoList.Add("Date:\n");
             }
 
             signoffInfoValue = string.Join("\n", signoffInfoList);
-            
+
             rd.SetParameterValue("Application", appValue);
             rd.SetParameterValue("Database", dbValue);
             rd.SetParameterValue("Server", serverValue);
 
+            rd.SetParameterValue("ImplementationTargetDate", targetImplementation.ToShortDateString());
+            rd.SetParameterValue("ImplementationTargetTime", targetImplementation.ToShortTimeString());
+
             rd.SetParameterValue("SignOffInfo", signoffInfoValue);
-            
+
             Response.Buffer = false;
             Response.ClearContent();
             Response.ClearHeaders();

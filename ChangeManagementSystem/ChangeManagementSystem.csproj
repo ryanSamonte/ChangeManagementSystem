@@ -173,7 +173,25 @@
     <Compile Include="Migrations\201901100303157_AddNameAndJobRoleInUsersTable.Designer.cs">
       <DependentUpon>201901100303157_AddNameAndJobRoleInUsersTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901110117533_AssignJobRoleForeignKeyToUserTable.cs" />
+    <Compile Include="Migrations\201901110117533_AssignJobRoleForeignKeyToUserTable.Designer.cs">
+      <DependentUpon>201901110117533_AssignJobRoleForeignKeyToUserTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901110216586_SeedJobRolesTable.cs" />
+    <Compile Include="Migrations\201901110216586_SeedJobRolesTable.Designer.cs">
+      <DependentUpon>201901110216586_SeedJobRolesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901110303484_SeedAspNetRoles.cs" />
+    <Compile Include="Migrations\201901110303484_SeedAspNetRoles.Designer.cs">
+      <DependentUpon>201901110303484_SeedAspNetRoles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901110527514_AddUserForeignKeyIntoCMDTable.cs" />
+    <Compile Include="Migrations\201901110527514_AddUserForeignKeyIntoCMDTable.Designer.cs">
+      <DependentUpon>201901110527514_AddUserForeignKeyIntoCMDTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountRoleName.cs" />
     <Compile Include="Models\AffectedAreasModels.cs" />
+    <Compile Include="Models\JobRoleModels.cs" />
     <Compile Include="Reports\CmdReport.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -236,6 +254,7 @@
     <Content Include="Content\img\sidebar-5.jpg" />
     <Content Include="Content\img\sidebar-bg.jpg" />
     <Content Include="Content\img\tim_80x80.png" />
+    <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\light-bootstrap-dashboard.css" />
     <Content Include="Content\pe-icon-7-stroke.css" />
     <Content Include="Content\Site.css" />
@@ -261,6 +280,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.3.2.1.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -327,6 +347,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901100303157_AddNameAndJobRoleInUsersTable.resx">
       <DependentUpon>201901100303157_AddNameAndJobRoleInUsersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901110117533_AssignJobRoleForeignKeyToUserTable.resx">
+      <DependentUpon>201901110117533_AssignJobRoleForeignKeyToUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901110216586_SeedJobRolesTable.resx">
+      <DependentUpon>201901110216586_SeedJobRolesTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901110303484_SeedAspNetRoles.resx">
+      <DependentUpon>201901110303484_SeedAspNetRoles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901110527514_AddUserForeignKeyIntoCMDTable.resx">
+      <DependentUpon>201901110527514_AddUserForeignKeyIntoCMDTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CmdReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
