@@ -130,7 +130,8 @@
                                         <table class="table table-hover table-striped text-center" id="signOffTableView">
                                             <thead class="text-center">
                                                 <tr>
-                                                    <th class="text-center">Reviewer(s)</th>
+                                                    <th class="text-center">Name</th>
+                                                    <th class="text-center">Role</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -228,7 +229,6 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="affectedAreasApp">Target Implementation Date and Time</label>
-                                        @*<input type="datetime-local" class="form-control form-control-sm" id="affectedAreasApp" name="affectedAreasApp">*@
                                         @Html.TextBoxFor(c => c.TargetImplementation, new { @class = "form-control form-control-sm", id = "targetImplementationEdit", type = "datetime-local", name = "targetImplementationEdit" })
                                     </div>
                                 </div>

@@ -93,12 +93,6 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="JobRole">Job Role</label>
-                                        @*<select class="form-control form-control-sm" id="JobRole" name="JobRole">
-                                            <option value="1">Business Analyst</option>
-                                            <option value="2">Business Analyst1</option>
-                                            <option value="3">Business Analyst2</option>
-                                            <option value="4">Business Analyst3</option>
-                                        </select>*@
                                         @Html.DropDownList("JobRole", (IEnumerable<SelectListItem>)ViewBag.JobRole, new { @class="form-control" })
                                     </div>
                                 </div>
@@ -317,7 +311,6 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="affectedAreasApp">Target Implementation Date and Time</label>
-                                        @*<input type="datetime-local" class="form-control form-control-sm" id="affectedAreasApp" name="affectedAreasApp">*@
                                         @Html.TextBoxFor(c => c.TargetImplementation, new { @class = "form-control form-control-sm", id = "targetImplementationEdit", type = "datetime-local", name = "targetImplementationEdit" })
                                     </div>
                                 </div>

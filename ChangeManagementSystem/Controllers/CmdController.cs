@@ -53,7 +53,8 @@ namespace ChangeManagementSystem.Controllers
             users = _context.Users.ToList();
 
             var userList = (from u in users
-                            where u.Firstname.StartsWith(prefix)
+                            where u.Firstname.Contains(prefix)
+                            where u.Id != User.Identity.GetUserId()
                             select new {u.Lastname, u.Firstname, u.JobRoles.JobRoleName});
 
             return Json(userList, JsonRequestBehavior.AllowGet);
@@ -94,6 +95,27 @@ namespace ChangeManagementSystem.Controllers
             var CmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).ToList();
 
             return Json(CmdList, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetAllIncoming()
+        {
+            var incomingCmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList().Take(5);
+
+            return Json(incomingCmdList, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCmdCount()
+        {
+            var cmdCount = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).Count();
+
+            return Json(cmdCount, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetImplementedCmdCount()
+        {
+            var implementedCmdCount = _context.ChangeManagements.Where(c => c.IsImplemented == true && c.DeletedAt == null).Count();
+
+            return Json(implementedCmdCount, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Find(int id)
@@ -238,8 +260,8 @@ namespace ChangeManagementSystem.Controllers
             {
                 signoffInfoList.Add("REVIEWED BY:\n");
                 signoffInfoList.Add("Signature:");
-                signoffInfoList.Add("Printed Name: " + dynObjSignOffItem["Reviewer"].ToString());
-                signoffInfoList.Add("Role: " + dynObjSignOffItem["Reviewer"].ToString());
+                signoffInfoList.Add("Printed Name: " + dynObjSignOffItem["Name"].ToString());
+                signoffInfoList.Add("Role: " + dynObjSignOffItem["Role"].ToString());
                 signoffInfoList.Add("Date:\n");
             }
 

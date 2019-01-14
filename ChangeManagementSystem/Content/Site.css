@@ -23,3 +23,12 @@ div.dataTables_wrapper div.dataTables_info{
 .modal-backdrop {
   z-index: -2;
 }
+
+.footer .active a{
+    color: #2471d1 !important;
+}
+
+/*#latestCmd .table-full-width{
+    margin-left: -15px;
+    margin-right: 25px;
+}*/

@@ -20,7 +20,6 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="changeObjective" style="color: #333; font-size: 15px;">Objective</label>
-                                        @*<textarea class="form-control form-control-sm" id="changeObjective" name="changeObjective" rows="3"></textarea>*@
                                         @Html.TextAreaFor(c => c.ChangeObjective, new { @class = "form-control form-control-sm", id = "changeObjective" })
                                     </div>
                                 </div>
@@ -30,7 +29,6 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="changeType" style="color: #333; font-size: 15px;">Type</label>
-                                        @*@Html.DropDownListFor(c => c.ChangeType, new SelectList(Enum.GetValues(typeof(changeObjective)), "Id", "Name"), "", new { @class = "form-control" })*@
                                         <select class="form-control form-control-sm" id="changeType" name="ChangeType">
                                             <option value="1">Corrective Patch</option>
                                             <option value="2">New Function</option>
@@ -43,7 +41,6 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="changeRequirements" style="color: #333; font-size: 15px;">Management Requirement</label>
-                                        @*<textarea class="form-control form-control-sm" id="changeRequirement" name="changeRequirement" rows="3"></textarea>*@
                                         @Html.TextAreaFor(c => c.ChangeRequirements, new { @class = "form-control form-control-sm", id = "changeRequirements" })
                                     </div>
                                 </div>
@@ -115,7 +112,6 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="affectedAreasApp" style="color: #333; font-size: 15px;">Target Implementation Date and Time</label>
-                                        @*<input type="datetime-local" class="form-control form-control-sm" id="affectedAreasApp" name="affectedAreasApp">*@
                                         @Html.TextBoxFor(c => c.TargetImplementation, new { @class = "form-control form-control-sm", id = "targetImplementation", type = "datetime-local" })
                                     </div>
                                 </div>
@@ -129,12 +125,6 @@
                                         <input type="text" class="form-control form-control-sm" id="signOffName" name="signOffName">
                                     </div>
                                 </div>
-                                @*<div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="signOffRole">Role</label>
-                                        <input type="text" class="form-control form-control-sm" id="signOffRole" name="signOffRole">
-                                    </div>
-                                </div>*@
                             </div>
 
                             <div class="row">
@@ -155,7 +145,8 @@
                                         <table class="table table-hover table-striped text-center" id="signOffTable">
                                             <thead class="text-center">
                                                 <tr>
-                                                    <th class="text-center">Reviewer</th>
+                                                    <th class="text-center">Name</th>
+                                                    <th class="text-center">Role</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>

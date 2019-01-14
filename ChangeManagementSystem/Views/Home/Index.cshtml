@@ -1,95 +1,37 @@
-﻿@{
+﻿@model ChangeManagementSystem.Models.ChangeManagementModels
+
+@{
     ViewBag.Title = "Home Page";
 }
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col">
-                    <div class="card ">
-                        <div class="header">
-                            <h4 class="title"><i class="pe-7s-portfolio" style="font-size: 50px;"></i>&nbsp;&nbsp;<span id="cmdCountAllTime" style="font-size: 60px;">5</span></h4>
-                        </div>
-                        <div class="content">
-                            <div class="footer">
-                                <hr>
-                                <div class="stats">
-                                    Change Management Document
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="row" style="margin-bottom: 30px;">
+        <div class="col-md-6">
+            <div class="card ">
+                <div class="header">
+                    <h4 class="title" id="cmdCountLabel" style="font-size: 40px; color: red;"></h4>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="header">
-                            <h4 class="title"><span id="cmdCountAllTime" style="font-size: 20px;">5</span></h4>
-                        </div>
-                        <div class="content">
-                            <div class="footer">
-                                <hr>
-                                <div class="stats" style="font-size: 11px;">
-                                    This Day
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="header">
-                            <h4 class="title"><span id="cmdCountAllTime" style="font-size: 20px;">5</span></h4>
-                        </div>
-                        <div class="content">
-                            <div class="footer">
-                                <hr>
-                                <div class="stats" style="font-size: 11px;">
-                                    This Week
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="header">
-                            <h4 class="title"><span id="cmdCountAllTime" style="font-size: 20px;">5</span></h4>
-                        </div>
-                        <div class="content">
-                            <div class="footer">
-                                <hr>
-                                <div class="stats" style="font-size: 11px;">
-                                    This Month
-                                </div>
-                            </div>
+                <div class="content">
+                    <div class="footer">
+                        <hr>
+                        <div class="stats" style="color: #2471d1; font-family: 'Century Gothic'; text-transform: uppercase; font-size: 17px;">
+                            Change Management Document
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+
+        <div class="col-md-6">
             <div class="card ">
                 <div class="header">
-                    <h4 class="title">Tasks</h4>
-                    <p class="category">Backend development</p>
+                    <h4 class="title" id="implementedCmdCountLabel" style="font-size: 40px; color: green;"></h4>
                 </div>
                 <div class="content">
-                    <div class="table-full-width">
-                        <table class="table" id="latestCmdTable">
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
                     <div class="footer">
                         <hr>
-                        <div class="stats">
-                            <i class="fa fa-history"></i> Updated 3 minutes ago
+                        <div class="stats" style="color: #2471d1; font-family: 'Century Gothic'; text-transform: uppercase; font-size: 17px;">
+                            Implemented
                         </div>
                     </div>
                 </div>
@@ -98,43 +40,30 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="card ">
+        <div class="col">
+            <div class="card" style="min-height: 370px; margin-bottom: 0px;">
                 <div class="header">
-                    <h4 class="title">2014 Sales</h4>
-                    <p class="category">All products including Taxes</p>
+                    <h4 class="title">Incoming Change Implementation</h4>
                 </div>
                 <div class="content">
-                    <div id="chartActivity" class="ct-chart"></div>
-                    <div class="footer">
-                        <div class="legend">
-                            <i class="fa fa-circle text-info"></i> Tesla Model S
-                            <i class="fa fa-circle text-danger"></i> BMW 5 Series
-                        </div>
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-check"></i> Data information certified
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card ">
-                <div class="header">
-                    <h4 class="title">2014 Sales</h4>
-                    <p class="category">All products including Taxes</p>
-                </div>
-                <div class="content">
-                    <div id="chartActivity" class="ct-chart"></div>
-                    <div class="footer">
-                        <div class="legend">
-                            <i class="fa fa-circle text-info"></i> Tesla Model S
-                            <i class="fa fa-circle text-danger"></i> BMW 5 Series
-                        </div>
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-check"></i> Data information certified
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col">
+                                <div class="content table-responsive table-full-width">
+                                    <table class="table table-hover table-striped text-center" id="latestCmdTable">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th class="text-center">Requestor</th>
+                                                <th class="text-center">Type</th>
+                                                <th class="text-center">Evaluation</th>
+                                                <th class="text-center">Target Date</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

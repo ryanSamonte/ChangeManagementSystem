@@ -66,7 +66,7 @@ namespace ChangeManagementSystem.Controllers
             return View();
         }
 
-        public ActionResult GetAll()
+        public JsonResult GetAll()
         {
             var userAccountList = _context.Users.ToList();
 
@@ -138,9 +138,6 @@ namespace ChangeManagementSystem.Controllers
                     await UserManager.AddToRoleAsync(user.Id, model.AccountRole);
                     return RedirectToAction("All", "Account");
                 }
-
-
-
                 else
                 {
                     AddErrors(result);
@@ -148,7 +145,7 @@ namespace ChangeManagementSystem.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return RedirectToAction("All", "Account");
         }
 
         //

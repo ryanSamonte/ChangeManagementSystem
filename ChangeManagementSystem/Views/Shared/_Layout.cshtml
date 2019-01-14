@@ -88,44 +88,13 @@
                     <div class="collapse navbar-collapse">
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
                         {
-                            <ul class="nav navbar-nav navbar-left">
-                                <li>
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fa fa-dashboard"></i>
-                                        <p class="hidden-lg hidden-md">Dashboard</p>
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fa fa-globe"></i>
-                                        <b class="caret hidden-lg hidden-md"></b>
-                                        <p class="hidden-lg hidden-md">
-                                            5 Notifications
-                                            <b class="caret"></b>
-                                        </p>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Notification 1</a></li>
-                                        <li><a href="#">Notification 2</a></li>
-                                        <li><a href="#">Notification 3</a></li>
-                                        <li><a href="#">Notification 4</a></li>
-                                        <li><a href="#">Another notification</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="">
-                                        <i class="fa fa-search"></i>
-                                        <p class="hidden-lg hidden-md">Search</p>
-                                    </a>
-                                </li>
-                            </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 <li>
-                                    <a href="">
-                                        <p>Account</p>
+                                    <a href="javascript:void(0);">
+                                        <p>Hello @User.Identity.Name!</p>
                                     </a>
                                 </li>
-                                <li class="dropdown">
+                                @*<li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <p>
                                             Dropdown
@@ -141,7 +110,7 @@
                                         <li class="divider"></li>
                                         <li><a href="#">Separated link</a></li>
                                     </ul>
-                                </li>
+                                </li>*@
                                 @Html.AntiForgeryToken()
 
                                 <li>
@@ -165,21 +134,35 @@
                 <div class="container-fluid">
                     <nav class="pull-left">
                         <ul>
-                            <li>
-                                <a href="#">
+                            <li class="@(ViewBag.Current == "Dashboard" ? "active" : "")">
+                                <a href="@Url.Action("Index", "Home")">
                                     Dashboard
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li class="@(ViewBag.Current == "New Change Document" ? "active" : "")">
+                                <a href="@Url.Action("New", "Cmd")">
                                     Add New
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li class="@(ViewBag.Current == "Manage Change Document" ? "active" : "")">
+                                <a href="@Url.Action("All", "Cmd")">
                                     View All
                                 </a>
                             </li>
+                            <li class="@(ViewBag.Current == "Change Document History" ? "active" : "")">
+                                <a href="@Url.Action("History", "Cmd")">
+                                    CMD History
+                                </a>
+                            </li>
+
+                            @if (User.IsInRole(AccountRoleName.Administrator))
+                            {
+                                <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
+                                    <a href="@Url.Action("All", "Account")">
+                                        User Account
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </nav>
                     <p class="copyright pull-right">
@@ -188,6 +171,124 @@
                     </p>
                 </div>
             </footer>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="container-fluid">
+        <div class="modal fade" id="viewAccountInfoModal" tabindex="-1" role="dialog" data-backdrop="false">
+            <div class="modal-dialog" role="document">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #2471d1; color: #fff;">
+                        <button type="button" class="close" data-dismiss="modal" style="color: #fff;">&times;</button>
+                        <h4 class="modal-title">View Change Management Document</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="newChangeDocumentForm">
+                            @Html.AntiForgeryToken()
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="changeObjectiveView">Objective</label>
+                                            <textarea class="form-control form-control-sm" id="changeObjectiveView" name="changeObjectiveView" rows="3" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="changeTypeView">Type</label>
+                                            <select class="form-control form-control-sm" id="changeTypeView" name="changeTypeView" disabled>
+                                                <option value="1">Corrective Patch</option>
+                                                <option value="2">New Function</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="changeRequirementView">Management Requirement</label>
+                                            <textarea class="form-control form-control-sm" id="changeRequirementView" name="changeRequirementView" rows="3" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom: 1px solid black;" />
+                                <label style="color: #333; font-size: 15px;">Affected Areas</label>
+                                <div class="row" style="margin-top: 15px;">
+                                    <div class="col">
+                                        <div class="content table-responsive table-full-width">
+                                            <table class="table table-hover table-striped text-center" id="affectedAreasTableView">
+                                                <thead class="text-center">
+                                                    <tr>
+                                                        <th class="text-center">Application(s)</th>
+                                                        <th class="text-center">Database & Table(s)</th>
+                                                        <th class="text-center">Server(s)/ IP(s)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom: 1px solid black;" />
+                                <div class="row">
+                                    <div class="col-md-6" style="margin-bottom: 25px;">
+                                        <div class="form-group">
+                                            <label for="requestEvaluationView">Request Evaluation</label>
+                                            <input type="text" class="form-control form-control-sm" id="requestEvaluationView" name="requestEvaluationView" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="targetImplementationView">Target Implementation Date and Time</label>
+                                            <input type="text" class="form-control form-control-sm" id="targetImplementationView" name="targetImplementationView" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom: 1px solid black;" />
+                                <label style="color: #333; font-size: 15px;">Change Management Sign-off</label>
+                                <br /><br />
+                                <label style="color: #333; font-size: 13px;">Requestor:</label>
+                                <div class="row" style="margin-top: 15px;">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm" id="requestorView" name="requestorView" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <label style="color: #333; font-size: 13px;">Reviewed by:</label>
+                                <div class="row" style="margin-top: 15px;">
+                                    <div class="col">
+                                        <div class="content table-responsive table-full-width">
+                                            <table class="table table-hover table-striped text-center" id="signOffTableView">
+                                                <thead class="text-center">
+                                                    <tr>
+                                                        <th class="text-center">Name</th>
+                                                        <th class="text-center">Role</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom: 1px solid black;" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-fill btn-primary" id="btnGenerate" data-generate-id="">Generate Document</a>
+                        <button type="button" class="btn btn-fill btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

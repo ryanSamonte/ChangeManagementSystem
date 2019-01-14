@@ -10,8 +10,8 @@
                 success: function (data) {
                     response($.map(data, function (item) {
                         return {
-                            label: item.Firstname + " " + item.Lastname + " -- " + item.JobRoleName,
-                            value: item.Firstname + " " + item.Lastname + " -- " + item.JobRoleName,
+                            label: item.Firstname + " " + item.Lastname + " ~ " + item.JobRoleName,
+                            value: item.Firstname + " " + item.Lastname + " ~ " + item.JobRoleName,
                         };
                     }))
                 }
@@ -21,7 +21,6 @@
         //    noResults: "", results: ""
         //}
     });
-
 
     $('#affectedAreasTable').DataTable({
         "paging": false,
@@ -64,6 +63,10 @@
     getHistoryList();
 
     getAccountList();
+
+    setInterval(getCmdCount, 1000);
+
+    setInterval(getImplementedCmdCount, 1000);
 
     getLatestCmdList();
 
@@ -223,8 +226,8 @@ $(document).ready(function () {
         }
         else {
             t1.row.add([
-                $('#signOffName').val(),
-                $('#signOffRole').val()
+                $('#signOffName').val().substring(0, $('#signOffName').val().indexOf("~")),
+                $('#signOffName').val().substring($('#signOffName').val().indexOf("~") + 1, $('#signOffName').val().length)
             ]).draw(false);
         }
     });
@@ -357,10 +360,12 @@ $(document).on("click", "#btnView", function () {
             var resultSignOff = {};
             for (j = 0; j < signOffDetails.length; j++) {
                 var objectInResponse = signOffDetails[j];
-                var name = objectInResponse.Reviewer
+                var name = objectInResponse.Name
+                var role = objectInResponse.Role
 
                 t1.row.add([
-                    name
+                    name,
+                    role
                 ]).draw(false);
             }
         },
@@ -764,19 +769,82 @@ function getAccountList() {
     });
 }
 
+function getCmdCount() {
+    $.ajax({
+        url: "/Cmd/GetCmdCount",
+        type: "GET",
+        success: function (data) {
+            var jsonStringified = JSON.stringify(data);
+            var countDetails = JSON.parse(jsonStringified);
+
+            $("#cmdCountLabel").html("<i class='pe-7s-copy-file'></i>&nbsp;&nbsp;"+countDetails);
+        },
+        error: function (data) {
+            alert("error");
+        }
+    });
+}
+
+function getImplementedCmdCount() {
+    $.ajax({
+        url: "/Cmd/GetImplementedCmdCount",
+        type: "GET",
+        success: function (data) {
+            var jsonStringified = JSON.stringify(data);
+            var implementedCountDetails = JSON.parse(jsonStringified);
+
+            $("#implementedCmdCountLabel").html("<i class='pe-7s-like2'></i>&nbsp;&nbsp;" + implementedCountDetails);
+        },
+        error: function(data){
+            alert("Error!");
+        }
+    });
+}
+
 function getLatestCmdList() {
     var table = $("#latestCmdTable").DataTable({
-        ajax: {
-            url: "/Cmd/GetAll",
-            dataSrc: "",
-            success: function (da) {
-                console.log(da);
-            },
-            error: function (da) {
-                console.log(da+ "error");
-            }
+        "paging": false,
+        "ordering": false,
+        "info": false,
 
-        }
+        ajax: {
+            url: "/Cmd/GetAllIncoming",
+            dataSrc: "",
+        },
+        columns: [
+            {
+                data: "ApplicationUser.Lastname",
+                render: function (data, type, full, meta) {
+                    return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
+                }
+                
+            },
+            {
+                data: "ChangeType",
+                render: function (data) {
+                    return data == 1 ? "Corrective Patch" : "New Function";
+                }
+            },
+            {
+                data: "ChangeEvaluation",
+                render: function (data) {
+                    return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
+                }
+            },
+            {
+                data: "TargetImplementation",
+                render: function (data) {
+                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
+                }
+            },
+            {
+                data: "Id",
+                render: function (data) {
+
+                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
+                }
+            }
+        ]
     });
 }
 
