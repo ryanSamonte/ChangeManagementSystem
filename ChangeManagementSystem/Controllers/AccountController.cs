@@ -141,11 +141,13 @@ namespace ChangeManagementSystem.Controllers
                 else
                 {
                     AddErrors(result);
+                    return RedirectToAction("All", "Account");
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return RedirectToAction("All", "Account");
+            //return RedirectToAction("All", "Account", model);
+            return View("All");
         }
 
         //

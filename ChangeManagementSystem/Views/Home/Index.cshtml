@@ -71,3 +71,45 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+<script>
+    $(document).ready(function () {
+        setInterval(getCmdCount, 1000);
+
+        setInterval(getImplementedCmdCount, 1000);
+    });
+
+    function getCmdCount() {
+        $.ajax({
+            url: "/Cmd/GetCmdCount",
+            type: "GET",
+            success: function (data) {
+                var jsonStringified = JSON.stringify(data);
+                var countDetails = JSON.parse(jsonStringified);
+
+                $("#cmdCountLabel").html("<i class='pe-7s-copy-file'></i>&nbsp;&nbsp;" + countDetails);
+            },
+            error: function (data) {
+                alert("error");
+            }
+        });
+    }
+
+    function getImplementedCmdCount() {
+        $.ajax({
+            url: "/Cmd/GetImplementedCmdCount",
+            type: "GET",
+            success: function (data) {
+                var jsonStringified = JSON.stringify(data);
+                var implementedCountDetails = JSON.parse(jsonStringified);
+
+                $("#implementedCmdCountLabel").html("<i class='pe-7s-like2'></i>&nbsp;&nbsp;" + implementedCountDetails);
+            },
+            error: function (data) {
+                alert("Error!");
+            }
+        });
+    }
+</script>
+}

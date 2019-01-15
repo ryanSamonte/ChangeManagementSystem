@@ -64,10 +64,6 @@
 
     getAccountList();
 
-    setInterval(getCmdCount, 1000);
-
-    setInterval(getImplementedCmdCount, 1000);
-
     getLatestCmdList();
 
 
@@ -189,16 +185,82 @@
             //$(element).parents('.radio-inline').append(error);
         }
     });
-});
 
-$(document).ready(function () {
-    var table = $('#affectedAreasTable').DataTable();
+    $("#newUserAccountForm").validate({
+        onkeyup: false,
+        onsubmit: false,
+        rules: {
+            Lastname: {
+                required: true
+            },
 
-    $('#affectedAreasTable tbody').on('click', '#removeBtn', function () {
-        table
-            .row($(this).parents('tr'))
-            .remove()
-            .draw();
+            Firstname: {
+                required: true
+            },
+
+            Email: {
+                required: true
+            },
+
+            Password: {
+                required: true
+            },
+
+            ConfirmPassword: {
+                required: true,
+                equalTo: "#Password"
+            },
+
+            JobRole: {
+                required: true
+            },
+
+            AccountRole: {
+                required: true
+            }
+        },
+
+        messages: {
+            Lastname: {
+                required: "Lastname is required"
+            },
+
+            Firstname: {
+                required: "Firstname is required"
+            },
+
+            Email: {
+                required: "Email address is required"
+            },
+
+            Password: {
+                required: "Password is required"
+            },
+
+            ConfirmPassword: {
+                required: "Password confirmation is required",
+                equalTo: "Password is not the same"
+            },
+
+            JobRole: {
+                required: "Job role is required"
+            },
+
+            AccountRole: {
+                required: "Account role is required"
+            }
+        },
+
+        highlight: function (input) {
+            $(input).addClass('error');
+        },
+        unhighlight: function (input) {
+            $(input).removeClass('error');
+        },
+        errorPlacement: function (error, element) {
+            $(element).parents('.form-group').append(error);
+            //$(element).parents('.radio-inline').append(error);
+        }
     });
 });
 
@@ -221,7 +283,7 @@ $(document).ready(function () {
     var t1 = $('#signOffTable').DataTable();
 
     $('#insertSignOff').on('click', function () {
-        if ($("#signOffName").val() === "" && $("#signOffRole").val() === "") {
+        if ($("#signOffName").val() === "") {
             console.log("");
         }
         else {
@@ -231,6 +293,18 @@ $(document).ready(function () {
             ]).draw(false);
         }
     });
+});
+
+$(document).on("click", "#undoAffectedArea", function () {
+    var table = $('#affectedAreasTable').DataTable();
+
+    table.row((table.data().count() / 3) - 1).remove().draw();
+});
+
+$(document).on("click", "#undoSignOff", function () {
+    var table = $('#signOffTable').DataTable();
+
+    table.row((table.data().count() / 2) - 1).remove().draw();
 });
 
 $(document).on("hide.bs.modal", "#viewCmdInfoModal", function () {
@@ -550,56 +624,61 @@ $(document).on("click", "#btnImplement", function () {
 });
 
 $(document).on("click", "#btnInsertAccount", function () {
-    $.ajax({
-        method: "POST",
-        url: "/Account/Register",
-        data: {
-            Lastname: $("#Lastname").val(),
-            Firstname: $("#Firstname").val(),
-            UserName: $("#Email").val(),
-            Email: $("#Email").val(),
-            Password: $("#Password").val(),
-            ConfirmPassword: $("#ConfirmPassword").val(),
-            JobRoleId: $("#JobRole").val(),
-            AccountRole: $("#AccountRole").val(),
-            __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newUserAccountForm").val(),
-        },
-        success: function (da) {
-            var table = $("#accountList").DataTable();
+    if ($("#newUserAccountForm").valid()) {
+        $.ajax({
+            method: "POST",
+            url: "/Account/Register",
+            data: {
+                Lastname: $("#Lastname").val(),
+                Firstname: $("#Firstname").val(),
+                UserName: $("#Email").val(),
+                Email: $("#Email").val(),
+                Password: $("#Password").val(),
+                ConfirmPassword: $("#ConfirmPassword").val(),
+                JobRoleId: $("#JobRole").val(),
+                AccountRole: $("#AccountRole").val(),
+                __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newUserAccountForm").val(),
+            },
+            success: function (da) {
+                var table = $("#accountList").DataTable();
 
-            $.notify({
-                icon: "pe-7s-check",
-                message: "User account successfully added!"
+                $.notify({
+                    icon: "pe-7s-check",
+                    message: "User account successfully added!"
 
-            }, {
-                type: 'success',
-                timer: 4000,
-                placement: {
-                    from: "bottom",
-                    align: "right"
-                }
-            });
+                }, {
+                    type: 'success',
+                    timer: 4000,
+                    placement: {
+                        from: "bottom",
+                        align: "right"
+                    }
+                });
 
-            clearInputsNewCmd();
-            $("#insertUserAccountModal .close").click();
-            table.destroy();
-            getAccountList();
-        },
-        error: function (da) {
-            $.notify({
-                icon: "pe-7s-close-circle",
-                message: "Error"
+                clearInputsNewCmd();
+                $("#insertUserAccountModal .close").click();
+                table.destroy();
+                getAccountList();
+            },
+            error: function (da) {
+                $.notify({
+                    icon: "pe-7s-close-circle",
+                    message: "Error"
 
-            }, {
-                type: 'danger',
-                timer: 4000,
-                placement: {
-                    from: "bottom",
-                    align: "right"
-                }
-            });
-        }
-    });
+                }, {
+                    type: 'danger',
+                    timer: 4000,
+                    placement: {
+                        from: "bottom",
+                        align: "right"
+                    }
+                });
+            }
+        });
+    }
+
+    return false;
+
 });
 
 function tableToJSON(tblObj) {
@@ -744,62 +823,11 @@ function getAccountList() {
             },
             {
                 data: "JobRoles.JobRoleName"
-            },
-            {
-                data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
-                }
-            },
-            {
-                data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-warning editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit' value='Edit' style='width:100%;'/>";
-                }
-            },
-            {
-                data: "Id",
-                render: function (data) {
-                    return "<input type='button' class='btn btn-fill btn-danger deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete' value='Delete' style='width:100%;'/>";
-                }
             }
         ]
     });
 }
 
-function getCmdCount() {
-    $.ajax({
-        url: "/Cmd/GetCmdCount",
-        type: "GET",
-        success: function (data) {
-            var jsonStringified = JSON.stringify(data);
-            var countDetails = JSON.parse(jsonStringified);
-
-            $("#cmdCountLabel").html("<i class='pe-7s-copy-file'></i>&nbsp;&nbsp;"+countDetails);
-        },
-        error: function (data) {
-            alert("error");
-        }
-    });
-}
-
-function getImplementedCmdCount() {
-    $.ajax({
-        url: "/Cmd/GetImplementedCmdCount",
-        type: "GET",
-        success: function (data) {
-            var jsonStringified = JSON.stringify(data);
-            var implementedCountDetails = JSON.parse(jsonStringified);
-
-            $("#implementedCmdCountLabel").html("<i class='pe-7s-like2'></i>&nbsp;&nbsp;" + implementedCountDetails);
-        },
-        error: function(data){
-            alert("Error!");
-        }
-    });
-}
 
 function getLatestCmdList() {
     var table = $("#latestCmdTable").DataTable({
