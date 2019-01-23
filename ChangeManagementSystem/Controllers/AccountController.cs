@@ -14,7 +14,7 @@ using ChangeManagementSystem.Models;
 
 namespace ChangeManagementSystem.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
@@ -41,7 +41,7 @@ namespace ChangeManagementSystem.Controllers
             }
         }
 
-        //[Authorize(Roles = AccountRoleName.Administrator)]
+        [Authorize(Roles = AccountRoleName.Administrator)]
         public ActionResult All()
         {
             ViewBag.Current = "Manage User Account";

@@ -17,9 +17,6 @@
                 }
             })
         }
-        //messages: {
-        //    noResults: "", results: ""
-        //}
     });
 
     $('#affectedAreasTable').DataTable({
@@ -67,7 +64,34 @@
     getLatestCmdList();
 
 
+    //calendar configuration
+    $('#calendarCont').fullCalendar({
+        eventSources: [{
+            url: '/Cmd/GetImplementationDates',
+            type: 'GET',
+            data: {
+            },
+            success: function (data) {
+
+            },
+            error: function () {
+                alert('there was an error while fetching events!');
+            },
+            color: '#2472d2',   // a non-ajax option
+            textColor: '#e3e7fa' // a non-ajax option
+        }],
+        timezone: 'Asia/Singapore'
+    });
+
     //validations
+    $.validator.addMethod("futureDate", function (value, element) {
+        var curDate = new Date();
+        var inputDate = new Date(value);
+        if (inputDate > curDate)
+            return true;
+        return false;
+    }, "Invalid Date!");
+
     $("#newChangeDocumentForm").validate({
         onkeyup: false,
         onsubmit: false,
@@ -89,7 +113,8 @@
             },
 
             TargetImplementation: {
-                required: true
+                required: true,
+                futureDate: true
             }
         },
 
@@ -111,7 +136,8 @@
             },
 
             TargetImplementation: {
-                required: "Implementation date is required"
+                required: "Implementation date is required",
+                futureDate: "Invalid date input"
             }
         },
 
@@ -123,7 +149,6 @@
         },
         errorPlacement: function (error, element) {
             $(element).parents('.form-group').append(error);
-            //$(element).parents('.radio-inline').append(error);
         }
     });
 
@@ -182,7 +207,6 @@
         },
         errorPlacement: function (error, element) {
             $(element).parents('.form-group').append(error);
-            //$(element).parents('.radio-inline').append(error);
         }
     });
 
@@ -329,6 +353,9 @@ $(document).on("hide.bs.modal", "#editCmdInfoModal", function () {
 
 $(document).on("click", "#btnSave", function () {
     var changeEvaluation = 0;
+    var type = 0;
+
+    $("input[id=correctivePatchRadio]:checked").val() == "on" ? type = 1 :  type = 2;
 
     $("input[id=highRadio]:checked").val() == "on" ? changeEvaluation = 1 : ($("input[id=mediumRadio]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
@@ -338,7 +365,7 @@ $(document).on("click", "#btnSave", function () {
             url: "/Cmd/Save",
             data: {
                 ChangeObjective: $("#changeObjective").val(),
-                ChangeType: $("#changeType").val(),
+                ChangeType: type,
                 ChangeRequirements: $("#changeRequirements").val(),
                 AffectedAreas: JSON.stringify(tableToJSON($("#affectedAreasTable"))),
                 ChangeEvaluation: changeEvaluation,

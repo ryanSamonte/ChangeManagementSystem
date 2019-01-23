@@ -17,25 +17,25 @@
                         @Html.AntiForgeryToken()
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-7">
                                     <div class="form-group">
                                         <label for="changeObjective" style="color: #333; font-size: 15px;">Objective</label>
                                         @Html.TextAreaFor(c => c.ChangeObjective, new { @class = "form-control form-control-sm", id = "changeObjective" })
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="changeType" style="color: #333; font-size: 15px;">Type</label>
-                                        <select class="form-control form-control-sm" id="changeType" name="ChangeType">
-                                            <option value="1">Corrective Patch</option>
-                                            <option value="2">New Function</option>
-                                        </select>
+                                <div class="col-md-5">
+                                    <div class="form-group" style="padding:5px;text-align:center;">
+                                        <fieldset class="fieldset">
+                                            <legend class="text-left" style="border: none; display:block; width:100%; font-size: 0px;"><label style="margin-bottom: 8px;text-align: left; color: #333; font-size: 15px;">Type</label></legend>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="ChangeType" id="correctivePatchRadio">Corrective Patch</label>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="ChangeType" id="newFunctionRadio">New Function</label>
+                                        </fieldset>
                                     </div>
                                 </div>
                             </div>
+
+                            <hr style="border-bottom: 1px solid black;" />
 
                             <div class="row">
                                 <div class="col">
@@ -45,7 +45,9 @@
                                     </div>
                                 </div>
                             </div>
+
                             <hr style="border-bottom: 1px solid black;"/>
+
                             <label style="color: #333; font-size: 15px;">Affected Areas</label>
                             <div class="row" style="margin-top: 15px;">
                                 <div class="col-md-4">
@@ -74,7 +76,7 @@
                                 <div class="col-md-3">
                                 </div>
                                 <div class="col-md-3">
-                                    <button type="button" class="btn btn-fill btn-primary btn-sm pull-right" id="insertAffectedArea" style="width:100%">Add to the list</button>
+                                    <button type="button" class="btn btn-fill btn-primary btn-sm pull-right" id="insertAffectedArea" style="width:100%;margin-bottom:10px;">Add to the list</button>
                                 </div>
                                 <div class="col-md-3 text-right">
                                     <button type="button" class="btn btn-fill btn-danger btn-sm pull-left" id="undoAffectedArea" style="width:100%">Undo</button>
@@ -100,13 +102,13 @@
                             <hr style="border-bottom: 1px solid black;" />
                             <div class="row">
                                 <div class="col-md-6" style="margin-bottom: 25px;">
-                                    <div class="form-group">
+                                    <div class="form-group" style="padding:5px;text-align:center;">
                                         <fieldset class="fieldset">
-                                            <legend style="border: none; display:block; width:100%; font-size: 0px;"><label style="margin-bottom: 8px;text-align: left; color: #333; font-size: 15px;">Request Evaluation</label></legend>
+                                            <legend class="text-left" style="border: none; display:block; width:100%; font-size: 0px;"><label style="margin-bottom: 8px;text-align: left; color: #333; font-size: 15px;">Request Evaluation</label></legend>
 
-                                            <label class="radio-inline" style="margin-right: 60px;text-align: center;"><input type="radio" name="evaluationRadio" id="highRadio">High</label>
-                                            <label class="radio-inline" style="margin-right: 60px;text-align: center;"><input type="radio" name="evaluationRadio" id="mediumRadio">Medium</label>
-                                            <label class="radio-inline" style="margin-right: 60px;text-align: center;"><input type="radio" name="evaluationRadio" id="lowRadio">Low</label>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="evaluationRadio" id="highRadio">High</label>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="evaluationRadio" id="mediumRadio">Medium</label>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="evaluationRadio" id="lowRadio">Low</label>
                                         </fieldset>
                                     </div>
                                 </div>
@@ -134,7 +136,7 @@
                                 <div class="col-md-3">
                                 </div>
                                 <div class="col-md-3">
-                                    <button type="button" class="btn btn-fill btn-primary btn-sm pull-right" id="insertSignOff" style="width:100%">Add to the list</button>
+                                    <button type="button" class="btn btn-fill btn-primary btn-sm pull-right" id="insertSignOff" style="width:100%;margin-bottom:10px;">Add to the list</button>
                                 </div>
                                 <div class="col-md-3 text-right">
                                     <button type="button" class="btn btn-fill btn-danger btn-sm pull-left" id="undoSignOff" style="width:100%">Undo</button>

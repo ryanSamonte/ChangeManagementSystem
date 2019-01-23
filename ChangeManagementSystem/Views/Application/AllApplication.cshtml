@@ -1,0 +1,188 @@
+﻿
+@{
+    ViewBag.Title = "AllApplication";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <input type='button' class='btn btn-fill btn-success' data-toggle='modal' data-target='#insertApplicationModal' value='Add New Application for Deployment' style='width:30%; float: right; margin-bottom: 15px; margin-top: 15px; margin-right: 15px; clear: both;' />
+                <div class="header">
+                    <h4 class="title">Applications</h4>
+                    <p class="category">Insert, View, Update or Delete Application Informations</p>
+                </div>
+                <div class="content table-responsive table-full-width">
+                    <table class="table table-hover table-striped text-center" id="cmdList">
+                        <thead class="text-center">
+                            <tr>
+                                <th class="text-center">Name</th>
+                                <th class="text-center">Change Type</th>
+                                <th class="text-center">Evaluation</th>
+                                <th class="text-center">Target Date</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- Modal -->
+<div class="container-fluid">
+    <div class="modal fade" id="insertApplicationModal" tabindex="-1" role="dialog" data-backdrop="false">
+        <div class="modal-dialog" role="document">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #2471d1; color: #fff;">
+                    <button type="button" class="close" data-dismiss="modal" style="color: #fff;">&times;</button>
+                    <h4 class="modal-title">Application Deployment Form</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="newChangeDocumentForm">
+                        @Html.AntiForgeryToken()
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="applicationName">Name</label>
+                                        <input type="text" class="form-control form-control-sm" id="applicationName" name="applicationName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="applicationDescription">Description</label>
+                                        <textarea class="form-control form-control-sm" id="applicationDescription" name="applicationDescription" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="border-bottom: 1px solid black;" />
+
+                            <label style="color: #333; font-size: 15px;">Developer/s</label>
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="developerName">Printed Name</label>
+                                        <input type="text" class="form-control form-control-sm" id="developerName" name="developerName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-fill btn-primary btn-sm pull-right" id="insertDev" style="width:100%;margin-bottom:10px;">Add to the list</button>
+                                </div>
+                                <div class="col-md-3 text-right">
+                                    <button type="button" class="btn btn-fill btn-danger btn-sm pull-left" id="undoDev" style="width:100%">Undo</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="content table-responsive table-full-width">
+                                        <table class="table table-hover table-striped text-center" id="devTable">
+                                            <thead class="text-center">
+                                                <tr>
+                                                    <th class="text-center">Name</th>
+                                                    <th class="text-center">Email</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="border-bottom: 1px solid black;" />
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group" style="padding:5px;text-align:center;">
+                                        <fieldset class="fieldset">
+                                            <legend class="text-left" style="border: none; display:block; width:100%; font-size: 0px;"><label style="margin-bottom: 8px;text-align: left; color: #333; font-size: 15px;">Status</label></legend>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="appStatus" id="firstTimeDeploymentRadio">First Time Deployment</label>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="appStatus" id="reDeploymentRadio">Re-deployment</label>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="border-bottom: 1px solid black;" />
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group" style="padding:5px;text-align:center;">
+                                        <fieldset class="fieldset">
+                                            <legend class="text-left" style="border: none; display:block; width:100%; font-size: 0px;"><label style="margin-bottom: 8px;text-align: left; color: #333; font-size: 15px;">User</label></legend>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="appUser" id="externalRadio">External</label>
+                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="appUser" id="clientRadio">Client</label>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="border-bottom: 1px solid black;" />
+                            <label style="color: #333; font-size: 15px;">Requested By</label>
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="requestorName">Printed Name</label>
+                                        <input type="text" class="form-control form-control-sm" id="requestorName" name="requestorName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-fill btn-primary btn-sm pull-right" id="insertRequestor" style="width:100%;margin-bottom:10px;">Add to the list</button>
+                                </div>
+                                <div class="col-md-3 text-right">
+                                    <button type="button" class="btn btn-fill btn-danger btn-sm pull-left" id="undoRequestor" style="width:100%">Undo</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="content table-responsive table-full-width">
+                                        <table class="table table-hover table-striped text-center" id="requestorTable">
+                                            <thead class="text-center">
+                                                <tr>
+                                                    <th class="text-center">Name</th>
+                                                    <th class="text-center">Department</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-fill btn-success" id="btnSaveApp">Add New Change Document</button>
+                    <button type="button" class="btn btn-fill btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

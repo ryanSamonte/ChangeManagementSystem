@@ -12,23 +12,16 @@
     <meta name="viewport" content="width=device-width" />
 
     @Styles.Render("~/Content/css")
-    @*@Scripts.Render("~/bundles/modernizr")*@
 
     <!--     Fonts and icons     -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+
     @Styles.Render("~/Content/peicon")
-    <!-- <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" /> -->
 </head>
 <body>
     <div class="wrapper">
         <div class="sidebar" data-color="blue">
-            <!--
-
-            Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-            Tip 2: you can also add an image using data-image tag
-
-        -->
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a href="@Url.Action("Index", "Home")" class="simple-text">
@@ -62,6 +55,13 @@
                         </a>
                     </li>
 
+                    <li class="@(ViewBag.Current == "Change Document Calendar" ? "active" : "")">
+                        <a href="@Url.Action("Calendar", "Cmd")">
+                            <i class="pe-7s-date"></i>
+                            <p>View Calendar</p>
+                        </a>
+                    </li>
+
                     @if(User.IsInRole(AccountRoleName.Administrator)){
                     <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
                         <a href="@Url.Action("All", "Account")">
@@ -70,6 +70,27 @@
                         </a>
                     </li>   
                     }
+
+                    <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "nav-item")">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#componentsExamples" aria-expanded="false">
+                            <i class="pe-7s-config"></i>
+                            <p>
+                                Maintenance
+                                <b class="caret"></b>
+                            </p>
+                        </a>
+                        <div class="collapse" id="componentsExamples">
+                            <ul class="nav">
+                                <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "")">
+                                    <a class="" href="@Url.Action("All", "Application")">
+                                        <p>
+                                            Manage Applications
+                                        </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -300,6 +321,8 @@
     @Scripts.Render("~/bundles/lightbootstrap")
     @Scripts.Render("~/bundles/dateformat")
     @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/moment")
+    @Scripts.Render("~/bundles/fullcalendar")
     @Scripts.Render("~/bundles/site")
     @RenderSection("scripts", required: false)
 </html>

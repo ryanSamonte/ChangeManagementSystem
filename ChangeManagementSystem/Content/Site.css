@@ -28,6 +28,10 @@ div.dataTables_wrapper div.dataTables_info{
     color: #2471d1 !important;
 }
 
+textarea{
+    resize: none;
+}
+
 /*#latestCmd .table-full-width{
     margin-left: -15px;
     margin-right: 25px;

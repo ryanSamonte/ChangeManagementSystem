@@ -22,7 +22,7 @@ namespace ChangeManagementSystem.Controllers
         public string Server;
     }
 
-    //[Authorize]
+    [Authorize]
     public class CmdController : Controller
     {
 
@@ -297,6 +297,27 @@ namespace ChangeManagementSystem.Controllers
             var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented == true && c.DeletedAt == null).ToList();
 
             return Json(cmdListHistory, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Calendar()
+        {
+            ViewBag.Current = "Change Document Calendar";
+
+            return View("CalendarCmd");
+        }
+
+        [AllowAnonymous]
+        public ActionResult GetImplementationDates()
+        {
+            var cmdListImplementationDates = _context.ChangeManagements
+                .Where(d => d.DeletedAt == null)
+                .Select(d => new { title = d.AffectedAreas,
+                                   start = d.TargetImplementation,
+                                   end = d.TargetImplementation
+                })
+                .ToList();
+
+            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
         }
     }
 }

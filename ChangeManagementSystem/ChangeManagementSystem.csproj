@@ -161,6 +161,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.cs" />
     <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.Designer.cs">
       <DependentUpon>201901090730292_AddIsImplementedColumnIntoCMDTable.cs</DependentUpon>
@@ -231,6 +232,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\datatables.min.css" />
     <Content Include="Content\demo.css" />
+    <Content Include="Content\fullcalendar.css" />
     <Content Include="Content\img\default-avatar.png" />
     <Content Include="Content\img\faces\face-0.jpg" />
     <Content Include="Content\img\faces\face-1.jpg" />
@@ -277,6 +279,7 @@
     <Content Include="Scripts\datatables.min.js" />
     <Content Include="Scripts\date.format.js" />
     <Content Include="Scripts\demo.js" />
+    <Content Include="Scripts\fullcalendar.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -288,6 +291,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\light-bootstrap-dashboard.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\site.js" />
@@ -327,6 +331,8 @@
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <Content Include="Views\Cmd\HistoryCmd.cshtml" />
     <Content Include="Views\Account\All.cshtml" />
+    <Content Include="Views\Cmd\CalendarCmd.cshtml" />
+    <Content Include="Views\Application\AllApplication.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

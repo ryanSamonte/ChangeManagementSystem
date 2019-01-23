@@ -37,6 +37,12 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                       "~/Scripts/jquery-ui.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/moment").Include(
+                      "~/Scripts/moment.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/fullcalendar").Include(
+                      "~/Scripts/fullcalendar.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/site").Include(
                       "~/Scripts/site.js"));
 
@@ -46,6 +52,7 @@ namespace ChangeManagementSystem
                       "~/Content/light-bootstrap-dashboard.css",
                       "~/Content/datatables.min.css",
                       "~/Content/jquery-ui.css",
+                      "~/Content/fullcalendar.css",
                       "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/peicon").Include(
