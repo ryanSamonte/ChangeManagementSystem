@@ -31,6 +31,12 @@
         "info": false
     });
 
+    $('#affectedAreasTableViewCalendar').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false
+    });
+
     $('#affectedAreasTableEdit').DataTable({
         "paging": false,
         "ordering": false,
@@ -44,6 +50,12 @@
     });
 
     $('#signOffTableView').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false
+    });
+
+    $('#signOffTableViewCalendar').DataTable({
         "paging": false,
         "ordering": false,
         "info": false
@@ -66,21 +78,129 @@
 
     //calendar configuration
     $('#calendarCont').fullCalendar({
-        eventSources: [{
-            url: '/Cmd/GetImplementationDates',
-            type: 'GET',
-            data: {
-            },
-            success: function (data) {
+        header: {
+            left:   'title',
+            center: '',
+            right:  'month prev,next'
+        },
+        
+        buttonText:{
+            today:    'today',
+            month:    'Monthly View',
+        },
+        eventSources: [
+            {
+                url: '/Cmd/GetChangesImplemented',
+                type: 'GET',
+                data: {
+                },
+                success: function (data) {
 
+                },
+                error: function () {
+                    alert('there was an error while fetching events!');
+                },
+
+                color: '#2472d2',
+                textColor: '#e3e7fa'
             },
-            error: function () {
-                alert('there was an error while fetching events!');
+            {
+                url: '/Cmd/GetChangesUnImplemented',
+                type: 'GET',
+                data: {
+                },
+                success: function (data) {
+
+                },
+                error: function () {
+                    alert('there was an error while fetching events!');
+                },
+
+                color: '#2472d2',
+                textColor: '#e3e7fa'
+            }
+        ],
+
+        eventClick: function(event, element) {
+            $("#viewCmdInfoModalCalendar").modal("show");
+
+            var id = event.areas;
+
+            $("#btnGenerateCalendar").attr("data-generate-id", id);
+
+            var t = $('#affectedAreasTableViewCalendar').DataTable();
+            var t1 = $('#signOffTableViewCalendar').DataTable();
+
+            $.ajax({
+                type: "GET",
+                url: "/Cmd/Find?id=" + id,
+                success: function (data) {
+                    var jsonStringified = JSON.stringify(data);
+
+                    var cmdDetails = JSON.parse(jsonStringified);
+
+                    var affectedAreaDetails = JSON.parse(cmdDetails.AffectedAreas);
+
+                    var signOffDetails = JSON.parse(cmdDetails.SignOff);
+
+                    $("#changeObjectiveViewCalendar").val(cmdDetails.ChangeObjective);
+                    $("#changeTypeViewCalendar").val(cmdDetails.ChangeType);
+                    $("#changeRequirementViewCalendar").val(cmdDetails.ChangeRequirements);
+
+                    var i;
+                    var result = {};
+                    for (i = 0; i < affectedAreaDetails.length; i++) {
+                        var objectInResponse = affectedAreaDetails[i];
+                        var application = objectInResponse.Application;
+                        var database = objectInResponse.Database;
+                        var server = objectInResponse.Server;
+
+                        t.row.add([
+                            application,
+                            database,
+                            server
+                        ]).draw(false);
+                    }
+                    $("#requestEvaluationViewCalendar").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
+                    var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
+                    var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy HH:MM");
+                    $("#targetImplementationViewCalendar").val(targetImplementationDate);
+                    $("#requestorViewCalendar").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
+
+
+                    var j;
+                    var resultSignOff = {};
+                    for (j = 0; j < signOffDetails.length; j++) {
+                        var objectInResponse = signOffDetails[j];
+                        var name = objectInResponse.Name
+                        var role = objectInResponse.Role
+
+                        t1.row.add([
+                            name,
+                            role
+                        ]).draw(false);
+                    }
+                },
+                error: function () {
+                    alert("Error while retrieving data of :" + id);
+                }
+            });
+        },
+
+        timezone: 'local',
+        eventLimit: true,
+        eventLimitText: "more implementation",
+        eventLimitClick: "agendaDay",
+        views: {
+            month: {
+                eventLimit: 5
             },
-            color: '#2472d2',   // a non-ajax option
-            textColor: '#e3e7fa' // a non-ajax option
-        }],
-        timezone: 'Asia/Singapore'
+            agendaDay: {
+                type: 'agenda',
+                duration: { days: 1 },
+                buttonText: '1 day'
+            }
+        }
     });
 
     //validations
@@ -337,6 +457,16 @@ $(document).on("hide.bs.modal", "#viewCmdInfoModal", function () {
     t.clear().draw();
 
     var t1 = $('#signOffTableView').DataTable();
+
+    t1.clear().draw();
+});
+
+$(document).on("hide.bs.modal", "#viewCmdInfoModalCalendar", function () {
+    var t = $('#affectedAreasTableViewCalendar').DataTable();
+
+    t.clear().draw();
+
+    var t1 = $('#signOffTableViewCalendar').DataTable();
 
     t1.clear().draw();
 });

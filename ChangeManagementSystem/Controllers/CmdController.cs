@@ -307,15 +307,34 @@ namespace ChangeManagementSystem.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult GetImplementationDates()
+        public ActionResult GetChangesImplemented()
         {
             var cmdListImplementationDates = _context.ChangeManagements
-                .Where(d => d.DeletedAt == null)
-                .Select(d => new { title = d.AffectedAreas,
-                                   start = d.TargetImplementation,
-                                   end = d.TargetImplementation
+                .Where(d => d.DeletedAt == null && d.IsImplemented == true)
+                .Select(d => new { title = d.CmdNo,
+                                   start = d.ImplementedAt,
+                                   areas = d.Id,
+                                   color = "green"
                 })
                 .ToList();
+
+            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult GetChangesUnImplemented()
+        {
+            var cmdListImplementationDates = _context.ChangeManagements
+                .Where(d => d.DeletedAt == null && d.IsImplemented == false)
+                .Select(d => new
+                {
+                    title = d.CmdNo,
+                    start = d.TargetImplementation,
+                    areas = d.Id,
+                    color = "red"
+                })
+                .ToList();
+
 
             return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
         }
