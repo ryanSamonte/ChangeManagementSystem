@@ -1,4 +1,97 @@
 ﻿$(document).ready(function () {
+    //textarea characted counter
+    $(function () {
+        var nMaxLength = 2000;
+        $('.remainingObjective').text(nMaxLength);
+
+        $('#changeObjective').keydown(function (event) {
+            LimitCharacters($(this));
+        });
+
+        $('#changeObjective').keyup(function (event) {
+            LimitCharacters($(this));
+        });
+
+        function LimitCharacters(remarks) {
+            if (remarks.val().length > nMaxLength) {
+                remarks.val(remarks.val().substring(0, nMaxLength));
+            }
+            else {
+                var nRemaining = nMaxLength - remarks.val().length;
+                $('.remainingObjective').text(nRemaining);
+            }
+        }
+    });
+
+    $(function () {
+        var nMaxLength = 2000;
+        $('.remainingObjectiveEdit').text(nMaxLength);
+
+        $('#changeObjectiveEdit').keydown(function (event) {
+            LimitCharacters($(this));
+        });
+
+        $('#changeObjectiveEdit').keyup(function (event) {
+            LimitCharacters($(this));
+        });
+
+        function LimitCharacters(remarks) {
+            if (remarks.val().length > nMaxLength) {
+                remarks.val(remarks.val().substring(0, nMaxLength));
+            }
+            else {
+                var nRemaining = nMaxLength - remarks.val().length;
+                $('.remainingObjectiveEdit').text(nRemaining);
+            }
+        }
+    });
+
+    $(function () {
+        var nMaxLength = 2000;
+        $('.remainingRequirements').text(nMaxLength);
+
+        $('#changeRequirements').keydown(function (event) {
+            LimitCharacters($(this));
+        });
+
+        $('#changeRequirements').keyup(function (event) {
+            LimitCharacters($(this));
+        });
+
+        function LimitCharacters(remarks) {
+            if (remarks.val().length > nMaxLength) {
+                remarks.val(remarks.val().substring(0, nMaxLength));
+            }
+            else {
+                var nRemaining = nMaxLength - remarks.val().length;
+                $('.remainingRequirements').text(nRemaining);
+            }
+        }
+    });
+
+    $(function () {
+        var nMaxLength = 2000;
+        $('.remainingRequirementsEdit').text(nMaxLength);
+
+        $('#changeRequirementEdit').keydown(function (event) {
+            LimitCharacters($(this));
+        });
+
+        $('#changeRequirementEdit').keyup(function (event) {
+            LimitCharacters($(this));
+        });
+
+        function LimitCharacters(remarks) {
+            if (remarks.val().length > nMaxLength) {
+                remarks.val(remarks.val().substring(0, nMaxLength));
+            }
+            else {
+                var nRemaining = nMaxLength - remarks.val().length;
+                $('.remainingRequirementsEdit').text(nRemaining);
+            }
+        }
+    });
+
     $("#signOffName").autocomplete({
         source: function (request, response) {
             var role = "";
@@ -118,6 +211,21 @@
 
                 color: '#2472d2',
                 textColor: '#e3e7fa'
+            },
+            {
+                url: '/Cmd/GetChangesPastTheDeadline',
+                type: 'GET',
+                data: {
+                },
+                success: function (data) {
+
+                },
+                error: function () {
+                    alert('there was an error while fetching events!');
+                },
+
+                color: '#2472d2',
+                textColor: '#e3e7fa'
             }
         ],
 
@@ -162,9 +270,20 @@
                         ]).draw(false);
                     }
                     $("#requestEvaluationViewCalendar").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
+
                     var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
                     var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy HH:MM");
                     $("#targetImplementationViewCalendar").val(targetImplementationDate);
+
+                    if (cmdDetails.ImplementedAt == null) {
+                        $("#implementedAtViewCalendar").val(null);
+                    }
+                    else {
+                        var implementedAt = new Date(parseInt(cmdDetails.ImplementedAt.substr(6)));
+                        var implementationDate = implementedAt.format("ddd mmm dd, yyyy HH:MM");
+                        $("#implementedAtViewCalendar").val(implementationDate);
+                    }
+
                     $("#requestorViewCalendar").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
 
 
@@ -208,6 +327,16 @@
         var curDate = new Date();
         var inputDate = new Date(value);
         if (inputDate > curDate)
+            return true;
+        return false;
+    }, "Invalid Date!");
+
+    $.validator.addMethod("futureDateAndSameValue", function (value, element) {
+        var curDate = new Date();
+        var inputDate = new Date(value);
+        var currentDateValue = new Date($("#targetImplementationTemp").val());
+
+        if (inputDate > curDate || currentDateValue.toString() === inputDate.toString())
             return true;
         return false;
     }, "Invalid Date!");
@@ -257,7 +386,7 @@
 
             TargetImplementation: {
                 required: "Implementation date is required",
-                futureDate: "Invalid date input"
+                futureDate: "Invalid date or time input"
             }
         },
 
@@ -292,8 +421,9 @@
                 required: true
             },
 
-            targetImplementationEdit: {
-                required: true
+            TargetImplementation: {
+                required: true,
+                //futureDateAndSameValue: true
             }
         },
 
@@ -314,8 +444,9 @@
                 required: "Evaluation is required"
             },
 
-            targetImplementationEdit: {
-                required: "Implementation date is required"
+            TargetImplementation: {
+                required: "Implementation date is required",
+                futureDateAndSameValue: "Invalid date or time input"
             }
         },
 
@@ -562,6 +693,7 @@ $(document).on("click", "#btnView", function () {
 
             var signOffDetails = JSON.parse(cmdDetails.SignOff);
 
+            $("#cmdNoHistory").html("<h5 class='small text-muted' style='display: inline-block; color: #fff;'>(" + cmdDetails.CmdNo + ")</h5>");
             $("#changeObjectiveView").val(cmdDetails.ChangeObjective);
             $("#changeTypeView").val(cmdDetails.ChangeType);
             $("#changeRequirementView").val(cmdDetails.ChangeRequirements);
@@ -581,9 +713,20 @@ $(document).on("click", "#btnView", function () {
                 ]).draw(false);
             }
             $("#requestEvaluationView").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
+            
             var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
             var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy HH:MM");
             $("#targetImplementationView").val(targetImplementationDate);
+
+            if (cmdDetails.ImplementedAt == null) {
+                $("#implementedAtViewCalendar").val(null);
+            }
+            else {
+                var implementedAt = new Date(parseInt(cmdDetails.ImplementedAt.substr(6)));
+                var implementationDate = implementedAt.format("ddd mmm dd, yyyy HH:MM");
+                $("#implementedAtView").val(implementationDate);
+            }
+
             $("#requestorView").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
 
 
@@ -615,6 +758,14 @@ $(document).on("click", "#btnGenerate", function () {
 $(document).on("click", "#btnEdit", function () {
     $("#editCmdInfoModal").focus();
 
+    var nMaxLength = 2000;
+
+    var nRemainingObjective = nMaxLength - $("#changeObjectiveEdit").val().length;
+    $('.remainingObjectiveEdit').text(nRemainingObjective);
+
+    var nRemainingRequirement = nMaxLength - $("#changeRequirementEdit").val().length;
+    $('.remainingRequirementsEdit').text(nRemainingRequirement);
+
     var id = $(this).attr("data-id");
 
     $("#btnUpdate").attr("data-edit-id", id);
@@ -634,6 +785,7 @@ $(document).on("click", "#btnEdit", function () {
 
             var signOffDetails = JSON.parse(cmdDetails.SignOff);
 
+            $("#cmdNoEdit").html("<h5 class='small text-muted' style='display: inline-block; color: #fff;'>(" + cmdDetails.CmdNo + ")</h5>");
             $("#changeObjectiveEdit").val(cmdDetails.ChangeObjective);
             $("#changeTypeEdit").val(cmdDetails.ChangeType);
             $("#changeRequirementEdit").val(cmdDetails.ChangeRequirements);
@@ -657,6 +809,8 @@ $(document).on("click", "#btnEdit", function () {
             var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
             var targetImplementationDate = nowDate.format("yyyy-mm-dd'T'HH:MM:ss");
             $("#targetImplementationEdit").val(targetImplementationDate);
+
+            $("#targetImplementationTemp").val(targetImplementationDate);
 
 
             var j;
@@ -682,7 +836,9 @@ $(document).on("click", "#btnUpdate", function () {
     var id = $(this).attr("data-edit-id");
 
     var changeEvaluation = 0;
+    var type = 0;
 
+    $("input[id=correctivePatchRadioEdit]:checked").val() == "on" ? type = 1 : type = 2;
     $("input[id=highRadioEdit]:checked").val() == "on" ? changeEvaluation = 1 : ($("input[id=mediumRadioEdit]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
     if ($("#editChangeDocumentForm").valid()) {
@@ -691,7 +847,7 @@ $(document).on("click", "#btnUpdate", function () {
             url: "/Cmd/Update?id=" + id,
             data: {
                 ChangeObjective: $("#changeObjectiveEdit").val(),
-                ChangeType: $("#changeTypeEdit").val(),
+                ChangeType: type,
                 ChangeRequirements: $("#changeRequirementEdit").val(),
                 AffectedAreas: JSON.stringify(tableToJSON($("#affectedAreasTableEdit"))),
                 ChangeEvaluation: changeEvaluation,
@@ -745,39 +901,75 @@ $(document).on("click", "#btnUpdate", function () {
 $(document).on("click", "#btnDelete", function () {
     var id = $(this).attr("data-id");
 
-    if (confirm("Are you sure you want to delete this record?") == true) {
-        $.ajax({
-            method: "POST",
-            url: "/Cmd/Delete?id=" + id,
-            success: function(da){
-                redrawDt();
+    bootbox.confirm({
+        title: "Delete Change Management Record",
+        size: "medium",
+        message: "Are you sure you want to delete this record?",
+        buttons: {
+            confirm: {
+                label: 'Yes',
+                className: 'btn btn-fill btn-danger'
             },
-            error: function (da) {
-                alert('Error encountered!');
+            cancel: {
+                label: 'No',
+                className: 'btn btn-fill btn-success'
             }
-        });
-    }
-    else
-        return false;
+        },
+        callback: function (result) {
+            if (result == true) {
+                $.ajax({
+                    method: "POST",
+                    url: "/Cmd/Delete?id=" + id,
+                    success: function (da) {
+                        redrawDt();
+                    },
+                    error: function (da) {
+                        alert('Error encountered!');
+                    }
+                });
+            }
+            else {
+
+            }
+        }
+    });
 });
 
 $(document).on("click", "#btnImplement", function () {
     var id = $(this).attr("data-id");
 
-    if (confirm("Are you sure to set this Change Document as implemented?") == true) {
-        $.ajax({
-            method: "POST",
-            url: "/Cmd/Implement?id=" + id,
-            success: function (da) {
-                redrawDt();
+    bootbox.confirm({
+        title: "Set Change Management Record as Implemented",
+        size: "medium",
+        message: "Are you sure to set this Change Document as implemented?",
+        buttons: {
+            confirm: {
+                label: 'Yes',
+                className: 'btn btn-fill btn-success'
             },
-            error: function (da) {
-                alert('Error encountered!');
+            cancel: {
+                label: 'No',
+                className: 'btn btn-fill btn-danger'
             }
-        });
-    }
-    else
-        return false;
+        },
+        callback: function (result) {
+            if (result == true) {
+                $.ajax({
+                    method: "POST",
+                    url: "/Cmd/Implement?id=" + id,
+                    success: function (da) {
+                        redrawDt();
+                    },
+                    error: function (da) {
+                        alert('Error encountered!');
+                    }
+                });
+            }
+            else {
+
+            }
+        }
+    });
 });
 
 $(document).on("click", "#btnInsertAccount", function () {

@@ -16,6 +16,7 @@ namespace ChangeManagementSystem.Models
         public string CmdNo { get; set; }
 
         [Required(ErrorMessage = "Change objective is required")]
+        [StringLength(2000)]
         [Display(Name = "OBJECTIVE")]
         public string ChangeObjective { get; set; }
 
@@ -25,6 +26,7 @@ namespace ChangeManagementSystem.Models
 
         [Required(ErrorMessage = "Change requirement is required")]
         [Display(Name = "MANAGEMENT REQUIREMENT")]
+        [StringLength(2000)]
         public string ChangeRequirements { get; set; }
 
         [Required(ErrorMessage = "Affected area is required")]

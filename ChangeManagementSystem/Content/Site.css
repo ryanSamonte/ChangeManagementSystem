@@ -21,7 +21,20 @@ div.dataTables_wrapper div.dataTables_info{
 }
 
 .modal-backdrop {
-  z-index: -2;
+  /*z-index: -2;*/
+  visibility: hidden;
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    background-color: #2471d1;
+    color: #fff;
+}
+
+.bootbox .modal-footer button {
+  float:right;
+  margin-left: 10px;
 }
 
 .footer .active a{
@@ -32,7 +45,12 @@ textarea{
     resize: none;
 }
 
-/*#latestCmd .table-full-width{
-    margin-left: -15px;
-    margin-right: 25px;
-}*/
+.fc-event{
+    cursor: pointer;
+}
+
+.rem-label{
+    float: right;
+    color: #2670d2;
+    font-weight: bold;
+}

@@ -49,6 +49,9 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/fullcalendar").Include(
                       "~/Scripts/fullcalendar.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/bootbox").Include(
+                      "~/Scripts/bootbox.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/site").Include(
                       "~/Scripts/site.js"));
 

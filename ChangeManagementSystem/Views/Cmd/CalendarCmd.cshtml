@@ -2,31 +2,13 @@
     ViewBag.Title = "CalendarCmd";
 }
 
-@*<div class="container-fluid">
-    <div class="row mb-5">
-        <div class="col-md-4"></div>
-        <div class="col-md-4"></div>
-        <div class="col-md-4 text-right">
-            <div class="card">
-                <div class="content">
-                    Legend:
-                    <br />
-                    Green- Implemented Changes
-                    <br />
-                    Red- Not Yet Implemented Changes
-                </div>
-            </div>
-        </div>
-    </div>
-</div>*@
-
 <div class="container-fluid">
     <div class="row">
         <div class="col">
             <div class="card">
                 <div class="header text-right">
                     @*<p class="category">Legend:</p>*@
-                    <p class="category"><span><span style="background-color: green;"><i class="pe-7s-albums" style="color: green;"></i></span>&nbsp;&nbsp;Implemented</span>&nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: red;"><i class="pe-7s-albums" style="color: red;"></i></span>&nbsp;&nbsp;Not Implemented</span></p>
+                    <p class="category"><span><span style="background-color: green;"><i class="pe-7s-albums" style="color: green;"></i></span>&nbsp;&nbsp;Implemented</span>&nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: orange;"><i class="pe-7s-albums" style="color: orange;"></i></span>&nbsp;&nbsp;Not Implemented</span>&nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: red;"><i class="pe-7s-albums" style="color: red;"></i></span>&nbsp;&nbsp;Past the Deadline</span></p>
                 </div>
                 <div class="content">
                     <div id="calendarCont" style="margin-top: 20px;"></div>
@@ -39,20 +21,20 @@
 <!-- Modal -->
 <div class="container-fluid">
     <div class="modal fade" id="viewCmdInfoModalCalendar" tabindex="-1" role="dialog" data-backdrop="false">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #2471d1; color: #fff;">
                     <button type="button" class="close" data-dismiss="modal" style="color: #fff;">&times;</button>
-                    <h4 class="modal-title">View Change Management Document</h4>
+                    <h4 class="modal-title">View Change Management Document&nbsp;<span id="cmdNoCalendar"></span></h4>
                 </div>
                 <div class="modal-body">
                     <form method="post" id="newChangeDocumentForm">
                         @Html.AntiForgeryToken()
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="changeObjectiveViewCalendar">Objective</label>
                                         <textarea class="form-control form-control-sm" id="changeObjectiveViewCalendar" name="changeObjectiveViewCalendar" rows="3" readonly></textarea>
@@ -60,8 +42,10 @@
                                 </div>
                             </div>
 
+                            <hr style="border-bottom: 1px solid black;" />
+
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="changeTypeViewCalendar">Type</label>
                                         <select class="form-control form-control-sm" id="changeTypeViewCalendar" name="changeTypeViewCalendar" disabled>
@@ -72,19 +56,23 @@
                                 </div>
                             </div>
 
+                            <hr style="border-bottom: 1px solid black;" />
+
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="changeRequirementViewCalendar">Management Requirement</label>
                                         <textarea class="form-control form-control-sm" id="changeRequirementViewCalendar" name="changeRequirementViewCalendar" rows="3" readonly></textarea>
                                     </div>
                                 </div>
                             </div>
+
                             <hr style="border-bottom: 1px solid black;" />
+
                             <label style="color: #333; font-size: 15px;">Affected Areas</label>
                             <div class="row" style="margin-top: 15px;">
-                                <div class="col">
-                                    <div class="content table-responsive table-full-width">
+                                <div class="col-md-12">
+                                    <div class="content table-responsive">
                                         <table class="table table-hover table-striped text-center" id="affectedAreasTableViewCalendar">
                                             <thead class="text-center">
                                                 <tr>
@@ -98,27 +86,41 @@
                                     </div>
                                 </div>
                             </div>
+
                             <hr style="border-bottom: 1px solid black;" />
+
                             <div class="row">
-                                <div class="col-md-6" style="margin-bottom: 25px;">
+                                <div class="col-md-12" style="margin-bottom: 25px;">
                                     <div class="form-group">
                                         <label for="requestEvaluationViewCalendar">Request Evaluation</label>
                                         <input type="text" class="form-control form-control-sm" id="requestEvaluationViewCalendar" name="requestEvaluationViewCalendar" readonly>
                                     </div>
                                 </div>
+                            </div>
+
+                            <hr style="border-bottom: 1px solid black;" />
+
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="targetImplementationViewCalendar">Target Implementation Date and Time</label>
                                         <input type="text" class="form-control form-control-sm" id="targetImplementationViewCalendar" name="targetImplementationViewCalendar" readonly>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="implementedAtViewCalendar">Date Implemented</label>
+                                        <input type="text" class="form-control form-control-sm" id="implementedAtViewCalendar" name="implementedAtViewCalendar" readonly>
+                                    </div>
+                                </div>
                             </div>
+
                             <hr style="border-bottom: 1px solid black;" />
                             <label style="color: #333; font-size: 15px;">Change Management Sign-off</label>
                             <br /><br />
                             <label style="color: #333; font-size: 13px;">Requestor:</label>
                             <div class="row" style="margin-top: 15px;">
-                                <div class="col">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-sm" id="requestorViewCalendar" name="requestorViewCalendar" readonly>
                                     </div>
@@ -127,8 +129,8 @@
                             <br />
                             <label style="color: #333; font-size: 13px;">Reviewed by:</label>
                             <div class="row" style="margin-top: 15px;">
-                                <div class="col">
-                                    <div class="content table-responsive table-full-width">
+                                <div class="col-md-12">
+                                    <div class="content table-responsive">
                                         <table class="table table-hover table-striped text-center" id="signOffTableViewCalendar">
                                             <thead class="text-center">
                                                 <tr>

@@ -25,7 +25,6 @@ namespace ChangeManagementSystem.Controllers
     [Authorize]
     public class CmdController : Controller
     {
-
         private readonly ApplicationDbContext _context;
 
         public CmdController()
@@ -313,6 +312,7 @@ namespace ChangeManagementSystem.Controllers
                 .Where(d => d.DeletedAt == null && d.IsImplemented == true)
                 .Select(d => new { title = d.CmdNo,
                                    start = d.ImplementedAt,
+                                   end = d.ImplementedAt,
                                    areas = d.Id,
                                    color = "green"
                 })
@@ -324,14 +324,39 @@ namespace ChangeManagementSystem.Controllers
         [AllowAnonymous]
         public ActionResult GetChangesUnImplemented()
         {
+            var now = DateTime.UtcNow.ToLocalTime();
+
             var cmdListImplementationDates = _context.ChangeManagements
-                .Where(d => d.DeletedAt == null && d.IsImplemented == false)
+                .Where(d => d.DeletedAt == null && d.IsImplemented == false && d.TargetImplementation > now)
                 .Select(d => new
                 {
                     title = d.CmdNo,
                     start = d.TargetImplementation,
+                    end = d.TargetImplementation,
                     areas = d.Id,
-                    color = "red"
+                    color = "orange"
+                })
+                .ToList();
+
+
+            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult GetChangesPastTheDeadline()
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+
+            var cmdListImplementationDates = _context.ChangeManagements
+                .Where(d => d.DeletedAt == null && d.IsImplemented == false && d.TargetImplementation < now)
+                .Select(d => new
+                {
+                    title = d.CmdNo,
+                    start = d.TargetImplementation,
+                    end = d.TargetImplementation,
+                    areas = d.Id,
+                    color = "red",
+                    now = now
                 })
                 .ToList();
 

@@ -190,6 +190,10 @@
     <Compile Include="Migrations\201901110527514_AddUserForeignKeyIntoCMDTable.Designer.cs">
       <DependentUpon>201901110527514_AddUserForeignKeyIntoCMDTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs" />
+    <Compile Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.Designer.cs">
+      <DependentUpon>201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRoleName.cs" />
     <Compile Include="Models\AffectedAreasModels.cs" />
     <Compile Include="Models\JobRoleModels.cs" />
@@ -266,6 +270,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap-notify.js" />
     <Content Include="Scripts\bootstrap-select.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -368,6 +373,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901110527514_AddUserForeignKeyIntoCMDTable.resx">
       <DependentUpon>201901110527514_AddUserForeignKeyIntoCMDTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.resx">
+      <DependentUpon>201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CmdReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

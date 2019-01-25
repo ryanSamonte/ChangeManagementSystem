@@ -104,7 +104,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#">@(ViewBag.Current)</a>
+                        <a class="navbar-brand" href="javascript:void(0);">@(ViewBag.Current)</a>
                     </div>
                     <div class="collapse navbar-collapse">
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
@@ -176,6 +176,12 @@
                                 </a>
                             </li>
 
+                            <li class="@(ViewBag.Current == "Change Document Calendar" ? "active" : "")">
+                                <a href="@Url.Action("Calendar", "Cmd")">
+                                    View Calendar
+                                </a>
+                            </li>
+
                             @if (User.IsInRole(AccountRoleName.Administrator))
                             {
                                 <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
@@ -184,6 +190,12 @@
                                     </a>
                                 </li>
                             }
+                            
+                            <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "")">
+                                <a class="" href="@Url.Action("All", "Application")">
+                                    Manage Applications
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                     <p class="copyright pull-right">
@@ -325,6 +337,7 @@
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/moment")
     @Scripts.Render("~/bundles/fullcalendar")
+    @Scripts.Render("~/bundles/bootbox")
     @Scripts.Render("~/bundles/site")
     @RenderSection("scripts", required: false)
 </html>
