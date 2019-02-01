@@ -39,6 +39,70 @@
         </div>
     </div>
 
+    <div class="row" style="margin-bottom: 30px;">
+        <div class="col-md-6">
+            <div class="card" style="margin-bottom: 30px;min-height: 425px;">
+                <div class="header">
+                    <h4 class="title">Change Document Record</h4>
+                </div>
+                <div class="content">
+                    <div id="chartPreferences" class="ct-chart ct-perfect-fourth" style="margin-bottom: 70px;"></div>
+
+                    <div class="footer">
+                        <div class="legend">
+                            <span style="background-color: green;"><i class="pe-7s-albums" style="color: green;"></i></span>&nbsp;&nbsp;Implemented</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: orange;"><i class="pe-7s-albums" style="color: orange;"></i></span>&nbsp;&nbsp;Not Implemented</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: red;"><i class="pe-7s-albums" style="color: red;"></i></span>&nbsp;&nbsp;Past the Deadline</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card" style="margin-bottom: 0px;">
+                <div class="header">
+                    <h4 class="title">Change Document Every Month</h4>
+                </div>
+                <div class="content">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="barChartMonth">
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="chartActivity" class="ct-chart"></div>
+                    </div>
+
+                    <div class="footer">
+                        <div class="legend">
+                            <span style="background-color: green;"><i class="pe-7s-albums" style="color: green;"></i></span>&nbsp;&nbsp;Implemented</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: orange;"><i class="pe-7s-albums" style="color: orange;"></i></span>&nbsp;&nbsp;Not Implemented</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: red;"><i class="pe-7s-albums" style="color: red;"></i></span>&nbsp;&nbsp;Past the Deadline</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col">
             <div class="card" style="min-height: 370px; margin-bottom: 0px;">
@@ -52,13 +116,13 @@
                                 <div class="content table-responsive table-full-width">
                                     <table class="table table-hover table-striped text-center" id="latestCmdTable">
                                         <thead class="text-center">
-                                            <tr>
-                                                <th class="text-center">Requestor</th>
-                                                <th class="text-center">Type</th>
-                                                <th class="text-center">Evaluation</th>
-                                                <th class="text-center">Target Date</th>
-                                                <th></th>
-                                            </tr>
+                                        <tr>
+                                            <th class="text-center">Requestor</th>
+                                            <th class="text-center">Type</th>
+                                            <th class="text-center">Evaluation</th>
+                                            <th class="text-center">Target Date</th>
+                                            <th></th>
+                                        </tr>
                                         </thead>
                                         <tbody></tbody>
                                     </table>

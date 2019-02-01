@@ -4,6 +4,36 @@
     color: red !important;
 }
 
+.implementedChart {
+    stroke: green;
+    stroke-width: 4px;
+    fill: hsl(120, 100%, 25%);
+}
+
+.notImplementedChart {
+    stroke: orange;
+    stroke-width: 4px;
+    fill: hsl(39, 100%, 50%);
+}
+
+.pastTheDeadlineChart {
+    stroke: red;
+    stroke-width: 4px;
+    fill: hsl(0, 100%, 50%);
+}
+
+.ct-series-a .ct-bar {
+  stroke: green;
+}
+
+.ct-series-b .ct-bar {
+  stroke: orange;
+}
+
+.ct-series-c .ct-bar {
+  stroke: red;
+}
+
 div.dataTables_wrapper div.dataTables_filter label{
     padding-right: 16px;
 }
@@ -53,4 +83,8 @@ textarea{
     float: right;
     color: #2670d2;
     font-weight: bold;
+}
+
+.btn-table {
+    border-radius: 0px;
 }

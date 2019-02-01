@@ -1,164 +1,161 @@
 ﻿$(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
     //textarea characted counter
-    $(function () {
+    $(function() {
         var nMaxLength = 2000;
-        $('.remainingObjective').text(nMaxLength);
+        $(".remainingObjective").text(nMaxLength);
 
-        $('#changeObjective').keydown(function (event) {
+        $("#changeObjective").keydown(function(event) {
             LimitCharacters($(this));
         });
 
-        $('#changeObjective').keyup(function (event) {
+        $("#changeObjective").keyup(function(event) {
             LimitCharacters($(this));
         });
 
         function LimitCharacters(remarks) {
             if (remarks.val().length > nMaxLength) {
                 remarks.val(remarks.val().substring(0, nMaxLength));
-            }
-            else {
+            } else {
                 var nRemaining = nMaxLength - remarks.val().length;
-                $('.remainingObjective').text(nRemaining);
+                $(".remainingObjective").text(nRemaining);
             }
         }
     });
 
-    $(function () {
+    $(function() {
         var nMaxLength = 2000;
-        $('.remainingObjectiveEdit').text(nMaxLength);
+        $(".remainingObjectiveEdit").text(nMaxLength);
 
-        $('#changeObjectiveEdit').keydown(function (event) {
+        $("#changeObjectiveEdit").keydown(function(event) {
             LimitCharacters($(this));
         });
 
-        $('#changeObjectiveEdit').keyup(function (event) {
+        $("#changeObjectiveEdit").keyup(function(event) {
             LimitCharacters($(this));
         });
 
         function LimitCharacters(remarks) {
             if (remarks.val().length > nMaxLength) {
                 remarks.val(remarks.val().substring(0, nMaxLength));
-            }
-            else {
+            } else {
                 var nRemaining = nMaxLength - remarks.val().length;
-                $('.remainingObjectiveEdit').text(nRemaining);
+                $(".remainingObjectiveEdit").text(nRemaining);
             }
         }
     });
 
-    $(function () {
+    $(function() {
         var nMaxLength = 2000;
-        $('.remainingRequirements').text(nMaxLength);
+        $(".remainingRequirements").text(nMaxLength);
 
-        $('#changeRequirements').keydown(function (event) {
+        $("#changeRequirements").keydown(function(event) {
             LimitCharacters($(this));
         });
 
-        $('#changeRequirements').keyup(function (event) {
+        $("#changeRequirements").keyup(function(event) {
             LimitCharacters($(this));
         });
 
         function LimitCharacters(remarks) {
             if (remarks.val().length > nMaxLength) {
                 remarks.val(remarks.val().substring(0, nMaxLength));
-            }
-            else {
+            } else {
                 var nRemaining = nMaxLength - remarks.val().length;
-                $('.remainingRequirements').text(nRemaining);
+                $(".remainingRequirements").text(nRemaining);
             }
         }
     });
 
-    $(function () {
+    $(function() {
         var nMaxLength = 2000;
-        $('.remainingRequirementsEdit').text(nMaxLength);
+        $(".remainingRequirementsEdit").text(nMaxLength);
 
-        $('#changeRequirementEdit').keydown(function (event) {
+        $("#changeRequirementEdit").keydown(function(event) {
             LimitCharacters($(this));
         });
 
-        $('#changeRequirementEdit').keyup(function (event) {
+        $("#changeRequirementEdit").keyup(function(event) {
             LimitCharacters($(this));
         });
 
         function LimitCharacters(remarks) {
             if (remarks.val().length > nMaxLength) {
                 remarks.val(remarks.val().substring(0, nMaxLength));
-            }
-            else {
+            } else {
                 var nRemaining = nMaxLength - remarks.val().length;
-                $('.remainingRequirementsEdit').text(nRemaining);
+                $(".remainingRequirementsEdit").text(nRemaining);
             }
         }
     });
 
     $("#signOffName").autocomplete({
-        source: function (request, response) {
+        source: function(request, response) {
             var role = "";
             $.ajax({
                 url: "/Cmd/UserList",
                 type: "POST",
                 dataType: "json",
                 data: { Prefix: request.term },
-                success: function (data) {
-                    response($.map(data, function (item) {
+                success: function(data) {
+                    response($.map(data, function(item) {
                         return {
                             label: item.Firstname + " " + item.Lastname + " ~ " + item.JobRoleName,
                             value: item.Firstname + " " + item.Lastname + " ~ " + item.JobRoleName,
                         };
-                    }))
+                    }));
                 }
-            })
+            });
         }
     });
 
-    $('#affectedAreasTable').DataTable({
+    $("#affectedAreasTable").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#affectedAreasTableView').DataTable({
+    $("#affectedAreasTableView").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#affectedAreasTableViewCalendar').DataTable({
+    $("#affectedAreasTableViewCalendar").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#affectedAreasTableEdit').DataTable({
+    $("#affectedAreasTableEdit").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#signOffTable').DataTable({
+    $("#signOffTable").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#signOffTableView').DataTable({
+    $("#signOffTableView").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#signOffTableViewCalendar').DataTable({
+    $("#signOffTableViewCalendar").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
     });
 
-    $('#signOffTableEdit').DataTable({
+    $("#signOffTableEdit").DataTable({
         "paging": false,
         "ordering": false,
         "info": false
-    });    
+    });
 
     getList();
 
@@ -168,64 +165,70 @@
 
     getLatestCmdList();
 
+    fillInPieChart();
+
+    defaultBarGraph();
 
     //calendar configuration
-    $('#calendarCont').fullCalendar({
+    $("#calendarCont").fullCalendar({
         header: {
-            left:   'title',
-            center: '',
-            right:  'month prev,next'
+            left: "title",
+            center: "",
+            right: "month prev,next"
         },
-        
-        buttonText:{
-            today:    'today',
-            month:    'Monthly View',
+
+        buttonText: {
+            today: "today",
+            month: "Monthly View",
         },
         eventSources: [
             {
-                url: '/Cmd/GetChangesImplemented',
-                type: 'GET',
+                url: "/Cmd/GetChangesImplemented",
+                type: "GET",
                 data: {
+                
                 },
-                success: function (data) {
+                success: function(data) {
 
                 },
-                error: function () {
-                    alert('there was an error while fetching events!');
+                error: function() {
+                    alert("there was an error while fetching events!");
                 },
 
-                color: '#2472d2',
-                textColor: '#e3e7fa'
+                color: "#2472d2",
+                textColor: "#e3e7fa"
             },
             {
-                url: '/Cmd/GetChangesUnImplemented',
-                type: 'GET',
+                url: "/Cmd/GetChangesUnImplemented",
+                type: "GET",
                 data: {
+                
                 },
-                success: function (data) {
+                success: function(data) {
 
                 },
-                error: function () {
-                    alert('there was an error while fetching events!');
+                error: function() {
+                    alert("there was an error while fetching events!");
                 },
 
-                color: '#2472d2',
-                textColor: '#e3e7fa'
+                color: "#2472d2",
+                textColor: "#e3e7fa"
             },
             {
-                url: '/Cmd/GetChangesPastTheDeadline',
-                type: 'GET',
+                url: "/Cmd/GetChangesPastTheDeadline",
+                type: "GET",
                 data: {
+                
                 },
-                success: function (data) {
+                success: function(data) {
 
                 },
-                error: function () {
-                    alert('there was an error while fetching events!');
+                error: function() {
+                    alert("there was an error while fetching events!");
                 },
 
-                color: '#2472d2',
-                textColor: '#e3e7fa'
+                color: "#2472d2",
+                textColor: "#e3e7fa"
             }
         ],
 
@@ -236,13 +239,13 @@
 
             $("#btnGenerateCalendar").attr("data-generate-id", id);
 
-            var t = $('#affectedAreasTableViewCalendar').DataTable();
-            var t1 = $('#signOffTableViewCalendar').DataTable();
+            var t = $("#affectedAreasTableViewCalendar").DataTable();
+            var t1 = $("#signOffTableViewCalendar").DataTable();
 
             $.ajax({
                 type: "GET",
                 url: "/Cmd/Find?id=" + id,
-                success: function (data) {
+                success: function(data) {
                     var jsonStringified = JSON.stringify(data);
 
                     var cmdDetails = JSON.parse(jsonStringified);
@@ -277,8 +280,7 @@
 
                     if (cmdDetails.ImplementedAt == null) {
                         $("#implementedAtViewCalendar").val(null);
-                    }
-                    else {
+                    } else {
                         var implementedAt = new Date(parseInt(cmdDetails.ImplementedAt.substr(6)));
                         var implementationDate = implementedAt.format("ddd mmm dd, yyyy HH:MM");
                         $("#implementedAtViewCalendar").val(implementationDate);
@@ -291,22 +293,21 @@
                     var resultSignOff = {};
                     for (j = 0; j < signOffDetails.length; j++) {
                         var objectInResponse = signOffDetails[j];
-                        var name = objectInResponse.Name
-                        var role = objectInResponse.Role
-
+                        var name = objectInResponse.Name;
+                        var role = objectInResponse.Role;
                         t1.row.add([
                             name,
                             role
                         ]).draw(false);
                     }
                 },
-                error: function () {
+                error: function() {
                     alert("Error while retrieving data of :" + id);
                 }
             });
         },
 
-        timezone: 'local',
+        timezone: "local",
         eventLimit: true,
         eventLimitText: "more implementation",
         eventLimitClick: "agendaDay",
@@ -315,15 +316,15 @@
                 eventLimit: 5
             },
             agendaDay: {
-                type: 'agenda',
+                type: "agenda",
                 duration: { days: 1 },
-                buttonText: '1 day'
+                buttonText: "1 day"
             }
         }
     });
 
     //validations
-    $.validator.addMethod("futureDate", function (value, element) {
+    $.validator.addMethod("futureDate", function(value, element) {
         var curDate = new Date();
         var inputDate = new Date(value);
         if (inputDate > curDate)
@@ -331,7 +332,7 @@
         return false;
     }, "Invalid Date!");
 
-    $.validator.addMethod("futureDateAndSameValue", function (value, element) {
+    $.validator.addMethod("futureDateAndSameValue", function(value, element) {
         var curDate = new Date();
         var inputDate = new Date(value);
         var currentDateValue = new Date($("#targetImplementationTemp").val());
@@ -390,14 +391,14 @@
             }
         },
 
-        highlight: function (input) {
-            $(input).addClass('error');
+        highlight: function(input) {
+            $(input).addClass("error");
         },
-        unhighlight: function (input) {
-            $(input).removeClass('error');
+        unhighlight: function(input) {
+            $(input).removeClass("error");
         },
-        errorPlacement: function (error, element) {
-            $(element).parents('.form-group').append(error);
+        errorPlacement: function(error, element) {
+            $(element).parents(".form-group").append(error);
         }
     });
 
@@ -450,14 +451,14 @@
             }
         },
 
-        highlight: function (input) {
-            $(input).addClass('error');
+        highlight: function(input) {
+            $(input).addClass("error");
         },
-        unhighlight: function (input) {
-            $(input).removeClass('error');
+        unhighlight: function(input) {
+            $(input).removeClass("error");
         },
-        errorPlacement: function (error, element) {
-            $(element).parents('.form-group').append(error);
+        errorPlacement: function(error, element) {
+            $(element).parents(".form-group").append(error);
         }
     });
 
@@ -526,97 +527,95 @@
             }
         },
 
-        highlight: function (input) {
-            $(input).addClass('error');
+        highlight: function(input) {
+            $(input).addClass("error");
         },
-        unhighlight: function (input) {
-            $(input).removeClass('error');
+        unhighlight: function(input) {
+            $(input).removeClass("error");
         },
-        errorPlacement: function (error, element) {
-            $(element).parents('.form-group').append(error);
+        errorPlacement: function(error, element) {
+            $(element).parents(".form-group").append(error);
             //$(element).parents('.radio-inline').append(error);
         }
     });
 });
 
-$(document).ready(function () {
-    var t = $('#affectedAreasTable').DataTable();
+$(document).ready(function() {
+    var t = $("#affectedAreasTable").DataTable();
 
-    $('#insertAffectedArea').on('click', function () {
+    $("#insertAffectedArea").on("click", function() {
         if ($("#affectedAreasApp").val() === "" && $("#affectedAreasDb").val() === "" && $("#affectedAreasServer").val() === "") {
             console.log("");
-        }
-        else {
+        } else {
             t.row.add([
-                $('#affectedAreasApp').val(),
-                $('#affectedAreasDb').val(),
-                $('#affectedAreasServer').val()
+                $("#affectedAreasApp").val(),
+                $("#affectedAreasDb").val(),
+                $("#affectedAreasServer").val()
             ]).draw(false);
         }
     });
 
-    var t1 = $('#signOffTable').DataTable();
+    var t1 = $("#signOffTable").DataTable();
 
-    $('#insertSignOff').on('click', function () {
+    $("#insertSignOff").on("click", function() {
         if ($("#signOffName").val() === "") {
             console.log("");
-        }
-        else {
+        } else {
             t1.row.add([
-                $('#signOffName').val().substring(0, $('#signOffName').val().indexOf("~")),
-                $('#signOffName').val().substring($('#signOffName').val().indexOf("~") + 1, $('#signOffName').val().length)
+                $("#signOffName").val().substring(0, $("#signOffName").val().indexOf("~")),
+                $("#signOffName").val().substring($("#signOffName").val().indexOf("~") + 1, $("#signOffName").val().length)
             ]).draw(false);
         }
     });
 });
 
-$(document).on("click", "#undoAffectedArea", function () {
-    var table = $('#affectedAreasTable').DataTable();
+$(document).on("click", "#undoAffectedArea", function() {
+    var table = $("#affectedAreasTable").DataTable();
 
     table.row((table.data().count() / 3) - 1).remove().draw();
 });
 
-$(document).on("click", "#undoSignOff", function () {
-    var table = $('#signOffTable').DataTable();
+$(document).on("click", "#undoSignOff", function() {
+    var table = $("#signOffTable").DataTable();
 
     table.row((table.data().count() / 2) - 1).remove().draw();
 });
 
-$(document).on("hide.bs.modal", "#viewCmdInfoModal", function () {
-    var t = $('#affectedAreasTableView').DataTable();
+$(document).on("hide.bs.modal", "#viewCmdInfoModal", function() {
+    var t = $("#affectedAreasTableView").DataTable();
 
     t.clear().draw();
 
-    var t1 = $('#signOffTableView').DataTable();
+    var t1 = $("#signOffTableView").DataTable();
 
     t1.clear().draw();
 });
 
-$(document).on("hide.bs.modal", "#viewCmdInfoModalCalendar", function () {
-    var t = $('#affectedAreasTableViewCalendar').DataTable();
+$(document).on("hide.bs.modal", "#viewCmdInfoModalCalendar", function() {
+    var t = $("#affectedAreasTableViewCalendar").DataTable();
 
     t.clear().draw();
 
-    var t1 = $('#signOffTableViewCalendar').DataTable();
+    var t1 = $("#signOffTableViewCalendar").DataTable();
 
     t1.clear().draw();
 });
 
-$(document).on("hide.bs.modal", "#editCmdInfoModal", function () {
-    var t = $('#affectedAreasTableEdit').DataTable();
+$(document).on("hide.bs.modal", "#editCmdInfoModal", function() {
+    var t = $("#affectedAreasTableEdit").DataTable();
 
     t.clear().draw();
 
-    var t1 = $('#signOffTableEdit').DataTable();
+    var t1 = $("#signOffTableEdit").DataTable();
 
     t1.clear().draw();
 });
 
-$(document).on("click", "#btnSave", function () {
+$(document).on("click", "#btnSave", function() {
     var changeEvaluation = 0;
     var type = 0;
 
-    $("input[id=correctivePatchRadio]:checked").val() == "on" ? type = 1 :  type = 2;
+    $("input[id=correctivePatchRadio]:checked").val() == "on" ? type = 1 : type = 2;
 
     $("input[id=highRadio]:checked").val() == "on" ? changeEvaluation = 1 : ($("input[id=mediumRadio]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
@@ -634,13 +633,13 @@ $(document).on("click", "#btnSave", function () {
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newChangeDocumentForm").val(),
                 SignOff: JSON.stringify(tableToJSON($("#signOffTable"))),
             },
-            success: function (da) {
+            success: function(da) {
                 $.notify({
                     icon: "pe-7s-check",
                     message: "Change Management Document successfully recorded!"
 
                 }, {
-                    type: 'success',
+                    type: "success",
                     timer: 4000,
                     placement: {
                         from: "bottom",
@@ -650,13 +649,13 @@ $(document).on("click", "#btnSave", function () {
 
                 clearInputsNewCmd();
             },
-            error: function (da) {
+            error: function(da) {
                 $.notify({
                     icon: "pe-7s-close-circle",
                     message: "Error"
 
                 }, {
-                    type: 'danger',
+                    type: "danger",
                     timer: 4000,
                     placement: {
                         from: "bottom",
@@ -671,20 +670,20 @@ $(document).on("click", "#btnSave", function () {
 
 });
 
-$(document).on("click", "#btnView", function () {
+$(document).on("click", "#btnView", function() {
     $("#viewCmdInfoModal").focus();
 
     var id = $(this).attr("data-id");
 
     $("#btnGenerate").attr("data-generate-id", id);
 
-    var t = $('#affectedAreasTableView').DataTable();
-    var t1 = $('#signOffTableView').DataTable();
+    var t = $("#affectedAreasTableView").DataTable();
+    var t1 = $("#signOffTableView").DataTable();
 
     $.ajax({
         type: "GET",
         url: "/Cmd/Find?id=" + id,
-        success: function (data) {
+        success: function(data) {
             var jsonStringified = JSON.stringify(data);
 
             var cmdDetails = JSON.parse(jsonStringified);
@@ -713,15 +712,14 @@ $(document).on("click", "#btnView", function () {
                 ]).draw(false);
             }
             $("#requestEvaluationView").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
-            
+
             var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
             var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy HH:MM");
             $("#targetImplementationView").val(targetImplementationDate);
 
             if (cmdDetails.ImplementedAt == null) {
                 $("#implementedAtViewCalendar").val(null);
-            }
-            else {
+            } else {
                 var implementedAt = new Date(parseInt(cmdDetails.ImplementedAt.substr(6)));
                 var implementationDate = implementedAt.format("ddd mmm dd, yyyy HH:MM");
                 $("#implementedAtView").val(implementationDate);
@@ -734,49 +732,48 @@ $(document).on("click", "#btnView", function () {
             var resultSignOff = {};
             for (j = 0; j < signOffDetails.length; j++) {
                 var objectInResponse = signOffDetails[j];
-                var name = objectInResponse.Name
-                var role = objectInResponse.Role
-
+                var name = objectInResponse.Name;
+                var role = objectInResponse.Role;
                 t1.row.add([
                     name,
                     role
                 ]).draw(false);
             }
         },
-        error: function () {
+        error: function() {
             alert("Error while retrieving data of :" + id);
         }
     });
 });
 
-$(document).on("click", "#btnGenerate", function () {
-    var id = $(this).attr("data-generate-id")
-    window.location.href = "/Cmd/ExportCmd?id=" + id
+$(document).on("click", "#btnGenerate", function() {
+    var id = $(this).attr("data-generate-id");
+    window.location.href = "/Cmd/ExportCmd?id=" + id;
 });
 
 
-$(document).on("click", "#btnEdit", function () {
+$(document).on("click", "#btnEdit", function() {
     $("#editCmdInfoModal").focus();
 
     var nMaxLength = 2000;
 
     var nRemainingObjective = nMaxLength - $("#changeObjectiveEdit").val().length;
-    $('.remainingObjectiveEdit').text(nRemainingObjective);
+    $(".remainingObjectiveEdit").text(nRemainingObjective);
 
     var nRemainingRequirement = nMaxLength - $("#changeRequirementEdit").val().length;
-    $('.remainingRequirementsEdit').text(nRemainingRequirement);
+    $(".remainingRequirementsEdit").text(nRemainingRequirement);
 
     var id = $(this).attr("data-id");
 
     $("#btnUpdate").attr("data-edit-id", id);
 
-    var t = $('#affectedAreasTableEdit').DataTable();
-    var t1 = $('#signOffTableEdit').DataTable();
+    var t = $("#affectedAreasTableEdit").DataTable();
+    var t1 = $("#signOffTableEdit").DataTable();
 
     $.ajax({
         type: "GET",
         url: "/Cmd/Find?id=" + id,
-        success: function (data) {
+        success: function(data) {
             var jsonStringified = JSON.stringify(data);
 
             var cmdDetails = JSON.parse(jsonStringified);
@@ -826,13 +823,13 @@ $(document).on("click", "#btnEdit", function () {
                 ]).draw(false);
             }
         },
-        error: function () {
+        error: function() {
             alert("Error while retrieving data of :" + id);
         }
     });
 });
 
-$(document).on("click", "#btnUpdate", function () {
+$(document).on("click", "#btnUpdate", function() {
     var id = $(this).attr("data-edit-id");
 
     var changeEvaluation = 0;
@@ -855,7 +852,7 @@ $(document).on("click", "#btnUpdate", function () {
                 SignOff: JSON.stringify(tableToJSON($("#signOffTableEdit"))),
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#editChangeDocumentForm").val(),
             },
-            success: function (da) {
+            success: function(da) {
                 var table = $("#cmdList").DataTable();
 
                 $.notify({
@@ -863,7 +860,7 @@ $(document).on("click", "#btnUpdate", function () {
                     message: "Change Management Document successfully updated!"
 
                 }, {
-                    type: 'success',
+                    type: "success",
                     timer: 4000,
                     placement: {
                         from: "bottom",
@@ -876,13 +873,13 @@ $(document).on("click", "#btnUpdate", function () {
                 table.destroy();
                 getList();
             },
-            error: function (da) {
+            error: function(da) {
                 $.notify({
                     icon: "pe-7s-close-circle",
                     message: "Error"
 
                 }, {
-                    type: 'danger',
+                    type: "danger",
                     timer: 4000,
                     placement: {
                         from: "bottom",
@@ -898,7 +895,7 @@ $(document).on("click", "#btnUpdate", function () {
 });
 
 
-$(document).on("click", "#btnDelete", function () {
+$(document).on("click", "#btnDelete", function() {
     var id = $(this).attr("data-id");
 
     bootbox.confirm({
@@ -907,35 +904,34 @@ $(document).on("click", "#btnDelete", function () {
         message: "Are you sure you want to delete this record?",
         buttons: {
             confirm: {
-                label: 'Yes',
-                className: 'btn btn-fill btn-danger'
+                label: "Yes",
+                className: "btn btn-fill btn-danger"
             },
             cancel: {
-                label: 'No',
-                className: 'btn btn-fill btn-success'
+                label: "No",
+                className: "btn btn-fill btn-success"
             }
         },
-        callback: function (result) {
+        callback: function(result) {
             if (result == true) {
                 $.ajax({
                     method: "POST",
                     url: "/Cmd/Delete?id=" + id,
-                    success: function (da) {
+                    success: function(da) {
                         redrawDt();
                     },
-                    error: function (da) {
-                        alert('Error encountered!');
+                    error: function(da) {
+                        alert("Error encountered!");
                     }
                 });
-            }
-            else {
+            } else {
 
             }
         }
     });
 });
 
-$(document).on("click", "#btnImplement", function () {
+$(document).on("click", "#btnImplement", function() {
     var id = $(this).attr("data-id");
 
     bootbox.confirm({
@@ -944,35 +940,34 @@ $(document).on("click", "#btnImplement", function () {
         message: "Are you sure to set this Change Document as implemented?",
         buttons: {
             confirm: {
-                label: 'Yes',
-                className: 'btn btn-fill btn-success'
+                label: "Yes",
+                className: "btn btn-fill btn-success"
             },
             cancel: {
-                label: 'No',
-                className: 'btn btn-fill btn-danger'
+                label: "No",
+                className: "btn btn-fill btn-danger"
             }
         },
-        callback: function (result) {
+        callback: function(result) {
             if (result == true) {
                 $.ajax({
                     method: "POST",
                     url: "/Cmd/Implement?id=" + id,
-                    success: function (da) {
+                    success: function(da) {
                         redrawDt();
                     },
-                    error: function (da) {
-                        alert('Error encountered!');
+                    error: function(da) {
+                        alert("Error encountered!");
                     }
                 });
-            }
-            else {
+            } else {
 
             }
         }
     });
 });
 
-$(document).on("click", "#btnInsertAccount", function () {
+$(document).on("click", "#btnInsertAccount", function() {
     if ($("#newUserAccountForm").valid()) {
         $.ajax({
             method: "POST",
@@ -988,7 +983,7 @@ $(document).on("click", "#btnInsertAccount", function () {
                 AccountRole: $("#AccountRole").val(),
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newUserAccountForm").val(),
             },
-            success: function (da) {
+            success: function(da) {
                 var table = $("#accountList").DataTable();
 
                 $.notify({
@@ -996,7 +991,7 @@ $(document).on("click", "#btnInsertAccount", function () {
                     message: "User account successfully added!"
 
                 }, {
-                    type: 'success',
+                    type: "success",
                     timer: 4000,
                     placement: {
                         from: "bottom",
@@ -1009,13 +1004,13 @@ $(document).on("click", "#btnInsertAccount", function () {
                 table.destroy();
                 getAccountList();
             },
-            error: function (da) {
+            error: function(da) {
                 $.notify({
                     icon: "pe-7s-close-circle",
                     message: "Error"
 
                 }, {
-                    type: 'danger',
+                    type: "danger",
                     timer: 4000,
                     placement: {
                         from: "bottom",
@@ -1030,17 +1025,197 @@ $(document).on("click", "#btnInsertAccount", function () {
 
 });
 
+$(document).on("change", "#barChartMonth", function() {
+    var month = $("#barChartMonth").val();
+
+    $.ajax({
+        type: "GET",
+        url: "/Cmd/GetCmdPercentagePerMonth?month=" + month,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess,
+        error: OnError
+    });
+
+    function OnSuccess(response) {
+        var jsonStringified = JSON.stringify(response);
+
+        var percentageDetails = JSON.parse(jsonStringified);
+
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var data = {
+            labels: [months[month - 1]],
+            series: [
+              [percentageDetails.implemented],
+              [percentageDetails.notImplemented],
+              [percentageDetails.pastTheDeadline]
+            ]
+        };
+
+        var options = {
+            seriesBarDistance: 10,
+            axisX: {
+                showGrid: false
+            },
+            height: "245px"
+        };
+
+        var responsiveOptions = [
+          ['screen and (max-width: 640px)', {
+              seriesBarDistance: 5,
+              axisX: {
+                  labelInterpolationFnc: function (value) {
+                      return value[0];
+                  }
+              }
+          }]
+        ];
+
+        Chartist.Bar('#chartActivity', data, options, responsiveOptions);
+    }
+
+    function OnError(response) {
+        alert("Error !");
+    }
+});
+
 function tableToJSON(tblObj) {
     var data = [];
     var $headers = $(tblObj).find("th");
-    var $rows = $(tblObj).find("tbody tr").each(function (index) {
+    var $rows = $(tblObj).find("tbody tr").each(function(index) {
         $cells = $(this).find("td");
         data[index] = {};
-        $cells.each(function (cellIndex) {
+        $cells.each(function(cellIndex) {
             data[index][$($headers[cellIndex]).html()] = $(this).html();
         });
     });
     return data;
+}
+
+function fillInPieChart() {
+    $.ajax({
+        type: "GET",
+        url: "/Cmd/GetCmdPercentage",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess,
+        error: OnError
+    });
+
+    function OnSuccess(response) {
+        var jsonStringified = JSON.stringify(response);
+
+        var percentageDetails = JSON.parse(jsonStringified);
+
+        var dataPreferences = {
+            series: [
+                [25, 30, 20, 25]
+            ]
+        };
+
+        var optionsPreferences = {
+            donut: true,
+            donutWidth: 10,
+            startAngle: 0,
+            total: 100,
+            showLabel: false,
+            axisX: {
+                showGrid: false
+            }
+        };
+
+        Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
+
+        Chartist.Pie('#chartPreferences', {
+            //labels: ['(9.09%)', '(81.82%)', '(9.09%)'],
+            //series: [9.09, 81.82, 9.09]
+            labels: [(Math.floor(percentageDetails.implemented * 100) / 100) + "%", (Math.floor(percentageDetails.notImplemented * 100) / 100) + "%", (Math.floor(percentageDetails.pastTheDeadline * 100) / 100) + "%"],
+            series: [
+                {
+                    value: (Math.floor(percentageDetails.implemented * 100) / 100),
+                    name: 'Series 1',
+                    className: 'implementedChart',
+                    meta: 'Meta One'
+                },
+                {
+                    value: (Math.floor(percentageDetails.notImplemented * 100) / 100),
+                    name: 'Series 1',
+                    className: 'notImplementedChart',
+                    meta: 'Meta One'
+                },
+                {
+                    value: (Math.floor(percentageDetails.pastTheDeadline * 100) / 100),
+                    name: 'Series 1',
+                    className: 'pastTheDeadlineChart',
+                    meta: 'Meta One'
+                }
+        ]},
+        {
+            chartPadding: 30,
+            labelOffset: 40,
+            labelDirection: 'explode',
+            donut: true,
+            donutWidth: 50
+        });
+    }
+
+    function OnError(response) {
+        alert("Error !");
+    }
+}
+
+function defaultBarGraph() {
+    var currentMonth = new Date().getMonth() + 1;
+
+    $.ajax({
+        type: "GET",
+        url: "/Cmd/GetCmdPercentagePerMonth?month=" + currentMonth,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess,
+        error: OnError
+    });
+
+    function OnSuccess(response) {
+        var jsonStringified = JSON.stringify(response);
+
+        var percentageDetails = JSON.parse(jsonStringified);
+        
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var data = {
+            labels: [months[new Date().getMonth()]],
+            series: [
+              [percentageDetails.implemented],
+              [percentageDetails.notImplemented],
+              [percentageDetails.pastTheDeadline]
+            ]
+        };
+
+        var options = {
+            seriesBarDistance: 10,
+            axisX: {
+                showGrid: false
+            },
+            height: "245px"
+        };
+
+        var responsiveOptions = [
+          ['screen and (max-width: 640px)', {
+              seriesBarDistance: 5,
+              axisX: {
+                  labelInterpolationFnc: function (value) {
+                      return value[0];
+                  }
+              }
+          }]
+        ];
+
+        Chartist.Bar('#chartActivity', data, options, responsiveOptions);
+    }
+
+    function OnError(response) {
+        alert("Error !");
+    }
 }
 
 function getList() {
@@ -1052,54 +1227,46 @@ function getList() {
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function (data, type, full, meta) {
+                render: function(data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
-                
+
             },
             {
                 data: "ChangeType",
-                render: function (data) {
+                render: function(data) {
                     return data == 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
-                render: function (data) {
+                render: function(data) {
                     return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
                 }
             },
             {
                 data: "TargetImplementation",
-                render: function (data) {
+                render: function(data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
-                }
-            },
-            {
-                data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-warning editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit' value='Edit' style='width:100%;'/>";
-                }
-            },
-            {
-                data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-success implementButton' data-id=" + data + " name='implementButton' id='btnImplement' value='Set as Implemented' style='width:100%;'/>";
-                }
-            },
-            {
-                data: "Id",
-                render: function (data) {
-                    return "<input type='button' class='btn btn-fill btn-danger deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete' value='Delete' style='width:100%;'/>";
+                render: function(data) {
+                    return "<div class='btn-group'>" +
+                                "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
+                                    "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
+                                "</span>" +
+                                "<span data-placement='top' data-toggle='tooltip' title='Edit Change Document Info'>" +
+                                    "<button type='button' class='btn btn-fill btn-warning btn-table editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit'><i class='pe-7s-note'></i></button>" +
+                                "</span>" +
+                                "<span data-placement='top' data-toggle='tooltip' title='Set as Implemented'>" +
+                                    "<button type='button' class='btn btn-fill btn-success btn-table implementButton' data-id=" + data + " name='implementButton' id='btnImplement'><i class='pe-7s-like2'></i></button>" +
+                                "</span>" +
+                                "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
+                                    "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
+                                "</span>" +
+                            "</div>";
                 }
             }
         ]
@@ -1115,39 +1282,42 @@ function getHistoryList() {
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function (data, type, full, meta) {
+                render: function(data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
             },
             {
                 data: "ChangeType",
-                render: function (data) {
+                render: function(data) {
                     return data == 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
-                render: function (data) {
+                render: function(data) {
                     return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
                 }
             },
             {
                 data: "TargetImplementation",
-                render: function (data) {
+                render: function(data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "ImplementedAt",
-                render: function (data) {
+                render: function(data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
+                render: function(data) {
+                    return "<div class='btn-group'>" +
+                                "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
+                                    "<button type='button' class='btn btn-fill btn-table btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
+                                "</span>" +
+                           "</div>";
                 }
             }
         ]
@@ -1163,7 +1333,7 @@ function getAccountList() {
         columns: [
             {
                 data: "Lastname",
-                render: function (data, type, full, meta) {
+                render: function(data, type, full, meta) {
                     return full.Firstname + " " + full.Lastname;
                 }
             },
@@ -1191,34 +1361,37 @@ function getLatestCmdList() {
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function (data, type, full, meta) {
+                render: function(data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
-                
+
             },
             {
                 data: "ChangeType",
-                render: function (data) {
+                render: function(data) {
                     return data == 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
-                render: function (data) {
+                render: function(data) {
                     return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
                 }
             },
             {
                 data: "TargetImplementation",
-                render: function (data) {
+                render: function(data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "Id",
-                render: function (data) {
-
-                    return "<input type='button' class='btn btn-fill btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView' value='View' style='width:100%;'/>";
+                render: function(data) {
+                    return "<div class='btn-group'>" +
+                                "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
+                                    "<button type='button' class='btn btn-fill btn-table btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
+                                "</span>" +
+                           "</div>";
                 }
             }
         ]
@@ -1226,22 +1399,22 @@ function getLatestCmdList() {
 }
 
 function clearInputsNewCmd() {
-    var t = $('#affectedAreasTable').DataTable();
-    var t1 = $('#signOffTable').DataTable();
+    var t = $("#affectedAreasTable").DataTable();
+    var t1 = $("#signOffTable").DataTable();
 
     $("#changeObjective").val("");
     $("#changeType").val(1);
     $("#changeRequirements").val("");
-    $('#affectedAreasApp').val("");
-    $('#affectedAreasDb').val("");
-    $('#affectedAreasServer').val("");
+    $("#affectedAreasApp").val("");
+    $("#affectedAreasDb").val("");
+    $("#affectedAreasServer").val("");
     t.clear().draw();
-    $("#highRadio").prop('checked', false);
-    $("#mediumRadio").prop('checked', false);
-    $("#lowRadio").prop('checked', false);
+    $("#highRadio").prop("checked", false);
+    $("#mediumRadio").prop("checked", false);
+    $("#lowRadio").prop("checked", false);
     $("#targetImplementation").val("");
-    $('#signOffName').val("");
-    $('#signOffRole').val("");
+    $("#signOffName").val("");
+    $("#signOffRole").val("");
     t1.clear().draw();
 }
 

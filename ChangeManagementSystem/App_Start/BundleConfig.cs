@@ -22,6 +22,9 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.min.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/chartist").Include(
+                      "~/Scripts/chartist.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/popper").Include(
                       "~/Scripts/popper.js"));
 

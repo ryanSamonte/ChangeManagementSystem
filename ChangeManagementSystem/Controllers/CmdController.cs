@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using ChangeManagementSystem.Models;
-using ChangeManagementSystem;
-using System.Data.Entity;
 using CrystalDecisions.CrystalReports.Engine;
-using System.IO;
-using System.Globalization;
-using Newtonsoft.Json;
+using CrystalDecisions.Shared;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 
 namespace ChangeManagementSystem.Controllers
 {
-
     public class Item
     {
         public string Application;
@@ -48,13 +45,13 @@ namespace ChangeManagementSystem.Controllers
         public JsonResult UserList(string prefix)
         {
             var users = new List<ApplicationUser>();
- 
+
             users = _context.Users.ToList();
 
-            var userList = (from u in users
-                            where u.Firstname.Contains(prefix)
-                            where u.Id != User.Identity.GetUserId()
-                            select new {u.Lastname, u.Firstname, u.JobRoles.JobRoleName});
+            var userList = from u in users
+                where u.Firstname.Contains(prefix)
+                where u.Id != User.Identity.GetUserId()
+                select new {u.Lastname, u.Firstname, u.JobRoles.JobRoleName};
 
             return Json(userList, JsonRequestBehavior.AllowGet);
         }
@@ -63,12 +60,13 @@ namespace ChangeManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Save(ChangeManagementModels cmdModel)
         {
-            Random generator = new Random();
+            var generator = new Random();
             //String r = generator.Next(0, 99999).ToString("D5");
 
-            string r = DateTime.UtcNow.ToLocalTime().Hour.ToString() + DateTime.UtcNow.ToLocalTime().Minute.ToString() + DateTime.UtcNow.ToLocalTime().Second.ToString();
+            var r = DateTime.UtcNow.ToLocalTime().Hour + DateTime.UtcNow.ToLocalTime().Minute.ToString() +
+                    DateTime.UtcNow.ToLocalTime().Second;
 
-            cmdModel.CmdNo = "CMD-" + DateTime.Now.Year.ToString() + "-" + r;
+            cmdModel.CmdNo = "CMD-" + DateTime.Now.Year + "-" + r;
             cmdModel.CreatedAt = DateTime.Now;
             cmdModel.UpdatedAt = DateTime.Now;
             cmdModel.DeletedAt = null;
@@ -98,7 +96,11 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetAllIncoming()
         {
-            var incomingCmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList().Take(5);
+            var incomingCmdList =
+                _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null)
+                    .OrderBy(c => c.TargetImplementation)
+                    .ToList()
+                    .Take(5);
 
             return Json(incomingCmdList, JsonRequestBehavior.AllowGet);
         }
@@ -112,7 +114,8 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetImplementedCmdCount()
         {
-            var implementedCmdCount = _context.ChangeManagements.Where(c => c.IsImplemented == true && c.DeletedAt == null).Count();
+            var implementedCmdCount =
+                _context.ChangeManagements.Where(c => c.IsImplemented && c.DeletedAt == null).Count();
 
             return Json(implementedCmdCount, JsonRequestBehavior.AllowGet);
         }
@@ -183,13 +186,13 @@ namespace ChangeManagementSystem.Controllers
         {
             var from = DateTime.Parse("10/01/2011");
 
-            ReportDocument rd = new ReportDocument();
+            var rd = new ReportDocument();
             rd.Load(Path.Combine(Server.MapPath("~/Reports/CmdReport.rpt")));
 
             var cmdModel = new List<AffectedAreasModels>();
-            string jsonAffectedArea = "";
-            string jsonSignOff = "";
-            DateTime targetImplementation = new DateTime();
+            var jsonAffectedArea = "";
+            var jsonSignOff = "";
+            var targetImplementation = new DateTime();
 
             var appList = new List<string>();
             var dbList = new List<string>();
@@ -203,11 +206,11 @@ namespace ChangeManagementSystem.Controllers
 
             cmdModel = _context.Users
                 .Join(_context.ChangeManagements
-                , users => users.Id
-                , cmd => cmd.RequestorId,
-                (users, cmd) => new { User = users, Cmd = cmd })
+                    , users => users.Id
+                    , cmd => cmd.RequestorId,
+                    (users, cmd) => new {User = users, Cmd = cmd})
                 .Where(UserCmd => UserCmd.Cmd.Id == id)
-                .Select(UserCmd => new AffectedAreasModels()
+                .Select(UserCmd => new AffectedAreasModels
                 {
                     CmdNo = UserCmd.Cmd.CmdNo,
                     ChangeObjective = UserCmd.Cmd.ChangeObjective,
@@ -221,7 +224,7 @@ namespace ChangeManagementSystem.Controllers
                     SignOff = UserCmd.Cmd.SignOff,
                     CreatedAt = UserCmd.Cmd.CreatedAt ?? from,
                     UpdatedAt = UserCmd.Cmd.UpdatedAt ?? from,
-                    DeletedAt = UserCmd.Cmd.DeletedAt ?? from,
+                    DeletedAt = UserCmd.Cmd.DeletedAt ?? from
                 }).ToList();
 
             foreach (var cmdModelItem in cmdModel)
@@ -254,7 +257,6 @@ namespace ChangeManagementSystem.Controllers
             serverValue = string.Join("\n\n", serverList);
 
 
-
             foreach (var dynObjSignOffItem in dynObjSignOff)
             {
                 signoffInfoList.Add("REVIEWED BY:\n");
@@ -279,9 +281,10 @@ namespace ChangeManagementSystem.Controllers
             Response.ClearContent();
             Response.ClearHeaders();
 
-            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            var stream = rd.ExportToStream(ExportFormatType.PortableDocFormat);
             stream.Seek(0, SeekOrigin.Begin);
-            return File(stream, "application/pdf", DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToLocalTime().ToShortTimeString() + ".pdf");
+            return File(stream, "application/pdf",
+                DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToLocalTime().ToShortTimeString() + ".pdf");
         }
 
         public ActionResult History()
@@ -293,9 +296,41 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetAllHistory()
         {
-            var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented == true && c.DeletedAt == null).ToList();
+            var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented && c.DeletedAt == null).ToList();
 
             return Json(cmdListHistory, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult GetCmdPercentage()
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+
+            var cmdPercentagePerStatus = _context.ChangeManagements
+                .Select(d => new
+                {
+                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count),
+                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count),
+                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count)
+                }).FirstOrDefault();
+
+            return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult GetCmdPercentagePerMonth(int month)
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+
+            var cmdPercentagePerStatus = _context.ChangeManagements
+                .Select(d => new
+                {
+                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented && p.ImplementedAt.Value.Month == month).ToList().Count),
+                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now && p.TargetImplementation.Month == month).ToList().Count),
+                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now && p.TargetImplementation.Month == month).ToList().Count)
+                }).FirstOrDefault();
+
+            return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Calendar()
@@ -309,12 +344,14 @@ namespace ChangeManagementSystem.Controllers
         public ActionResult GetChangesImplemented()
         {
             var cmdListImplementationDates = _context.ChangeManagements
-                .Where(d => d.DeletedAt == null && d.IsImplemented == true)
-                .Select(d => new { title = d.CmdNo,
-                                   start = d.ImplementedAt,
-                                   end = d.ImplementedAt,
-                                   areas = d.Id,
-                                   color = "green"
+                .Where(d => d.DeletedAt == null && d.IsImplemented)
+                .Select(d => new
+                {
+                    title = d.CmdNo,
+                    start = d.ImplementedAt,
+                    end = d.ImplementedAt,
+                    areas = d.Id,
+                    color = "green"
                 })
                 .ToList();
 
@@ -356,7 +393,7 @@ namespace ChangeManagementSystem.Controllers
                     end = d.TargetImplementation,
                     areas = d.Id,
                     color = "red",
-                    now = now
+                    now
                 })
                 .ToList();
 
