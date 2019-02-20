@@ -50,7 +50,7 @@
 
                     <div class="footer">
                         <div class="legend">
-                            <span style="background-color: green;"><i class="pe-7s-albums" style="color: green;"></i></span>&nbsp;&nbsp;Implemented</span>
+                            <span><span style="background-color: green;"><i class="pe-7s-albums" style="color: green;"></i></span>&nbsp;&nbsp;Implemented</span>
                             &nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: orange;"><i class="pe-7s-albums" style="color: orange;"></i></span>&nbsp;&nbsp;Not Implemented</span>
                             &nbsp;&nbsp;&nbsp;&nbsp;<span><span style="background-color: red;"><i class="pe-7s-albums" style="color: red;"></i></span>&nbsp;&nbsp;Past the Deadline</span>
                         </div>
@@ -67,7 +67,6 @@
                 <div class="content">
                     <div class="row">
                         <div class="col-md-6">
-
                         </div>
                         <div class="col-md-6">
                             <select class="form-control" id="barChartMonth">
@@ -103,6 +102,7 @@
         </div>
     </div>
 
+    <div id="incomingCmdImplementationUrl" data-request-url="@Url.Action("GetAllIncoming", "Cmd")"></div>
     <div class="row">
         <div class="col">
             <div class="card" style="min-height: 370px; margin-bottom: 0px;">
@@ -116,13 +116,13 @@
                                 <div class="content table-responsive table-full-width">
                                     <table class="table table-hover table-striped text-center" id="latestCmdTable">
                                         <thead class="text-center">
-                                        <tr>
-                                            <th class="text-center">Requestor</th>
-                                            <th class="text-center">Type</th>
-                                            <th class="text-center">Evaluation</th>
-                                            <th class="text-center">Target Date</th>
-                                            <th></th>
-                                        </tr>
+                                            <tr>
+                                                <th class="text-center">Requestor</th>
+                                                <th class="text-center">Type</th>
+                                                <th class="text-center">Evaluation</th>
+                                                <th class="text-center">Target Date</th>
+                                                <th></th>
+                                            </tr>
                                         </thead>
                                         <tbody></tbody>
                                     </table>
@@ -136,7 +136,7 @@
     </div>
 </div>
 
-  <!-- Modal -->
+<!-- Modal -->
 <div class="container-fluid">
     <div class="modal fade" id="viewCmdInfoModal" tabindex="-1" role="dialog" data-backdrop="false">
         <div class="modal-dialog" role="document">
@@ -255,43 +255,230 @@
 </div>
 
 @section scripts{
-<script>
-    $(document).ready(function () {
-        setInterval(getCmdCount, 1000);
+    <script>
+        $(document).ready(function () {
+            setInterval(getCmdCount, 1000);
 
-        setInterval(getImplementedCmdCount, 1000);
-    });
+            setInterval(getImplementedCmdCount, 1000);
 
-    function getCmdCount() {
-        $.ajax({
-            url: "/Cmd/GetCmdCount",
-            type: "GET",
-            success: function (data) {
-                var jsonStringified = JSON.stringify(data);
-                var countDetails = JSON.parse(jsonStringified);
+            fillInPieChart();
 
-                $("#cmdCountLabel").html("<i class='pe-7s-copy-file'></i>&nbsp;&nbsp;" + countDetails);
-            },
-            error: function (data) {
-                alert("error");
+            defaultBarGraph();
+
+            var month = new Date().getMonth();
+
+            $("#barChartMonth").val("0" + (month + 1));
+        });
+
+        function getCmdCount() {
+            $.ajax({
+                url: '@Url.Action("GetCmdCount", "Cmd")',
+                type: "GET",
+                success: function (data) {
+                    var jsonStringified = JSON.stringify(data);
+                    var countDetails = JSON.parse(jsonStringified);
+
+                    $("#cmdCountLabel").html("<i class='pe-7s-copy-file'></i>&nbsp;&nbsp;" + countDetails);
+                },
+                error: function (data) {
+                    alert("error");
+                }
+            });
+        }
+
+        function getImplementedCmdCount() {
+            $.ajax({
+                url: '@Url.Action("GetImplementedCmdCount", "Cmd")',
+                type: "GET",
+                success: function (data) {
+                    var jsonStringified = JSON.stringify(data);
+                    var implementedCountDetails = JSON.parse(jsonStringified);
+
+                    $("#implementedCmdCountLabel").html("<i class='pe-7s-like2'></i>&nbsp;&nbsp;" + implementedCountDetails);
+                },
+                error: function (data) {
+                    alert("Error!");
+                }
+            });
+        }
+
+        function fillInPieChart() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetCmdPercentage", "Cmd")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                error: OnError
+            });
+
+            function OnSuccess(response) {
+                var jsonStringified = JSON.stringify(response);
+
+                var percentageDetails = JSON.parse(jsonStringified);
+
+                var dataPreferences = {
+                    series: [
+                        [25, 30, 20, 25]
+                    ]
+                };
+
+                var optionsPreferences = {
+                    donut: true,
+                    donutWidth: 10,
+                    startAngle: 0,
+                    total: 100,
+                    showLabel: false,
+                    axisX: {
+                        showGrid: false
+                    }
+                };
+
+                Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
+
+                Chartist.Pie('#chartPreferences', {
+                    labels: [(Math.floor(percentageDetails.implemented * 100) / 100) + "%", (Math.floor(percentageDetails.notImplemented * 100) / 100) + "%", (Math.floor(percentageDetails.pastTheDeadline * 100) / 100) + "%"],
+                    series: [
+                        {
+                            value: (Math.floor(percentageDetails.implemented * 100) / 100),
+                            name: 'Series 1',
+                            className: 'implementedChart',
+                            meta: 'Meta One'
+                        },
+                        {
+                            value: (Math.floor(percentageDetails.notImplemented * 100) / 100),
+                            name: 'Series 1',
+                            className: 'notImplementedChart',
+                            meta: 'Meta One'
+                        },
+                        {
+                            value: (Math.floor(percentageDetails.pastTheDeadline * 100) / 100),
+                            name: 'Series 1',
+                            className: 'pastTheDeadlineChart',
+                            meta: 'Meta One'
+                        }
+                    ]
+                },
+                {
+                    chartPadding: 30,
+                    labelOffset: 40,
+                    labelDirection: 'explode',
+                    donut: true,
+                    donutWidth: 50
+                });
+            }
+
+            function OnError(response) {
+                alert("No data available!");
+            }
+        }
+
+        function defaultBarGraph() {
+            var currentMonth = new Date().getMonth() + 1;
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetCmdPercentagePerMonth", "Cmd")?month=' + currentMonth,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                error: OnError
+            });
+
+            function OnSuccess(response) {
+                var jsonStringified = JSON.stringify(response);
+
+                var percentageDetails = JSON.parse(jsonStringified);
+
+                var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                var data = {
+                    labels: [months[new Date().getMonth()]],
+                    series: [
+                      [percentageDetails.implemented],
+                      [percentageDetails.notImplemented],
+                      [percentageDetails.pastTheDeadline]
+                    ]
+                };
+
+                var options = {
+                    seriesBarDistance: 10,
+                    axisX: {
+                        showGrid: false
+                    },
+                    height: "245px"
+                };
+
+                var responsiveOptions = [
+                  ['screen and (max-width: 640px)', {
+                      seriesBarDistance: 5,
+                      axisX: {
+                          labelInterpolationFnc: function (value) {
+                              return value[0];
+                          }
+                      }
+                  }]
+                ];
+
+                Chartist.Bar('#chartActivity', data, options, responsiveOptions);
+            }
+
+            function OnError(response) {
+                alert("No data available!");
+            }
+        }
+
+        $(document).on("change", "#barChartMonth", function () {
+            var month = $("#barChartMonth").val();
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetCmdPercentagePerMonth", "Cmd")?month=' + month,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                error: OnError
+            });
+
+            function OnSuccess(response) {
+                var jsonStringified = JSON.stringify(response);
+
+                var percentageDetails = JSON.parse(jsonStringified);
+
+                var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                var data = {
+                    labels: [months[month - 1]],
+                    series: [
+                      [percentageDetails.implemented],
+                      [percentageDetails.notImplemented],
+                      [percentageDetails.pastTheDeadline]
+                    ]
+                };
+
+                var options = {
+                    seriesBarDistance: 10,
+                    axisX: {
+                        showGrid: false
+                    },
+                    height: "245px"
+                };
+
+                var responsiveOptions = [
+                  ['screen and (max-width: 640px)', {
+                      seriesBarDistance: 5,
+                      axisX: {
+                          labelInterpolationFnc: function (value) {
+                              return value[0];
+                          }
+                      }
+                  }]
+                ];
+
+                Chartist.Bar('#chartActivity', data, options, responsiveOptions);
+            }
+
+            function OnError(response) {
+                alert("Error !");
             }
         });
-    }
-
-    function getImplementedCmdCount() {
-        $.ajax({
-            url: "/Cmd/GetImplementedCmdCount",
-            type: "GET",
-            success: function (data) {
-                var jsonStringified = JSON.stringify(data);
-                var implementedCountDetails = JSON.parse(jsonStringified);
-
-                $("#implementedCmdCountLabel").html("<i class='pe-7s-like2'></i>&nbsp;&nbsp;" + implementedCountDetails);
-            },
-            error: function (data) {
-                alert("Error!");
-            }
-        });
-    }
-</script>
+    </script>
 }

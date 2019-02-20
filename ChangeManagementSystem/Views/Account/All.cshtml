@@ -6,6 +6,7 @@
     ViewBag.Title = "Index";
 }
 
+<div id="allAccountUrl" data-request-url="@Url.Action("GetAll", "Account")"></div>
 <div class="container-fluid">
     <div class="row">
         <div class="col">
@@ -34,6 +35,7 @@
 </div>
 
 <!-- Modal -->
+<div id="insertAccountUrl" data-request-url="@Url.Action("Register", "Account")"></div>
 <div class="container-fluid">
     <div class="modal fade" id="insertUserAccountModal" tabindex="-1" role="dialog" data-backdrop="false">
         <div class="modal-dialog" role="document">
@@ -95,7 +97,7 @@
                                         <label for="JobRole">Job Role</label>
                                         @if (ViewData["JobRole"] != null)
                                         {
-                                            @Html.DropDownList("JobRole", (IEnumerable<SelectListItem>)ViewBag.JobRole, new { @class="form-control" })   
+                                            @Html.DropDownList("JobRole", (IEnumerable<SelectListItem>)ViewBag.JobRole, new { @class = "form-control" })
                                         }
                                     </div>
                                 </div>

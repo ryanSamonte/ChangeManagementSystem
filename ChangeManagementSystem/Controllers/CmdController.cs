@@ -1,14 +1,14 @@
-﻿using System;
+﻿using ChangeManagementSystem.Models;
+using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Shared;
+using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using ChangeManagementSystem.Models;
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.Shared;
-using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
 
 namespace ChangeManagementSystem.Controllers
 {
@@ -44,14 +44,12 @@ namespace ChangeManagementSystem.Controllers
 
         public JsonResult UserList(string prefix)
         {
-            var users = new List<ApplicationUser>();
-
-            users = _context.Users.ToList();
+            var users = _context.Users.ToList();
 
             var userList = from u in users
-                where u.Firstname.Contains(prefix)
-                where u.Id != User.Identity.GetUserId()
-                select new {u.Lastname, u.Firstname, u.JobRoles.JobRoleName};
+                           where u.Firstname.Contains(prefix)
+                           where u.Id != User.Identity.GetUserId()
+                           select new { u.Lastname, u.Firstname, u.JobRoles.JobRoleName };
 
             return Json(userList, JsonRequestBehavior.AllowGet);
         }
@@ -60,9 +58,6 @@ namespace ChangeManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Save(ChangeManagementModels cmdModel)
         {
-            var generator = new Random();
-            //String r = generator.Next(0, 99999).ToString("D5");
-
             var r = DateTime.UtcNow.ToLocalTime().Hour + DateTime.UtcNow.ToLocalTime().Minute.ToString() +
                     DateTime.UtcNow.ToLocalTime().Second;
 
@@ -89,15 +84,17 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetAll()
         {
-            var CmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).ToList();
+            var cmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
 
-            return Json(CmdList, JsonRequestBehavior.AllowGet);
+            return Json(cmdList, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetAllIncoming()
         {
+            var now = DateTime.UtcNow.ToLocalTime();
+
             var incomingCmdList =
-                _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null)
+                _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null && c.TargetImplementation > now)
                     .OrderBy(c => c.TargetImplementation)
                     .ToList()
                     .Take(5);
@@ -107,7 +104,7 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetCmdCount()
         {
-            var cmdCount = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).Count();
+            var cmdCount = _context.ChangeManagements.Count(c => c.IsImplemented != true && c.DeletedAt == null);
 
             return Json(cmdCount, JsonRequestBehavior.AllowGet);
         }
@@ -115,14 +112,14 @@ namespace ChangeManagementSystem.Controllers
         public ActionResult GetImplementedCmdCount()
         {
             var implementedCmdCount =
-                _context.ChangeManagements.Where(c => c.IsImplemented && c.DeletedAt == null).Count();
+                _context.ChangeManagements.Count(c => c.IsImplemented && c.DeletedAt == null);
 
             return Json(implementedCmdCount, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Find(int id)
         {
-            var cmdRecord = _context.ChangeManagements.Where(c => c.Id == id).FirstOrDefault();
+            var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
 
             return Json(cmdRecord, JsonRequestBehavior.AllowGet);
         }
@@ -130,8 +127,7 @@ namespace ChangeManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Update(ChangeManagementModels cmdModel, int id)
         {
-            var cmdRecord = _context.ChangeManagements.Where(c => c.Id == id).FirstOrDefault();
-
+            var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
 
             if (cmdRecord != null)
             {
@@ -153,7 +149,7 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult Delete(int id)
         {
-            var cmdRecord = _context.ChangeManagements.Where(c => c.Id == id).FirstOrDefault();
+            var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
 
             if (cmdRecord != null)
             {
@@ -168,7 +164,7 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult Implement(int id)
         {
-            var cmdRecord = _context.ChangeManagements.Where(c => c.Id == id).FirstOrDefault();
+            var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
 
             if (cmdRecord != null)
             {
@@ -189,7 +185,6 @@ namespace ChangeManagementSystem.Controllers
             var rd = new ReportDocument();
             rd.Load(Path.Combine(Server.MapPath("~/Reports/CmdReport.rpt")));
 
-            var cmdModel = new List<AffectedAreasModels>();
             var jsonAffectedArea = "";
             var jsonSignOff = "";
             var targetImplementation = new DateTime();
@@ -198,33 +193,29 @@ namespace ChangeManagementSystem.Controllers
             var dbList = new List<string>();
             var serverList = new List<string>();
 
-            var signoffReviewedByList = new List<string>();
-            var signoffSignatureList = new List<string>();
             var signoffInfoList = new List<string>();
-            var signoffRoleList = new List<string>();
-            var signoffDateList = new List<string>();
 
-            cmdModel = _context.Users
+            var cmdModel = _context.Users
                 .Join(_context.ChangeManagements
                     , users => users.Id
                     , cmd => cmd.RequestorId,
-                    (users, cmd) => new {User = users, Cmd = cmd})
-                .Where(UserCmd => UserCmd.Cmd.Id == id)
-                .Select(UserCmd => new AffectedAreasModels
+                    (users, cmd) => new { User = users, Cmd = cmd })
+                .Where(userCmd => userCmd.Cmd.Id == id)
+                .Select(userCmd => new AffectedAreasModels
                 {
-                    CmdNo = UserCmd.Cmd.CmdNo,
-                    ChangeObjective = UserCmd.Cmd.ChangeObjective,
-                    ChangeType = UserCmd.Cmd.ChangeType,
-                    ChangeRequirements = UserCmd.Cmd.ChangeRequirements,
-                    AffectedAreas = UserCmd.Cmd.AffectedAreas,
-                    ChangeEvaluation = UserCmd.Cmd.ChangeEvaluation,
-                    TargetImplementation = UserCmd.Cmd.TargetImplementation,
-                    RequestorName = UserCmd.User.Firstname + " " + UserCmd.User.Lastname,
-                    RequestorRole = UserCmd.User.JobRoles.JobRoleName,
-                    SignOff = UserCmd.Cmd.SignOff,
-                    CreatedAt = UserCmd.Cmd.CreatedAt ?? from,
-                    UpdatedAt = UserCmd.Cmd.UpdatedAt ?? from,
-                    DeletedAt = UserCmd.Cmd.DeletedAt ?? from
+                    CmdNo = userCmd.Cmd.CmdNo,
+                    ChangeObjective = userCmd.Cmd.ChangeObjective,
+                    ChangeType = userCmd.Cmd.ChangeType,
+                    ChangeRequirements = userCmd.Cmd.ChangeRequirements,
+                    AffectedAreas = userCmd.Cmd.AffectedAreas,
+                    ChangeEvaluation = userCmd.Cmd.ChangeEvaluation,
+                    TargetImplementation = userCmd.Cmd.TargetImplementation,
+                    RequestorName = userCmd.User.Firstname + " " + userCmd.User.Lastname,
+                    RequestorRole = userCmd.User.JobRoles.JobRoleName,
+                    SignOff = userCmd.Cmd.SignOff,
+                    CreatedAt = userCmd.Cmd.CreatedAt ?? @from,
+                    UpdatedAt = userCmd.Cmd.UpdatedAt ?? @from,
+                    DeletedAt = userCmd.Cmd.DeletedAt ?? @from
                 }).ToList();
 
             foreach (var cmdModelItem in cmdModel)
@@ -255,7 +246,6 @@ namespace ChangeManagementSystem.Controllers
             appValue = string.Join("\n\n", appList);
             dbValue = string.Join("\n\n", dbList);
             serverValue = string.Join("\n\n", serverList);
-
 
             foreach (var dynObjSignOffItem in dynObjSignOff)
             {
@@ -321,13 +311,14 @@ namespace ChangeManagementSystem.Controllers
         public ActionResult GetCmdPercentagePerMonth(int month)
         {
             var now = DateTime.UtcNow.ToLocalTime();
+            var year = now.Year;
 
             var cmdPercentagePerStatus = _context.ChangeManagements
                 .Select(d => new
                 {
-                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented && p.ImplementedAt.Value.Month == month).ToList().Count),
-                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now && p.TargetImplementation.Month == month).ToList().Count),
-                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now && p.TargetImplementation.Month == month).ToList().Count)
+                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented && p.ImplementedAt.Value.Month == month && p.ImplementedAt.Value.Year == year).ToList().Count),
+                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now && p.TargetImplementation.Month == month && p.TargetImplementation.Year == year).ToList().Count),
+                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now && p.TargetImplementation.Month == month && p.TargetImplementation.Year == year).ToList().Count)
                 }).FirstOrDefault();
 
             return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
@@ -375,7 +366,6 @@ namespace ChangeManagementSystem.Controllers
                 })
                 .ToList();
 
-
             return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
         }
 
@@ -396,7 +386,6 @@ namespace ChangeManagementSystem.Controllers
                     now
                 })
                 .ToList();
-
 
             return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
         }

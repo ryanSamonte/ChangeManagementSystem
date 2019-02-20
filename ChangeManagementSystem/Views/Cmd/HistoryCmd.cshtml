@@ -4,6 +4,9 @@
     ViewBag.Title = "Index";
 }
 
+<div id="getAllCmdHistoryUrl" data-request-url="@Url.Action("GetAllHistory", "Cmd")"></div>
+
+<div id="exportCmdUrl" data-request-url="@Url.Action("ExportCmd", "Cmd")"></div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
@@ -33,6 +36,7 @@
 </div>
 
 <!-- Modal -->
+<div id="viewCmdUrl" data-request-url="@Url.Action("Find", "Cmd")"></div>
 <div class="container-fluid">
     <div class="modal fade" id="viewCmdInfoModal" tabindex="-1" role="dialog" data-backdrop="false">
         <div class="modal-dialog modal-lg" role="document">
@@ -169,4 +173,3 @@
         </div>
     </div>
 </div>
-

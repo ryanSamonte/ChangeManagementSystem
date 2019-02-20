@@ -1,16 +1,12 @@
-﻿using System;
+﻿using ChangeManagementSystem.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using Owin;
-using ChangeManagementSystem.Models;
 
 namespace ChangeManagementSystem.Controllers
 {
@@ -30,7 +26,8 @@ namespace ChangeManagementSystem.Controllers
             UserManager = userManager;
         }
 
-        public ApplicationUserManager UserManager {
+        public ApplicationUserManager UserManager
+        {
             get
             {
                 return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
@@ -41,7 +38,8 @@ namespace ChangeManagementSystem.Controllers
             }
         }
 
-        [Authorize(Roles = AccountRoleName.Administrator)]
+        //[Authorize(Roles = AccountRoleName.Administrator)]
+        [AllowAnonymous]
         public ActionResult All()
         {
             ViewBag.Current = "Manage User Account";
@@ -51,7 +49,6 @@ namespace ChangeManagementSystem.Controllers
             {
                 Value = c.Id.ToString(),
                 Text = c.JobRoleName
-
             });
 
             IEnumerable<SelectListItem> roles = _context.Roles.Select(c => new SelectListItem
@@ -66,6 +63,7 @@ namespace ChangeManagementSystem.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public JsonResult GetAll()
         {
             var userAccountList = _context.Users.ToList();
@@ -117,8 +115,9 @@ namespace ChangeManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser() { 
-                    UserName = model.Email, 
+                var user = new ApplicationUser()
+                {
+                    UserName = model.Email,
                     Email = model.Email,
                     Lastname = model.Lastname,
                     Firstname = model.Firstname,
@@ -134,7 +133,7 @@ namespace ChangeManagementSystem.Controllers
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-      
+
                     await UserManager.AddToRoleAsync(user.Id, model.AccountRole);
                     return RedirectToAction("All", "Account");
                 }
@@ -155,7 +154,7 @@ namespace ChangeManagementSystem.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
-            if (userId == null || code == null) 
+            if (userId == null || code == null)
             {
                 return View("Error");
             }
@@ -199,7 +198,7 @@ namespace ChangeManagementSystem.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
                 // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
+                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 // return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
@@ -215,13 +214,13 @@ namespace ChangeManagementSystem.Controllers
         {
             return View();
         }
-	
+
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            if (code == null) 
+            if (code == null)
             {
                 return View("Error");
             }
@@ -273,7 +272,7 @@ namespace ChangeManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Disassociate(string loginProvider, string providerKey)
         {
-            ManageMessageId? message = null;
+            ManageMessageId? message;
             IdentityResult result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
             {
@@ -449,13 +448,13 @@ namespace ChangeManagementSystem.Controllers
                     if (result.Succeeded)
                     {
                         await SignInAsync(user, isPersistent: false);
-                        
+
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                         // Send an email with this link
                         // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                         // SendEmail(user.Email, callbackUrl, "Confirm your account", "Please confirm your account by clicking this link");
-                        
+
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -489,7 +488,7 @@ namespace ChangeManagementSystem.Controllers
         {
             var linkedAccounts = UserManager.GetLogins(User.Identity.GetUserId());
             ViewBag.ShowRemoveButton = HasPassword() || linkedAccounts.Count > 1;
-            return (ActionResult)PartialView("_RemoveAccountPartial", linkedAccounts);
+            return PartialView("_RemoveAccountPartial", linkedAccounts);
         }
 
         protected override void Dispose(bool disposing)
@@ -504,6 +503,7 @@ namespace ChangeManagementSystem.Controllers
         }
 
         #region Helpers
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -539,11 +539,6 @@ namespace ChangeManagementSystem.Controllers
             return false;
         }
 
-        private void SendEmail(string email, string callbackUrl, string subject, string message)
-        {
-            // For information on sending mail, please visit http://go.microsoft.com/fwlink/?LinkID=320771
-        }
-
         public enum ManageMessageId
         {
             ChangePasswordSuccess,
@@ -566,20 +561,16 @@ namespace ChangeManagementSystem.Controllers
 
         private class ChallengeResult : HttpUnauthorizedResult
         {
-            public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null)
-            {
-            }
-
-            public ChallengeResult(string provider, string redirectUri, string userId)
+            public ChallengeResult(string provider, string redirectUri, string userId = null)
             {
                 LoginProvider = provider;
                 RedirectUri = redirectUri;
                 UserId = userId;
             }
 
-            public string LoginProvider { get; set; }
-            public string RedirectUri { get; set; }
-            public string UserId { get; set; }
+            private string LoginProvider { get; set; }
+            private string RedirectUri { get; set; }
+            private string UserId { get; set; }
 
             public override void ExecuteResult(ControllerContext context)
             {
@@ -591,6 +582,7 @@ namespace ChangeManagementSystem.Controllers
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
-        #endregion
+
+        #endregion Helpers
     }
 }

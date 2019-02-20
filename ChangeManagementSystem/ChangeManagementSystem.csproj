@@ -194,15 +194,13 @@
     <Compile Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.Designer.cs">
       <DependentUpon>201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902190835430_RenameDatabase.cs" />
+    <Compile Include="Migrations\201902190835430_RenameDatabase.Designer.cs">
+      <DependentUpon>201902190835430_RenameDatabase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRoleName.cs" />
     <Compile Include="Models\AffectedAreasModels.cs" />
     <Compile Include="Models\JobRoleModels.cs" />
-    <Compile Include="Reports\CmdReport.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CmdReport.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CmdController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -268,6 +266,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\Pe-icon-7-stroke.svg" />
     <Content Include="Global.asax" />
+    <Content Include="grant.sql" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\bootbox.min.js" />
@@ -279,6 +278,8 @@
     <Content Include="fonts\Pe-icon-7-stroke.eot" />
     <Content Include="fonts\Pe-icon-7-stroke.ttf" />
     <Content Include="fonts\Pe-icon-7-stroke.woff" />
+    <None Include="Properties\PublishProfiles\CMD.pubxml" />
+    <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\chartist.min.js" />
     <Content Include="Scripts\datatables.min.js" />
@@ -304,7 +305,9 @@
     <Content Include="Scripts\site.js" />
     <Content Include="Scripts\tooltip.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -341,6 +344,9 @@
     <Content Include="Views\Account\All.cshtml" />
     <Content Include="Views\Cmd\CalendarCmd.cshtml" />
     <Content Include="Views\Application\AllApplication.cshtml" />
+    <None Include="Web.Test.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -377,10 +383,10 @@
     <EmbeddedResource Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.resx">
       <DependentUpon>201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\CmdReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>CmdReport.cs</LastGenOutput>
+    <EmbeddedResource Include="Migrations\201902190835430_RenameDatabase.resx">
+      <DependentUpon>201902190835430_RenameDatabase.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="Reports\CmdReport.rpt" />
     <EmbeddedResource Include="Migrations\201901020042305_InitialMigration.resx">
       <DependentUpon>201901020042305_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>

@@ -1,15 +1,15 @@
 ﻿$(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
     //textarea characted counter
-    $(function() {
+    $(function () {
         var nMaxLength = 2000;
         $(".remainingObjective").text(nMaxLength);
 
-        $("#changeObjective").keydown(function(event) {
+        $("#changeObjective").keydown(function () {
             LimitCharacters($(this));
         });
 
-        $("#changeObjective").keyup(function(event) {
+        $("#changeObjective").keyup(function () {
             LimitCharacters($(this));
         });
 
@@ -23,15 +23,15 @@
         }
     });
 
-    $(function() {
+    $(function () {
         var nMaxLength = 2000;
         $(".remainingObjectiveEdit").text(nMaxLength);
 
-        $("#changeObjectiveEdit").keydown(function(event) {
+        $("#changeObjectiveEdit").keydown(function (event) {
             LimitCharacters($(this));
         });
 
-        $("#changeObjectiveEdit").keyup(function(event) {
+        $("#changeObjectiveEdit").keyup(function (event) {
             LimitCharacters($(this));
         });
 
@@ -45,15 +45,15 @@
         }
     });
 
-    $(function() {
+    $(function () {
         var nMaxLength = 2000;
         $(".remainingRequirements").text(nMaxLength);
 
-        $("#changeRequirements").keydown(function(event) {
+        $("#changeRequirements").keydown(function (event) {
             LimitCharacters($(this));
         });
 
-        $("#changeRequirements").keyup(function(event) {
+        $("#changeRequirements").keyup(function (event) {
             LimitCharacters($(this));
         });
 
@@ -67,15 +67,15 @@
         }
     });
 
-    $(function() {
+    $(function () {
         var nMaxLength = 2000;
         $(".remainingRequirementsEdit").text(nMaxLength);
 
-        $("#changeRequirementEdit").keydown(function(event) {
+        $("#changeRequirementEdit").keydown(function (event) {
             LimitCharacters($(this));
         });
 
-        $("#changeRequirementEdit").keyup(function(event) {
+        $("#changeRequirementEdit").keyup(function (event) {
             LimitCharacters($(this));
         });
 
@@ -90,15 +90,15 @@
     });
 
     $("#signOffName").autocomplete({
-        source: function(request, response) {
+        source: function (request, response) {
             var role = "";
             $.ajax({
-                url: "/Cmd/UserList",
+                url: $("#signOffInfoUrl").data("request-url"),
                 type: "POST",
                 dataType: "json",
                 data: { Prefix: request.term },
-                success: function(data) {
-                    response($.map(data, function(item) {
+                success: function (data) {
+                    response($.map(data, function (item) {
                         return {
                             label: item.Firstname + " " + item.Lastname + " ~ " + item.JobRoleName,
                             value: item.Firstname + " " + item.Lastname + " ~ " + item.JobRoleName,
@@ -165,10 +165,6 @@
 
     getLatestCmdList();
 
-    fillInPieChart();
-
-    defaultBarGraph();
-
     //calendar configuration
     $("#calendarCont").fullCalendar({
         header: {
@@ -183,15 +179,13 @@
         },
         eventSources: [
             {
-                url: "/Cmd/GetChangesImplemented",
+                url: $("#changesImplementedUrl").data("request-url"),
                 type: "GET",
                 data: {
-                
                 },
-                success: function(data) {
-
+                success: function (data) {
                 },
-                error: function() {
+                error: function () {
                     alert("there was an error while fetching events!");
                 },
 
@@ -199,15 +193,13 @@
                 textColor: "#e3e7fa"
             },
             {
-                url: "/Cmd/GetChangesUnImplemented",
+                url: $("#changesUnimplementedUrl").data("request-url"),
                 type: "GET",
                 data: {
-                
                 },
-                success: function(data) {
-
+                success: function (data) {
                 },
-                error: function() {
+                error: function () {
                     alert("there was an error while fetching events!");
                 },
 
@@ -215,15 +207,13 @@
                 textColor: "#e3e7fa"
             },
             {
-                url: "/Cmd/GetChangesPastTheDeadline",
+                url: $("#changesPastTheDeadlineUrl").data("request-url"),
                 type: "GET",
                 data: {
-                
                 },
-                success: function(data) {
-
+                success: function (data) {
                 },
-                error: function() {
+                error: function () {
                     alert("there was an error while fetching events!");
                 },
 
@@ -232,20 +222,20 @@
             }
         ],
 
-        eventClick: function(event, element) {
+        eventClick: function (event, element) {
             $("#viewCmdInfoModalCalendar").modal("show");
 
             var id = event.areas;
 
-            $("#btnGenerateCalendar").attr("data-generate-id", id);
+            $("#btnGenerate").attr("data-generate-id", id);
 
             var t = $("#affectedAreasTableViewCalendar").DataTable();
             var t1 = $("#signOffTableViewCalendar").DataTable();
 
             $.ajax({
                 type: "GET",
-                url: "/Cmd/Find?id=" + id,
-                success: function(data) {
+                url: $("#viewCalendarCmdUrl").data("request-url") + "?id=" + id,
+                success: function (data) {
                     var jsonStringified = JSON.stringify(data);
 
                     var cmdDetails = JSON.parse(jsonStringified);
@@ -288,7 +278,6 @@
 
                     $("#requestorViewCalendar").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
 
-
                     var j;
                     var resultSignOff = {};
                     for (j = 0; j < signOffDetails.length; j++) {
@@ -301,7 +290,7 @@
                         ]).draw(false);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert("Error while retrieving data of :" + id);
                 }
             });
@@ -324,7 +313,7 @@
     });
 
     //validations
-    $.validator.addMethod("futureDate", function(value, element) {
+    $.validator.addMethod("futureDate", function (value, element) {
         var curDate = new Date();
         var inputDate = new Date(value);
         if (inputDate > curDate)
@@ -332,7 +321,7 @@
         return false;
     }, "Invalid Date!");
 
-    $.validator.addMethod("futureDateAndSameValue", function(value, element) {
+    $.validator.addMethod("futureDateAndSameValue", function (value, element) {
         var curDate = new Date();
         var inputDate = new Date(value);
         var currentDateValue = new Date($("#targetImplementationTemp").val());
@@ -391,13 +380,13 @@
             }
         },
 
-        highlight: function(input) {
+        highlight: function (input) {
             $(input).addClass("error");
         },
-        unhighlight: function(input) {
+        unhighlight: function (input) {
             $(input).removeClass("error");
         },
-        errorPlacement: function(error, element) {
+        errorPlacement: function (error, element) {
             $(element).parents(".form-group").append(error);
         }
     });
@@ -423,8 +412,7 @@
             },
 
             TargetImplementation: {
-                required: true,
-                //futureDateAndSameValue: true
+                required: true
             }
         },
 
@@ -451,13 +439,13 @@
             }
         },
 
-        highlight: function(input) {
+        highlight: function (input) {
             $(input).addClass("error");
         },
-        unhighlight: function(input) {
+        unhighlight: function (input) {
             $(input).removeClass("error");
         },
-        errorPlacement: function(error, element) {
+        errorPlacement: function (error, element) {
             $(element).parents(".form-group").append(error);
         }
     });
@@ -527,61 +515,84 @@
             }
         },
 
-        highlight: function(input) {
+        highlight: function (input) {
             $(input).addClass("error");
         },
-        unhighlight: function(input) {
+        unhighlight: function (input) {
             $(input).removeClass("error");
         },
-        errorPlacement: function(error, element) {
+        errorPlacement: function (error, element) {
             $(element).parents(".form-group").append(error);
-            //$(element).parents('.radio-inline').append(error);
         }
     });
 });
 
-$(document).ready(function() {
+$(document).ready(function () {
     var t = $("#affectedAreasTable").DataTable();
 
-    $("#insertAffectedArea").on("click", function() {
+    $("#insertAffectedArea").on("click", function () {
         if ($("#affectedAreasApp").val() === "" && $("#affectedAreasDb").val() === "" && $("#affectedAreasServer").val() === "") {
             console.log("");
         } else {
             t.row.add([
-                $("#affectedAreasApp").val(),
-                $("#affectedAreasDb").val(),
-                $("#affectedAreasServer").val()
+                "<td><span class='tableContent'>" + $("#affectedAreasApp").val() + "</span></td>",
+                "<td><span class='tableContent'>" + $("#affectedAreasDb").val() + "</span></td>",
+                "<td><span class='tableContent'>" + $("#affectedAreasServer").val() + "</span></td>",
+                "<div class='btn-group'>" +
+                    "<span data-placement='top' data-toggle='tooltip' title='Remove Row'>" +
+                        "<button type='button' id='removeBtn' class='btn btn-danger btn-table btn-fill btn-sm' data-toggle='' data-target='' style='width:100%;'><i class='pe-7s-close' style='font-size:20px;'></i></button>" +
+                    "</span>" +
+                "</div>"
             ]).draw(false);
         }
     });
 
     var t1 = $("#signOffTable").DataTable();
 
-    $("#insertSignOff").on("click", function() {
+    $("#insertSignOff").on("click", function () {
         if ($("#signOffName").val() === "") {
             console.log("");
         } else {
             t1.row.add([
-                $("#signOffName").val().substring(0, $("#signOffName").val().indexOf("~")),
-                $("#signOffName").val().substring($("#signOffName").val().indexOf("~") + 1, $("#signOffName").val().length)
+                "<td><span class='tableContent'>" + $("#signOffName").val().substring(0, $("#signOffName").val().indexOf("~")) + "</span></td>",
+                "<td><span class='tableContent'>" + $("#signOffName").val().substring($("#signOffName").val().indexOf("~") + 1, $("#signOffName").val().length) + "</span></td>",
+                "<div class='btn-group'>" +
+                    "<span data-placement='top' data-toggle='tooltip' title='Remove Row'>" +
+                        "<button type='button' id='removeBtnSignOff' class='btn btn-danger btn-table btn-fill btn-sm' data-toggle='' data-target='' style='width:100%;'><i class='pe-7s-close' style='font-size:20px;'></i></button>" +
+                    "</span>" +
+                "</div>"
             ]).draw(false);
         }
     });
+
+    $('#affectedAreasTable tbody').on('click', '#removeBtn', function () {
+        t
+            .row($(this).parents("tr"))
+            .remove()
+            .draw();
+    });
+
+    $('#signOffTable tbody').on('click', '#removeBtnSignOff', function () {
+        t1
+            .row($(this).parents("tr"))
+            .remove()
+            .draw();
+    });
 });
 
-$(document).on("click", "#undoAffectedArea", function() {
+$(document).on("click", "#undoAffectedArea", function () {
     var table = $("#affectedAreasTable").DataTable();
 
     table.row((table.data().count() / 3) - 1).remove().draw();
 });
 
-$(document).on("click", "#undoSignOff", function() {
+$(document).on("click", "#undoSignOff", function () {
     var table = $("#signOffTable").DataTable();
 
     table.row((table.data().count() / 2) - 1).remove().draw();
 });
 
-$(document).on("hide.bs.modal", "#viewCmdInfoModal", function() {
+$(document).on("hide.bs.modal", "#viewCmdInfoModal", function () {
     var t = $("#affectedAreasTableView").DataTable();
 
     t.clear().draw();
@@ -591,7 +602,7 @@ $(document).on("hide.bs.modal", "#viewCmdInfoModal", function() {
     t1.clear().draw();
 });
 
-$(document).on("hide.bs.modal", "#viewCmdInfoModalCalendar", function() {
+$(document).on("hide.bs.modal", "#viewCmdInfoModalCalendar", function () {
     var t = $("#affectedAreasTableViewCalendar").DataTable();
 
     t.clear().draw();
@@ -601,7 +612,7 @@ $(document).on("hide.bs.modal", "#viewCmdInfoModalCalendar", function() {
     t1.clear().draw();
 });
 
-$(document).on("hide.bs.modal", "#editCmdInfoModal", function() {
+$(document).on("hide.bs.modal", "#editCmdInfoModal", function () {
     var t = $("#affectedAreasTableEdit").DataTable();
 
     t.clear().draw();
@@ -611,18 +622,18 @@ $(document).on("hide.bs.modal", "#editCmdInfoModal", function() {
     t1.clear().draw();
 });
 
-$(document).on("click", "#btnSave", function() {
+$(document).on("click", "#btnSave", function () {
     var changeEvaluation = 0;
     var type = 0;
 
-    $("input[id=correctivePatchRadio]:checked").val() == "on" ? type = 1 : type = 2;
+    $("input[id=correctivePatchRadio]:checked").val() === "on" ? type = 1 : type = 2;
 
-    $("input[id=highRadio]:checked").val() == "on" ? changeEvaluation = 1 : ($("input[id=mediumRadio]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
+    $("input[id=highRadio]:checked").val() === "on" ? changeEvaluation = 1 : ($("input[id=mediumRadio]:checked").val() === "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
     if ($("#newChangeDocumentForm").valid()) {
         $.ajax({
             method: "POST", //HTTP POST Method
-            url: "/Cmd/Save",
+            url: $("#insertNewCmdUrl").data("request-url"),
             data: {
                 ChangeObjective: $("#changeObjective").val(),
                 ChangeType: type,
@@ -633,11 +644,10 @@ $(document).on("click", "#btnSave", function() {
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newChangeDocumentForm").val(),
                 SignOff: JSON.stringify(tableToJSON($("#signOffTable"))),
             },
-            success: function(da) {
+            success: function (da) {
                 $.notify({
                     icon: "pe-7s-check",
                     message: "Change Management Document successfully recorded!"
-
                 }, {
                     type: "success",
                     timer: 4000,
@@ -649,11 +659,10 @@ $(document).on("click", "#btnSave", function() {
 
                 clearInputsNewCmd();
             },
-            error: function(da) {
+            error: function (da) {
                 $.notify({
                     icon: "pe-7s-close-circle",
                     message: "Error"
-
                 }, {
                     type: "danger",
                     timer: 4000,
@@ -667,10 +676,9 @@ $(document).on("click", "#btnSave", function() {
     }
 
     return false;
-
 });
 
-$(document).on("click", "#btnView", function() {
+$(document).on("click", "#btnView", function () {
     $("#viewCmdInfoModal").focus();
 
     var id = $(this).attr("data-id");
@@ -682,8 +690,8 @@ $(document).on("click", "#btnView", function() {
 
     $.ajax({
         type: "GET",
-        url: "/Cmd/Find?id=" + id,
-        success: function(data) {
+        url: $("#viewCmdUrl").data("request-url") + "?id=" + id,
+        success: function (data) {
             var jsonStringified = JSON.stringify(data);
 
             var cmdDetails = JSON.parse(jsonStringified);
@@ -727,7 +735,6 @@ $(document).on("click", "#btnView", function() {
 
             $("#requestorView").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
 
-
             var j;
             var resultSignOff = {};
             for (j = 0; j < signOffDetails.length; j++) {
@@ -740,19 +747,19 @@ $(document).on("click", "#btnView", function() {
                 ]).draw(false);
             }
         },
-        error: function() {
+        error: function () {
             alert("Error while retrieving data of :" + id);
         }
     });
 });
 
-$(document).on("click", "#btnGenerate", function() {
+$(document).on("click", "#btnGenerate", function () {
     var id = $(this).attr("data-generate-id");
-    window.location.href = "/Cmd/ExportCmd?id=" + id;
+
+    window.location.href = $("#exportCmdUrl").data("request-url") + "?id=" + id;
 });
 
-
-$(document).on("click", "#btnEdit", function() {
+$(document).on("click", "#btnEdit", function () {
     $("#editCmdInfoModal").focus();
 
     var nMaxLength = 2000;
@@ -772,8 +779,8 @@ $(document).on("click", "#btnEdit", function() {
 
     $.ajax({
         type: "GET",
-        url: "/Cmd/Find?id=" + id,
-        success: function(data) {
+        url: $("#viewCmdUrl").data("request-url") + "?id=" + id,
+        success: function (data) {
             var jsonStringified = JSON.stringify(data);
 
             var cmdDetails = JSON.parse(jsonStringified);
@@ -796,9 +803,9 @@ $(document).on("click", "#btnEdit", function() {
                 var server = objectInResponse.Server;
 
                 t.row.add([
-                    application,
-                    database,
-                    server
+                    "<td><span class='tableContent'>" + application + "</span></td>",
+                    "<td><span class='tableContent'>" + database + "</span></td>",
+                    "<td><span class='tableContent'>" + server + "</span></td>"
                 ]).draw(false);
             }
             console.log(cmdDetails.ChangeEvaluation);
@@ -809,7 +816,6 @@ $(document).on("click", "#btnEdit", function() {
 
             $("#targetImplementationTemp").val(targetImplementationDate);
 
-
             var j;
             var resultSignOff = {};
             for (j = 0; j < signOffDetails.length; j++) {
@@ -818,30 +824,30 @@ $(document).on("click", "#btnEdit", function() {
                 var role = objectInResponse.Role;
 
                 t1.row.add([
-                    name,
-                    role
+                    "<td><span class='tableContent'>" + name + "</span></td>",
+                    "<td><span class='tableContent'>" + role + "</span></td>"
                 ]).draw(false);
             }
         },
-        error: function() {
+        error: function () {
             alert("Error while retrieving data of :" + id);
         }
     });
 });
 
-$(document).on("click", "#btnUpdate", function() {
+$(document).on("click", "#btnUpdate", function () {
     var id = $(this).attr("data-edit-id");
 
     var changeEvaluation = 0;
     var type = 0;
 
-    $("input[id=correctivePatchRadioEdit]:checked").val() == "on" ? type = 1 : type = 2;
-    $("input[id=highRadioEdit]:checked").val() == "on" ? changeEvaluation = 1 : ($("input[id=mediumRadioEdit]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
+    $("input[id=correctivePatchRadioEdit]:checked").val() === "on" ? type = 1 : type = 2;
+    $("input[id=highRadioEdit]:checked").val() === "on" ? changeEvaluation = 1 : ($("input[id=mediumRadioEdit]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
     if ($("#editChangeDocumentForm").valid()) {
         $.ajax({
             method: "POST", //HTTP POST Method
-            url: "/Cmd/Update?id=" + id,
+            url: $("#updateCmdUrl").data("request-url") + "?id=" + id,
             data: {
                 ChangeObjective: $("#changeObjectiveEdit").val(),
                 ChangeType: type,
@@ -852,13 +858,12 @@ $(document).on("click", "#btnUpdate", function() {
                 SignOff: JSON.stringify(tableToJSON($("#signOffTableEdit"))),
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#editChangeDocumentForm").val(),
             },
-            success: function(da) {
+            success: function (da) {
                 var table = $("#cmdList").DataTable();
 
                 $.notify({
                     icon: "pe-7s-check",
                     message: "Change Management Document successfully updated!"
-
                 }, {
                     type: "success",
                     timer: 4000,
@@ -873,11 +878,10 @@ $(document).on("click", "#btnUpdate", function() {
                 table.destroy();
                 getList();
             },
-            error: function(da) {
+            error: function (da) {
                 $.notify({
                     icon: "pe-7s-close-circle",
                     message: "Error"
-
                 }, {
                     type: "danger",
                     timer: 4000,
@@ -891,11 +895,9 @@ $(document).on("click", "#btnUpdate", function() {
     }
 
     return false;
-
 });
 
-
-$(document).on("click", "#btnDelete", function() {
+$(document).on("click", "#btnDelete", function () {
     var id = $(this).attr("data-id");
 
     bootbox.confirm({
@@ -912,26 +914,25 @@ $(document).on("click", "#btnDelete", function() {
                 className: "btn btn-fill btn-success"
             }
         },
-        callback: function(result) {
+        callback: function (result) {
             if (result == true) {
                 $.ajax({
                     method: "POST",
-                    url: "/Cmd/Delete?id=" + id,
-                    success: function(da) {
+                    url: $("#deleteCmdUrl").data("request-url") + "?id=" + id,
+                    success: function (da) {
                         redrawDt();
                     },
-                    error: function(da) {
+                    error: function (da) {
                         alert("Error encountered!");
                     }
                 });
             } else {
-
             }
         }
     });
 });
 
-$(document).on("click", "#btnImplement", function() {
+$(document).on("click", "#btnImplement", function () {
     var id = $(this).attr("data-id");
 
     bootbox.confirm({
@@ -948,30 +949,29 @@ $(document).on("click", "#btnImplement", function() {
                 className: "btn btn-fill btn-danger"
             }
         },
-        callback: function(result) {
-            if (result == true) {
+        callback: function (result) {
+            if (result === true) {
                 $.ajax({
                     method: "POST",
-                    url: "/Cmd/Implement?id=" + id,
-                    success: function(da) {
+                    url: $("#implementCmdUrl").data("request-url") + "?id=" + id,
+                    success: function (da) {
                         redrawDt();
                     },
-                    error: function(da) {
+                    error: function (da) {
                         alert("Error encountered!");
                     }
                 });
             } else {
-
             }
         }
     });
 });
 
-$(document).on("click", "#btnInsertAccount", function() {
+$(document).on("click", "#btnInsertAccount", function () {
     if ($("#newUserAccountForm").valid()) {
         $.ajax({
             method: "POST",
-            url: "/Account/Register",
+            url: $("#insertAccountUrl").data("request-url"),
             data: {
                 Lastname: $("#Lastname").val(),
                 Firstname: $("#Firstname").val(),
@@ -983,13 +983,12 @@ $(document).on("click", "#btnInsertAccount", function() {
                 AccountRole: $("#AccountRole").val(),
                 __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newUserAccountForm").val(),
             },
-            success: function(da) {
+            success: function (da) {
                 var table = $("#accountList").DataTable();
 
                 $.notify({
                     icon: "pe-7s-check",
                     message: "User account successfully added!"
-
                 }, {
                     type: "success",
                     timer: 4000,
@@ -1004,11 +1003,10 @@ $(document).on("click", "#btnInsertAccount", function() {
                 table.destroy();
                 getAccountList();
             },
-            error: function(da) {
+            error: function (da) {
                 $.notify({
                     icon: "pe-7s-close-circle",
                     message: "Error"
-
                 }, {
                     type: "danger",
                     timer: 4000,
@@ -1022,237 +1020,59 @@ $(document).on("click", "#btnInsertAccount", function() {
     }
 
     return false;
-
-});
-
-$(document).on("change", "#barChartMonth", function() {
-    var month = $("#barChartMonth").val();
-
-    $.ajax({
-        type: "GET",
-        url: "/Cmd/GetCmdPercentagePerMonth?month=" + month,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: OnSuccess,
-        error: OnError
-    });
-
-    function OnSuccess(response) {
-        var jsonStringified = JSON.stringify(response);
-
-        var percentageDetails = JSON.parse(jsonStringified);
-
-        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        var data = {
-            labels: [months[month - 1]],
-            series: [
-              [percentageDetails.implemented],
-              [percentageDetails.notImplemented],
-              [percentageDetails.pastTheDeadline]
-            ]
-        };
-
-        var options = {
-            seriesBarDistance: 10,
-            axisX: {
-                showGrid: false
-            },
-            height: "245px"
-        };
-
-        var responsiveOptions = [
-          ['screen and (max-width: 640px)', {
-              seriesBarDistance: 5,
-              axisX: {
-                  labelInterpolationFnc: function (value) {
-                      return value[0];
-                  }
-              }
-          }]
-        ];
-
-        Chartist.Bar('#chartActivity', data, options, responsiveOptions);
-    }
-
-    function OnError(response) {
-        alert("Error !");
-    }
 });
 
 function tableToJSON(tblObj) {
     var data = [];
     var $headers = $(tblObj).find("th");
-    var $rows = $(tblObj).find("tbody tr").each(function(index) {
-        $cells = $(this).find("td");
+    var $rows = $(tblObj).find("tbody tr").each(function (index) {
+        $cells = $(this).find(".tableContent");
         data[index] = {};
-        $cells.each(function(cellIndex) {
+        $cells.each(function (cellIndex) {
             data[index][$($headers[cellIndex]).html()] = $(this).html();
         });
     });
     return data;
 }
 
-function fillInPieChart() {
-    $.ajax({
-        type: "GET",
-        url: "/Cmd/GetCmdPercentage",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: OnSuccess,
-        error: OnError
-    });
-
-    function OnSuccess(response) {
-        var jsonStringified = JSON.stringify(response);
-
-        var percentageDetails = JSON.parse(jsonStringified);
-
-        var dataPreferences = {
-            series: [
-                [25, 30, 20, 25]
-            ]
-        };
-
-        var optionsPreferences = {
-            donut: true,
-            donutWidth: 10,
-            startAngle: 0,
-            total: 100,
-            showLabel: false,
-            axisX: {
-                showGrid: false
-            }
-        };
-
-        Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
-
-        Chartist.Pie('#chartPreferences', {
-            //labels: ['(9.09%)', '(81.82%)', '(9.09%)'],
-            //series: [9.09, 81.82, 9.09]
-            labels: [(Math.floor(percentageDetails.implemented * 100) / 100) + "%", (Math.floor(percentageDetails.notImplemented * 100) / 100) + "%", (Math.floor(percentageDetails.pastTheDeadline * 100) / 100) + "%"],
-            series: [
-                {
-                    value: (Math.floor(percentageDetails.implemented * 100) / 100),
-                    name: 'Series 1',
-                    className: 'implementedChart',
-                    meta: 'Meta One'
-                },
-                {
-                    value: (Math.floor(percentageDetails.notImplemented * 100) / 100),
-                    name: 'Series 1',
-                    className: 'notImplementedChart',
-                    meta: 'Meta One'
-                },
-                {
-                    value: (Math.floor(percentageDetails.pastTheDeadline * 100) / 100),
-                    name: 'Series 1',
-                    className: 'pastTheDeadlineChart',
-                    meta: 'Meta One'
-                }
-        ]},
-        {
-            chartPadding: 30,
-            labelOffset: 40,
-            labelDirection: 'explode',
-            donut: true,
-            donutWidth: 50
-        });
-    }
-
-    function OnError(response) {
-        alert("Error !");
-    }
-}
-
-function defaultBarGraph() {
-    var currentMonth = new Date().getMonth() + 1;
-
-    $.ajax({
-        type: "GET",
-        url: "/Cmd/GetCmdPercentagePerMonth?month=" + currentMonth,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: OnSuccess,
-        error: OnError
-    });
-
-    function OnSuccess(response) {
-        var jsonStringified = JSON.stringify(response);
-
-        var percentageDetails = JSON.parse(jsonStringified);
-        
-        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        var data = {
-            labels: [months[new Date().getMonth()]],
-            series: [
-              [percentageDetails.implemented],
-              [percentageDetails.notImplemented],
-              [percentageDetails.pastTheDeadline]
-            ]
-        };
-
-        var options = {
-            seriesBarDistance: 10,
-            axisX: {
-                showGrid: false
-            },
-            height: "245px"
-        };
-
-        var responsiveOptions = [
-          ['screen and (max-width: 640px)', {
-              seriesBarDistance: 5,
-              axisX: {
-                  labelInterpolationFnc: function (value) {
-                      return value[0];
-                  }
-              }
-          }]
-        ];
-
-        Chartist.Bar('#chartActivity', data, options, responsiveOptions);
-    }
-
-    function OnError(response) {
-        alert("Error !");
-    }
+function testFunc() {
+    var num1 = 5;
 }
 
 function getList() {
     var table = $("#cmdList").DataTable({
         ajax: {
-            url: "/Cmd/GetAll",
-            dataSrc: "",
+            url: $("#getAllCmdUrl").data("request-url"),
+            dataSrc: ""
         },
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function(data, type, full, meta) {
+                render: function (data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
-
             },
             {
                 data: "ChangeType",
-                render: function(data) {
+                render: function (data) {
                     return data == 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
-                render: function(data) {
+                render: function (data) {
                     return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
                 }
             },
             {
                 data: "TargetImplementation",
-                render: function(data) {
+                render: function (data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "Id",
-                render: function(data) {
+                render: function (data) {
                     return "<div class='btn-group'>" +
                                 "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                                     "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
@@ -1276,43 +1096,43 @@ function getList() {
 function getHistoryList() {
     var table = $("#cmdHistoryList").DataTable({
         ajax: {
-            url: "/Cmd/GetAllHistory",
-            dataSrc: "",
+            url: $("#getAllCmdHistoryUrl").data("request-url"),
+            dataSrc: ""
         },
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function(data, type, full, meta) {
+                render: function (data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
             },
             {
                 data: "ChangeType",
-                render: function(data) {
+                render: function (data) {
                     return data == 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
-                render: function(data) {
+                render: function (data) {
                     return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
                 }
             },
             {
                 data: "TargetImplementation",
-                render: function(data) {
+                render: function (data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "ImplementedAt",
-                render: function(data) {
+                render: function (data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "Id",
-                render: function(data) {
+                render: function (data) {
                     return "<div class='btn-group'>" +
                                 "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                                     "<button type='button' class='btn btn-fill btn-table btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
@@ -1327,13 +1147,13 @@ function getHistoryList() {
 function getAccountList() {
     var table = $("#accountList").DataTable({
         ajax: {
-            url: "/Account/GetAll",
-            dataSrc: "",
+            url: $("#allAccountUrl").data("request-url"),
+            dataSrc: ""
         },
         columns: [
             {
                 data: "Lastname",
-                render: function(data, type, full, meta) {
+                render: function (data, type, full, meta) {
                     return full.Firstname + " " + full.Lastname;
                 }
             },
@@ -1347,7 +1167,6 @@ function getAccountList() {
     });
 }
 
-
 function getLatestCmdList() {
     var table = $("#latestCmdTable").DataTable({
         "paging": false,
@@ -1355,38 +1174,37 @@ function getLatestCmdList() {
         "info": false,
 
         ajax: {
-            url: "/Cmd/GetAllIncoming",
-            dataSrc: "",
+            url: $("#incomingCmdImplementationUrl").data("request-url"),
+            dataSrc: ""
         },
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function(data, type, full, meta) {
+                render: function (data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
-
             },
             {
                 data: "ChangeType",
-                render: function(data) {
-                    return data == 1 ? "Corrective Patch" : "New Function";
+                render: function (data) {
+                    return data === 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
-                render: function(data) {
-                    return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
+                render: function (data) {
+                    return data === 1 ? "High" : (data === 2 ? "Medium" : "Low");
                 }
             },
             {
                 data: "TargetImplementation",
-                render: function(data) {
+                render: function (data) {
                     return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy HH:MM");
                 }
             },
             {
                 data: "Id",
-                render: function(data) {
+                render: function (data) {
                     return "<div class='btn-group'>" +
                                 "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                                     "<button type='button' class='btn btn-fill btn-table btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +

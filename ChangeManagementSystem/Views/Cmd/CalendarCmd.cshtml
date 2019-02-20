@@ -2,6 +2,13 @@
     ViewBag.Title = "CalendarCmd";
 }
 
+<div id="changesImplementedUrl" data-request-url="@Url.Action("GetChangesImplemented", "Cmd")"></div>
+<div id="changesUnimplementedUrl" data-request-url="@Url.Action("GetChangesUnImplemented", "Cmd")"></div>
+<div id="changesPastTheDeadlineUrl" data-request-url="@Url.Action("GetChangesPastTheDeadline", "Cmd")"></div>
+<div id="viewCalendarCmdUrl" data-request-url="@Url.Action("Find", "Cmd")"></div>
+
+<div id="exportCmdUrl" data-request-url="@Url.Action("ExportCmd", "Cmd")"></div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col">
