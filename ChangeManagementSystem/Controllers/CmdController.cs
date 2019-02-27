@@ -39,6 +39,16 @@ namespace ChangeManagementSystem.Controllers
         {
             ViewBag.Current = "New Change Document";
 
+            var userId = User.Identity.GetUserId();
+
+            IEnumerable<SelectListItem> users = _context.Users.Where(u => u.Id != userId).Select(u => new SelectListItem
+            {
+                Value = u.Id.ToString(),
+                Text = u.Firstname + " " + u.Lastname + " ~ " + u.JobRoles.JobRoleName
+            });
+
+            ViewBag.SignOff = users;
+
             return View("NewCmd");
         }
 
@@ -52,6 +62,14 @@ namespace ChangeManagementSystem.Controllers
                            select new { u.Lastname, u.Firstname, u.JobRoles.JobRoleName };
 
             return Json(userList, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetLoggedUserInfo()
+        {
+            var userId = User.Identity.GetUserId();
+            var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
+
+            return Json(userInfo, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -86,7 +104,26 @@ namespace ChangeManagementSystem.Controllers
         {
             var cmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
 
-            return Json(cmdList, JsonRequestBehavior.AllowGet);
+            var cmdIdList = new List<int>();
+
+            var userId = User.Identity.GetUserId();
+
+            foreach (var cmdListItem in cmdList)
+            {
+                var jsonSignOff = cmdListItem.SignOff;
+                dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
+
+                foreach (var dynObjItem in dynObj)
+                {
+                    if (!dynObjItem[""].ToString().Equals(userId)) continue;
+                    cmdIdList.Add(cmdListItem.Id);
+                    break;
+                }
+            }
+
+            var cmdListFiltered = _context.ChangeManagements.Where(c => cmdIdList.Contains(c.Id) && c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+            return Json(cmdListFiltered, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetAllIncoming()
@@ -164,6 +201,14 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult Implement(int id)
         {
+            var userId = User.Identity.GetUserId();
+            var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
+
+            if (userInfo != null && !userInfo.JobRoles.CanImplement)
+            {
+                ModelState.AddModelError("unauthorize", "Not authorized");
+                return RedirectToAction("All");
+            }
             var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
 
             if (cmdRecord != null)

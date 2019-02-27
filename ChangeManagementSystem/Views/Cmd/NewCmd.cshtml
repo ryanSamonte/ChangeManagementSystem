@@ -128,7 +128,11 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="signOffName">Printed Name</label>
-                                        <input type="text" class="form-control form-control-sm" id="signOffName" name="signOffName">
+                                        @*<input type="text" class="form-control form-control-sm" id="signOffName" name="signOffName">*@
+                                        @if (ViewData["SignOff"] != null)
+                                        {
+                                            @Html.DropDownList("SignOff", (IEnumerable<SelectListItem>)ViewBag.SignOff, new { @class = "form-control" })
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -154,6 +158,7 @@
                                                     <th class="text-center">Name</th>
                                                     <th class="text-center">Role</th>
                                                     <th></th>
+                                                    <th class="td-id-cont">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>

@@ -1,4 +1,7 @@
-﻿@using Microsoft.AspNet.Identity
+﻿@using System.Activities.Expressions
+@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using Microsoft.AspNet.Identity
 @using ChangeManagementSystem.Models
 
 <!DOCTYPE html>
@@ -36,11 +39,31 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="@(ViewBag.Current == "New Change Document" ? "active" : "")">
-                        <a href="@Url.Action("New", "Cmd")">
-                            <i class="pe-7s-note2"></i>
-                            <p>Add New</p>
+                    <li class="@(ViewBag.Current == "New Change Document" ? "active" : (ViewBag.Current == "Manage Application" ? "active" : ""))">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#addNewCollapse" aria-expanded="false">
+                            <i class="pe-7s-plus"></i>
+                            <p>
+                                Add New
+                                <b class="caret"></b>
+                            </p>
                         </a>
+                        <div class="collapse" id="addNewCollapse">
+                            <ul class="nav">
+                                <li class="@(ViewBag.Current == "New Change Document" ? "active collapse-item" : "collapse-item")">
+                                    <a href="@Url.Action("New", "Cmd")">
+                                        <i class="pe-7s-note2 collapse-i"></i>
+                                        <p class="collapse-p">Change Document</p>
+                                    </a>
+                                </li>
+
+                                <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active collapse-item-one" : "collapse-item-one")">
+                                    <a class="" href="@Url.Action("All", "Application")">
+                                        <i class="pe-7s-credit collapse-i"></i>
+                                        <p class="collapse-p">Application</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     <li class="@(ViewBag.Current == "Manage Change Document" ? "active" : "")">
                         <a href="@Url.Action("All", "Cmd")">
@@ -62,35 +85,22 @@
                         </a>
                     </li>
 
-                    @if(User.IsInRole(AccountRoleName.Administrator)){
-                    <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
-                        <a href="@Url.Action("All", "Account")">
-                            <i class="pe-7s-id"></i>
-                            <p>User Account</p>
-                        </a>
-                    </li>   
-                    }
+                    @if (User.IsInRole(AccountRoleName.Administrator))
+                    {
+                        <li class="@(ViewBag.Current == "Manage Job Roles" ? "active" : "")">
+                            <a href="@Url.Action("All", "Roles")">
+                                <i class="pe-7s-users"></i>
+                                <p>Job Roles</p>
+                            </a>
+                        </li>
 
-                    <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "nav-item")">
-                        <a class="nav-link collapsed" data-toggle="collapse" href="#componentsExamples" aria-expanded="false">
-                            <i class="pe-7s-config"></i>
-                            <p>
-                                Maintenance
-                                <b class="caret"></b>
-                            </p>
-                        </a>
-                        <div class="collapse" id="componentsExamples">
-                            <ul class="nav">
-                                <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "")">
-                                    <a class="" href="@Url.Action("All", "Application")">
-                                        <p>
-                                            Manage Applications
-                                        </p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                        <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
+                            <a href="@Url.Action("All", "Account")">
+                                <i class="pe-7s-id"></i>
+                                <p>User Account</p>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
@@ -116,29 +126,28 @@
                                     </a>
                                 </li>
                                 @*<li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <p>
-                                            Dropdown
-                                            <b class="caret"></b>
-                                        </p>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Action</a></li>
-                                        <li><a href="#">Another action</a></li>
-                                        <li><a href="#">Something</a></li>
-                                        <li><a href="#">Another action</a></li>
-                                        <li><a href="#">Something</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Separated link</a></li>
-                                    </ul>
-                                </li>*@
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <p>
+                                                Dropdown
+                                                <b class="caret"></b>
+                                            </p>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#">Action</a></li>
+                                            <li><a href="#">Another action</a></li>
+                                            <li><a href="#">Something</a></li>
+                                            <li><a href="#">Another action</a></li>
+                                            <li><a href="#">Something</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#">Separated link</a></li>
+                                        </ul>
+                                    </li>*@
                                 @Html.AntiForgeryToken()
 
                                 <li>
                                     <a href="javascript:document.getElementById('logoutForm').submit()">
                                         Log out
                                     </a>
-
                                 </li>
                                 <li class="separator hidden-lg"></li>
                             </ul>
@@ -190,7 +199,7 @@
                                     </a>
                                 </li>
                             }
-                            
+
                             <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "")">
                                 <a class="" href="@Url.Action("All", "Application")">
                                     Manage Applications
@@ -325,20 +334,25 @@
         </div>
     </div>
 </body>
-    @Scripts.Render("~/bundles/datatable")
-    @*@Scripts.Render("~/bundles/jquery")*@
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/chartist")
-    @Scripts.Render("~/bundles/popper")
-    @Scripts.Render("~/bundles/tooltip")
-    @Scripts.Render("~/bundles/bootstrapnotify")
-    @Scripts.Render("~/bundles/lightbootstrap")
-    @Scripts.Render("~/bundles/dateformat")
-    @Scripts.Render("~/bundles/jqueryui")
-    @Scripts.Render("~/bundles/moment")
-    @Scripts.Render("~/bundles/fullcalendar")
-    @Scripts.Render("~/bundles/bootbox")
-    @Scripts.Render("~/bundles/site")
-    @RenderSection("scripts", required: false)
+@Scripts.Render("~/bundles/datatable")
+@*@Scripts.Render("~/bundles/jquery")*@
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/chartist")
+@Scripts.Render("~/bundles/popper")
+@Scripts.Render("~/bundles/tooltip")
+@Scripts.Render("~/bundles/bootstrapnotify")
+@Scripts.Render("~/bundles/lightbootstrap")
+@Scripts.Render("~/bundles/dateformat")
+@Scripts.Render("~/bundles/jqueryui")
+@Scripts.Render("~/bundles/moment")
+@Scripts.Render("~/bundles/fullcalendar")
+@Scripts.Render("~/bundles/bootbox")
+@Scripts.Render("~/bundles/table-configuration")
+@Scripts.Render("~/bundles/character-counter")
+@Scripts.Render("~/bundles/calendar-configuration")
+@Scripts.Render("~/bundles/form-validation")
+@Scripts.Render("~/bundles/cmd-crud")
+@Scripts.Render("~/bundles/cmd-role")
+@RenderSection("scripts", required: false)
 </html>

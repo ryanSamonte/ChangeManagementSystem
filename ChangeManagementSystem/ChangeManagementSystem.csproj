@@ -162,6 +162,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.cs" />
     <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.Designer.cs">
       <DependentUpon>201901090730292_AddIsImplementedColumnIntoCMDTable.cs</DependentUpon>
@@ -194,9 +195,13 @@
     <Compile Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.Designer.cs">
       <DependentUpon>201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201902190835430_RenameDatabase.cs" />
-    <Compile Include="Migrations\201902190835430_RenameDatabase.Designer.cs">
-      <DependentUpon>201902190835430_RenameDatabase.cs</DependentUpon>
+    <Compile Include="Migrations\201902260154398_InsertAdminAccount.cs" />
+    <Compile Include="Migrations\201902260154398_InsertAdminAccount.Designer.cs">
+      <DependentUpon>201902260154398_InsertAdminAccount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902270139482_AddCanImplementFieldIntoJobRoleModel.cs" />
+    <Compile Include="Migrations\201902270139482_AddCanImplementFieldIntoJobRoleModel.Designer.cs">
+      <DependentUpon>201902270139482_AddCanImplementFieldIntoJobRoleModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountRoleName.cs" />
     <Compile Include="Models\AffectedAreasModels.cs" />
@@ -283,9 +288,14 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\chartist.min.js" />
     <Content Include="Scripts\datatables.min.js" />
+    <Content Include="Scripts\Data\cmd-crud.js" />
+    <Content Include="Scripts\Data\cmd-role.js" />
     <Content Include="Scripts\date.format.js" />
     <Content Include="Scripts\demo.js" />
     <Content Include="Scripts\fullcalendar.js" />
+    <Content Include="Scripts\Function\calendar-configuration.js" />
+    <Content Include="Scripts\Function\character-counter.js" />
+    <Content Include="Scripts\Function\form-validation.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -302,7 +312,7 @@
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\site.js" />
+    <Content Include="Scripts\Function\table-configuration.js" />
     <Content Include="Scripts\tooltip.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
@@ -344,6 +354,7 @@
     <Content Include="Views\Account\All.cshtml" />
     <Content Include="Views\Cmd\CalendarCmd.cshtml" />
     <Content Include="Views\Application\AllApplication.cshtml" />
+    <Content Include="Views\Roles\AllRoles.cshtml" />
     <None Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -383,15 +394,18 @@
     <EmbeddedResource Include="Migrations\201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.resx">
       <DependentUpon>201901250650167_SetStringLengthOfObjectiveAndRequirementAttributes.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902190835430_RenameDatabase.resx">
-      <DependentUpon>201902190835430_RenameDatabase.cs</DependentUpon>
-    </EmbeddedResource>
     <Content Include="Reports\CmdReport.rpt" />
     <EmbeddedResource Include="Migrations\201901020042305_InitialMigration.resx">
       <DependentUpon>201901020042305_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901030346056_AddRequestorAndSignOffAttributes.resx">
       <DependentUpon>201901030346056_AddRequestorAndSignOffAttributes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902260154398_InsertAdminAccount.resx">
+      <DependentUpon>201902260154398_InsertAdminAccount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902270139482_AddCanImplementFieldIntoJobRoleModel.resx">
+      <DependentUpon>201902270139482_AddCanImplementFieldIntoJobRoleModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CmdReportJson.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

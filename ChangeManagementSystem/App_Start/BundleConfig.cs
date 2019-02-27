@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace ChangeManagementSystem
 {
@@ -55,8 +54,23 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/bootbox").Include(
                       "~/Scripts/bootbox.min.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/site").Include(
-                      "~/Scripts/site.js"));
+            bundles.Add(new ScriptBundle("~/bundles/table-configuration").Include(
+                      "~/Scripts/Function/table-configuration.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/character-counter").Include(
+                      "~/Scripts/Function/character-counter.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/calendar-configuration").Include(
+                      "~/Scripts/Function/calendar-configuration.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/form-validation").Include(
+                      "~/Scripts/Function/form-validation.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/cmd-crud").Include(
+                      "~/Scripts/Data/cmd-crud.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/cmd-role").Include(
+                      "~/Scripts/Data/cmd-role.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",

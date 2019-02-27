@@ -7,13 +7,13 @@ namespace ChangeManagementSystem.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.0-30225")]
-    public sealed partial class RenameDatabase : IMigrationMetadata
+    public sealed partial class InsertAdminAccount : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RenameDatabase));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InsertAdminAccount));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902190835430_RenameDatabase"; }
+            get { return "201902260154398_InsertAdminAccount"; }
         }
         
         string IMigrationMetadata.Source

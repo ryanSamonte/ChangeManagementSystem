@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ChangeManagementSystem.Models
 {
@@ -14,5 +10,8 @@ namespace ChangeManagementSystem.Models
 
         [Required]
         public string JobRoleName { get; set; }
+
+        [Required]
+        public bool CanImplement { get; set; }
     }
 }

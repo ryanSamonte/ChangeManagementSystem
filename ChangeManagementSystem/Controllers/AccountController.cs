@@ -90,7 +90,7 @@ namespace ChangeManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindAsync(model.Email, model.Password);
+                var user = await UserManager.FindAsync(model.Username, model.Password);
                 if (user != null)
                 {
                     await SignInAsync(user, model.RememberMe);
@@ -98,12 +98,14 @@ namespace ChangeManagementSystem.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Invalid username or password.");
+                    ModelState.AddModelError("loginError", "Invalid username or password.");
+                    return View();
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return RedirectToAction("LogIn");
+            ModelState.AddModelError("modelError", "Model error.");
+            return View();
         }
 
         //
@@ -117,16 +119,16 @@ namespace ChangeManagementSystem.Controllers
             {
                 var user = new ApplicationUser()
                 {
-                    UserName = model.Email,
-                    Email = model.Email,
+                    UserName = model.UserName,
                     Lastname = model.Lastname,
+                    Email = model.Email,
                     Firstname = model.Firstname,
                     JobRoleId = model.JobRoleId
                 };
                 IdentityResult result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInAsync(user, isPersistent: false);
+                    //await SignInAsync(user, isPersistent: false);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -139,13 +141,14 @@ namespace ChangeManagementSystem.Controllers
                 }
                 else
                 {
-                    AddErrors(result);
-                    return RedirectToAction("All", "Account");
+                    ModelState.AddModelError("registerError", "Invalid data");
+                    return View("All");
                 }
             }
 
             // If we got this far, something failed, redisplay form
             //return RedirectToAction("All", "Account", model);
+            ModelState.AddModelError("modelError", "Invalid model");
             return View("All");
         }
 

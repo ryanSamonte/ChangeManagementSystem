@@ -94,3 +94,62 @@ textarea {
     -ms-border-radius: 0px;
     border-radius: 0px;
 }
+
+.collapse-item {
+    margin-left: 20px;
+    margin-top: -22px;
+}
+
+.collapse-i {
+    font-size: 20px !important;
+}
+
+.collapse-p {
+    font-size: 11px !important;
+}
+
+.collapse-item-one {
+    margin-left: 20px;
+    font-size: 15px;
+}
+
+.td-id-cont {
+    display: none;
+}
+
+.btn-approve.btn-fill {
+    background-color: #ffe800;
+    border-color: #ffe800;
+}
+
+    .btn-approve.btn-fill:hover {
+        background-color: #e0ce11;
+        border-color: #e0ce11;
+    }
+
+    .btn-approve.btn-fill:active {
+        background-color: #ffe800 !important;
+        border-color: #ffe800 !important;
+    }
+
+.allow-select {
+    color: green;
+    border: green 2px solid;
+    font-weight: bold;
+}
+
+.deny-select {
+    color: red;
+    border: red 2px solid;
+    font-weight: bold;
+}
+
+.allow-radio {
+    color: green;
+    font-weight: bold;
+}
+
+.deny-radio {
+    color: red;
+    font-weight: bold;
+}
