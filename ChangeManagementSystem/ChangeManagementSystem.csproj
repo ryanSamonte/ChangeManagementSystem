@@ -203,6 +203,10 @@
     <Compile Include="Migrations\201902270139482_AddCanImplementFieldIntoJobRoleModel.Designer.cs">
       <DependentUpon>201902270139482_AddCanImplementFieldIntoJobRoleModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902280553413_AddIsApprovedFieldIntoChangeManagementModel.cs" />
+    <Compile Include="Migrations\201902280553413_AddIsApprovedFieldIntoChangeManagementModel.Designer.cs">
+      <DependentUpon>201902280553413_AddIsApprovedFieldIntoChangeManagementModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRoleName.cs" />
     <Compile Include="Models\AffectedAreasModels.cs" />
     <Compile Include="Models\JobRoleModels.cs" />
@@ -224,6 +228,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ChangeManagementModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\UserPrivileges.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\CmdReportJson.cs">
       <AutoGen>True</AutoGen>
@@ -289,7 +294,7 @@
     <Content Include="Scripts\chartist.min.js" />
     <Content Include="Scripts\datatables.min.js" />
     <Content Include="Scripts\Data\cmd-crud.js" />
-    <Content Include="Scripts\Data\cmd-role.js" />
+    <Content Include="Scripts\Data\role-crud.js" />
     <Content Include="Scripts\date.format.js" />
     <Content Include="Scripts\demo.js" />
     <Content Include="Scripts\fullcalendar.js" />
@@ -328,8 +333,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
@@ -406,6 +409,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902270139482_AddCanImplementFieldIntoJobRoleModel.resx">
       <DependentUpon>201902270139482_AddCanImplementFieldIntoJobRoleModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902280553413_AddIsApprovedFieldIntoChangeManagementModel.resx">
+      <DependentUpon>201902280553413_AddIsApprovedFieldIntoChangeManagementModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CmdReportJson.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

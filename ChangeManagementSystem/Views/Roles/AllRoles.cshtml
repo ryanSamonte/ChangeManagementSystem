@@ -4,11 +4,7 @@
     ViewBag.Title = "Index";
 }
 
-<div id="getLoggedUserUrl" data-request-url="@Url.Action("GetLoggedUserInfo", "Cmd")"></div>
-
-<div id="getAllCmdUrl" data-request-url="@Url.Action("GetAll", "Cmd")"></div>
-
-<div id="exportCmdUrl" data-request-url="@Url.Action("ExportCmd", "Cmd")"></div>
+<div id="getAllRoleUrl" data-request-url="@Url.Action("GetAll", "Roles")"></div>
 
 <div class="container-fluid">
     <div class="row">
@@ -20,13 +16,10 @@
                     <p class="category">View, Update or Delete Job Roles</p>
                 </div>
                 <div class="content table-responsive table-full-width">
-                    <table class="table table-hover table-striped text-center" id="cmdList">
+                    <table class="table table-hover table-striped text-center" id="rolesList">
                         <thead class="text-center">
                             <tr>
-                                <th class="text-center">Requestor</th>
-                                <th class="text-center">Change Type</th>
-                                <th class="text-center">Evaluation</th>
-                                <th class="text-center">Target Date</th>
+                                <th class="text-center">Job Role Name</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -104,112 +97,54 @@
     </div>
 </div>
 
-<div id="updateCmdUrl" data-request-url="@Url.Action("Update", "Cmd")"></div>
+<div id="findRoleUrl" data-request-url="@Url.Action("Find", "Roles")"></div>
 <div class="container-fluid">
-    <div class="modal fade" id="editCmdInfoModal" tabindex="-1" role="dialog" data-backdrop="false">
-        <div class="modal-dialog modal-lg" role="document">
+    <div class="modal fade" id="viewPrivilegeModal" tabindex="-1" role="dialog" data-backdrop="false">
+        <div class="modal-dialog" role="document">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #2471d1; color: #fff;">
                     <button type="button" class="close" data-dismiss="modal" style="color: #fff;">&times;</button>
-                    <h4 class="modal-title">Edit Change Management Document&nbsp;<span id="cmdNoEdit"></span></h4>
+                    <h4 class="modal-title" id="viewPrivilegesModalTitle"></h4>
                 </div>
                 <div class="modal-body">
-                    <form method="post" id="editChangeDocumentForm">
+                    <form method="post" id="viewJobRoleForm">
                         @Html.AntiForgeryToken()
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="changeObjectiveEdit">Objective</label>&nbsp;<small class="rem-label"><span class="remainingObjectiveEdit"></span></small>
-                                        <textarea class="form-control form-control-sm" id="changeObjectiveEdit" name="changeObjectiveEdit" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
+                                <div class="content table-responsive text-center">
+                                    <table class="table table-hover table-striped text-center">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th class="text-left">Privileges</th>
+                                                <th class="text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-left">
 
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group" style="padding: 5px; text-align: center;">
-                                        <fieldset class="fieldset">
-                                            <legend class="text-left" style="border: none; display: block; width: 100%; font-size: 0px;"><label style="margin-bottom: 8px; text-align: left; color: #333; font-size: 15px;">Type</label></legend>
-                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="ChangeTypeEdit" id="correctivePatchRadioEdit">Corrective Patch</label>
-                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="ChangeTypeEdit" id="newFunctionRadioEdit">New Function</label>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
+                                                    <p>Implement Changes</p>
+                                                </td>
 
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="changeRequirementEdit">Management Requirement</label>&nbsp;<small class="rem-label"><span class="remainingRequirementsEdit"></span></small>
-                                        <textarea class="form-control form-control-sm" id="changeRequirementEdit" name="changeRequirementEdit" rows="3"></textarea>
-                                    </div>
+                                                <td>
+                                                    <div class="form-group" style="padding: 5px; text-align: right;">
+                                                        <fieldset class="fieldset">
+                                                            <label class="radio-inline allow-radio" style="text-align: center;"><input type="radio" name="actionRadioView" id="allowRadioView" disabled>Allow</label>
+                                                            <label class="radio-inline deny-radio" style="text-align: center;"><input type="radio" name="actionRadioView" id="denyRadioView" disabled>Deny</label>
+                                                        </fieldset>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <hr style="border-bottom: 1px solid black;" />
-                            <label style="color: #333; font-size: 15px;">Affected Areas</label>
-                            <div class="row" style="margin-top: 15px;">
-                                <div class="col">
-                                    <div class="content table-responsive table-full-width">
-                                        <table class="table table-hover table-striped text-center" id="affectedAreasTableEdit" contenteditable="true">
-                                            <thead class="text-center">
-                                                <tr>
-                                                    <th class="text-center">Application</th>
-                                                    <th class="text-center">Database</th>
-                                                    <th class="text-center">Server</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr style="border-bottom: 1px solid black;" />
-                            <div class="row">
-                                <div class="col-md-6" style="margin-bottom: 25px;">
-                                    <div class="form-group" style="padding: 5px; text-align: center;">
-                                        <fieldset class="fieldset">
-                                            <legend class="text-left" style="border: none; display: block; width: 100%; font-size: 0px;"><label style="margin-bottom: 8px; text-align: left; color: #333; font-size: 15px;">Request Evaluation</label></legend>
-
-                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="evaluationRadioEdit" id="highRadioEdit">High</label>
-                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="evaluationRadioEdit" id="mediumRadioEdit">Medium</label>
-                                            <label class="radio-inline" style="text-align: center;"><input type="radio" name="evaluationRadioEdit" id="lowRadioEdit">Low</label>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="affectedAreasApp">Target Implementation Date and Time</label>
-                                        @Html.TextBoxFor(c => c.TargetImplementation, new { @class = "form-control form-control-sm", id = "targetImplementationEdit", type = "datetime-local", name = "targetImplementationEdit" })
-                                        <input type="hidden" name="targetImplementationTemp" value="" id="targetImplementationTemp" />
-                                    </div>
-                                </div>
-                            </div>
-                            <hr style="border-bottom: 1px solid black;" />
-                            <label style="color: #333; font-size: 15px;">Change Management Sign-off</label>
-                            <div class="row" style="margin-top: 15px;">
-                                <div class="col">
-                                    <div class="content table-responsive table-full-width">
-                                        <table class="table table-hover table-striped text-center" id="signOffTableEdit" contenteditable="true">
-                                            <thead class="text-center">
-                                                <tr>
-                                                    <th class="text-center">Name</th>
-                                                    <th class="text-center">Role</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr style="border-bottom: 1px solid black;" />
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-fill btn-success" id="btnUpdate" data-edit-id="">Save changes</button>
                     <button type="button" class="btn btn-fill btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -217,5 +152,67 @@
     </div>
 </div>
 
-<div id="deleteCmdUrl" data-request-url="@Url.Action("Delete", "Cmd")"></div>
-<div id="implementCmdUrl" data-request-url="@Url.Action("Implement", "Cmd")"></div>
+<div id="updateJobRoleUrl" data-request-url="@Url.Action("Update", "Roles")"></div>
+<div class="container-fluid">
+    <div class="modal fade" id="editPrivilegeModal" tabindex="-1" role="dialog" data-backdrop="false">
+        <div class="modal-dialog" role="document">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #2471d1; color: #fff;">
+                    <button type="button" class="close" data-dismiss="modal" style="color: #fff;">&times;</button>
+                    <h4 class="modal-title" id="editPrivilegesModalTitle"></h4>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="editJobRoleForm">
+                        @Html.AntiForgeryToken()
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="JobRoleName">Job Role</label>
+                                        <input type="text" class="form-control form-control-sm" id="JobRoleNameEdit" name="JobRoleName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="content table-responsive text-center">
+                                    <table class="table table-hover table-striped text-center">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th class="text-left">Privileges</th>
+                                                <th class="text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-left">
+
+                                                    <p>Implement Changes</p>
+                                                </td>
+
+                                                <td>
+                                                    <div class="form-group" style="padding: 5px; text-align: right;">
+                                                        <fieldset class="fieldset">
+                                                            <label class="radio-inline allow-radio" style="text-align: center;"><input type="radio" name="actionRadioEdit" id="allowRadioEdit">Allow</label>
+                                                            <label class="radio-inline deny-radio" style="text-align: center;"><input type="radio" name="actionRadioEdit" id="denyRadioEdit">Deny</label>
+                                                        </fieldset>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-fill btn-success" id="btnUpdatePrivilege" data-edit-id="">Save changes</button>
+                    <button type="button" class="btn btn-fill btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

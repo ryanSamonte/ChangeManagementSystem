@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -53,6 +50,8 @@ namespace ChangeManagementSystem.Models
         public string SignOff { get; set; }
 
         public bool IsImplemented { get; set; }
+
+        public bool IsApproved { get; set; }
 
         public DateTime? ImplementedAt { get; set; }
 

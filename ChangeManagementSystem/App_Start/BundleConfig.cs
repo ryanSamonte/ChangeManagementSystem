@@ -69,8 +69,8 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/cmd-crud").Include(
                       "~/Scripts/Data/cmd-crud.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/cmd-role").Include(
-                      "~/Scripts/Data/cmd-role.js"));
+            bundles.Add(new ScriptBundle("~/bundles/role-crud").Include(
+                      "~/Scripts/Data/role-crud.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",

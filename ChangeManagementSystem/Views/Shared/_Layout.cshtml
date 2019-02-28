@@ -4,6 +4,8 @@
 @using Microsoft.AspNet.Identity
 @using ChangeManagementSystem.Models
 
+@model UserPrivileges
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +18,7 @@
 
     @Styles.Render("~/Content/css")
 
-    <!--     Fonts and icons     -->
+    <!-- Fonts and icons -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
 
@@ -29,9 +31,10 @@
                 <div class="logo">
                     <a href="@Url.Action("Index", "Home")" class="simple-text">
                         @*<img src="~/Content/img/favicon.png" alt="CMS Icon" width="32px" />*@
-                        <span style="font-size:16px;text-transform:capitalize;">Change Management System</span>
+                        <span style="font-size: 16px; text-transform: capitalize;">Change Management System</span>
                     </a>
                 </div>
+
                 <ul class="nav">
                     <li class="@(ViewBag.Current == "Dashboard" ? "active" : "")">
                         <a href="@Url.Action("Index", "Home")">
@@ -39,7 +42,7 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="@(ViewBag.Current == "New Change Document" ? "active" : (ViewBag.Current == "Manage Application" ? "active" : ""))">
+                    <li class="@(ViewBag.Current == "New Change Document" ? "active" : (ViewBag.Current == "Manage Application" ? "active" : ""))" id="viewNav">
                         <a class="nav-link collapsed" data-toggle="collapse" href="#addNewCollapse" aria-expanded="false">
                             <i class="pe-7s-plus"></i>
                             <p>
@@ -65,12 +68,14 @@
                             </ul>
                         </div>
                     </li>
+
                     <li class="@(ViewBag.Current == "Manage Change Document" ? "active" : "")">
                         <a href="@Url.Action("All", "Cmd")">
                             <i class="pe-7s-folder"></i>
-                            <p>View All</p>
+                            <p>View CMD</p>
                         </a>
                     </li>
+
                     <li class="@(ViewBag.Current == "Change Document History" ? "active" : "")">
                         <a href="@Url.Action("History", "Cmd")">
                             <i class="pe-7s-box1"></i>
@@ -171,7 +176,12 @@
                             </li>
                             <li class="@(ViewBag.Current == "New Change Document" ? "active" : "")">
                                 <a href="@Url.Action("New", "Cmd")">
-                                    Add New
+                                    New CMD
+                                </a>
+                            </li>
+                            <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "")">
+                                <a class="" href="@Url.Action("All", "Application")">
+                                    New App
                                 </a>
                             </li>
                             <li class="@(ViewBag.Current == "Manage Change Document" ? "active" : "")">
@@ -193,18 +203,18 @@
 
                             @if (User.IsInRole(AccountRoleName.Administrator))
                             {
+                                <li class="@(ViewBag.Current == "Manage Job Roles" ? "active" : "")">
+                                    <a href="@Url.Action("All", "Roles")">
+                                        Job Roles
+                                    </a>
+                                </li>
+
                                 <li class="@(ViewBag.Current == "Manage User Account" ? "active" : "")">
                                     <a href="@Url.Action("All", "Account")">
                                         User Account
                                     </a>
                                 </li>
                             }
-
-                            <li class="@(ViewBag.Current == "Manage Application" ? "nav-item active" : "")">
-                                <a class="" href="@Url.Action("All", "Application")">
-                                    Manage Applications
-                                </a>
-                            </li>
                         </ul>
                     </nav>
                     <p class="copyright pull-right">
@@ -353,6 +363,28 @@
 @Scripts.Render("~/bundles/calendar-configuration")
 @Scripts.Render("~/bundles/form-validation")
 @Scripts.Render("~/bundles/cmd-crud")
-@Scripts.Render("~/bundles/cmd-role")
+@Scripts.Render("~/bundles/role-crud")
 @RenderSection("scripts", required: false)
 </html>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+        });
+
+        function getUserPrivilege() {
+            $.ajax({
+                url: '@Url.Action("GetLoggedUserInfo", "Cmd")',
+                type: "GET",
+                success: function (data) {
+                    var jsonStringified = JSON.stringify(data);
+                    var loggedUserDetails = JSON.parse(jsonStringified);
+
+                    var canImplement = loggedUserDetails.JobRoles.CanImplement;
+
+                }
+            });
+        }
+    </script>
+}

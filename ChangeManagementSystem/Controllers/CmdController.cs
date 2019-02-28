@@ -12,13 +12,6 @@ using System.Web.Mvc;
 
 namespace ChangeManagementSystem.Controllers
 {
-    public class Item
-    {
-        public string Application;
-        public string Database;
-        public string Server;
-    }
-
     [Authorize]
     public class CmdController : Controller
     {
@@ -34,96 +27,16 @@ namespace ChangeManagementSystem.Controllers
             _context.Dispose();
         }
 
-        // GET: Cmd
-        public ActionResult New()
-        {
-            ViewBag.Current = "New Change Document";
-
-            var userId = User.Identity.GetUserId();
-
-            IEnumerable<SelectListItem> users = _context.Users.Where(u => u.Id != userId).Select(u => new SelectListItem
-            {
-                Value = u.Id.ToString(),
-                Text = u.Firstname + " " + u.Lastname + " ~ " + u.JobRoles.JobRoleName
-            });
-
-            ViewBag.SignOff = users;
-
-            return View("NewCmd");
-        }
-
-        public JsonResult UserList(string prefix)
-        {
-            var users = _context.Users.ToList();
-
-            var userList = from u in users
-                           where u.Firstname.Contains(prefix)
-                           where u.Id != User.Identity.GetUserId()
-                           select new { u.Lastname, u.Firstname, u.JobRoles.JobRoleName };
-
-            return Json(userList, JsonRequestBehavior.AllowGet);
-        }
+        //Data Retrieval
 
         public ActionResult GetLoggedUserInfo()
         {
             var userId = User.Identity.GetUserId();
             var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
 
+            if (userInfo != null) ViewBag.CanImplementStatus = userInfo.JobRoles.CanImplement;
+
             return Json(userInfo, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Save(ChangeManagementModels cmdModel)
-        {
-            var r = DateTime.UtcNow.ToLocalTime().Hour + DateTime.UtcNow.ToLocalTime().Minute.ToString() +
-                    DateTime.UtcNow.ToLocalTime().Second;
-
-            cmdModel.CmdNo = "CMD-" + DateTime.Now.Year + "-" + r;
-            cmdModel.CreatedAt = DateTime.Now;
-            cmdModel.UpdatedAt = DateTime.Now;
-            cmdModel.DeletedAt = null;
-            cmdModel.ImplementedAt = null;
-            cmdModel.RequestorId = User.Identity.GetUserId();
-            cmdModel.IsImplemented = false;
-            _context.ChangeManagements.Add(cmdModel);
-
-            _context.SaveChanges();
-
-            return RedirectToAction("New");
-        }
-
-        public ActionResult All()
-        {
-            ViewBag.Current = "Manage Change Document";
-
-            return View("AllCmd");
-        }
-
-        public ActionResult GetAll()
-        {
-            var cmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
-
-            var cmdIdList = new List<int>();
-
-            var userId = User.Identity.GetUserId();
-
-            foreach (var cmdListItem in cmdList)
-            {
-                var jsonSignOff = cmdListItem.SignOff;
-                dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
-
-                foreach (var dynObjItem in dynObj)
-                {
-                    if (!dynObjItem[""].ToString().Equals(userId)) continue;
-                    cmdIdList.Add(cmdListItem.Id);
-                    break;
-                }
-            }
-
-            var cmdListFiltered = _context.ChangeManagements.Where(c => cmdIdList.Contains(c.Id) && c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
-
-            return Json(cmdListFiltered, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetAllIncoming()
@@ -154,6 +67,221 @@ namespace ChangeManagementSystem.Controllers
             return Json(implementedCmdCount, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult History()
+        {
+            ViewBag.Current = "Change Document History";
+
+            return View("HistoryCmd");
+        }
+
+        public ActionResult GetAllHistory()
+        {
+            var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented && c.DeletedAt == null).ToList();
+
+            return Json(cmdListHistory, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCmdPercentage()
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+
+            var cmdPercentagePerStatus = _context.ChangeManagements
+                .Select(d => new
+                {
+                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count),
+                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count),
+                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count)
+                }).FirstOrDefault();
+
+            return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCmdPercentagePerMonth(int month)
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+            var year = now.Year;
+
+            var cmdPercentagePerStatus = _context.ChangeManagements
+                .Select(d => new
+                {
+                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented && p.ImplementedAt.Value.Month == month && p.ImplementedAt.Value.Year == year).ToList().Count),
+                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now && p.TargetImplementation.Month == month && p.TargetImplementation.Year == year).ToList().Count),
+                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now && p.TargetImplementation.Month == month && p.TargetImplementation.Year == year).ToList().Count)
+                }).FirstOrDefault();
+
+            return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Calendar()
+        {
+            ViewBag.Current = "Change Document Calendar";
+
+            return View("CalendarCmd");
+        }
+
+        public ActionResult GetChangesImplemented()
+        {
+            var cmdListImplementationDates = _context.ChangeManagements
+                .Where(d => d.DeletedAt == null && d.IsImplemented)
+                .Select(d => new
+                {
+                    title = d.CmdNo,
+                    start = d.ImplementedAt,
+                    end = d.ImplementedAt,
+                    areas = d.Id,
+                    color = "green"
+                })
+                .ToList();
+
+            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetChangesUnImplemented()
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+
+            var cmdListImplementationDates = _context.ChangeManagements
+                .Where(d => d.DeletedAt == null && d.IsImplemented == false && d.TargetImplementation > now)
+                .Select(d => new
+                {
+                    title = d.CmdNo,
+                    start = d.TargetImplementation,
+                    end = d.TargetImplementation,
+                    areas = d.Id,
+                    color = "orange"
+                })
+                .ToList();
+
+            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetChangesPastTheDeadline()
+        {
+            var now = DateTime.UtcNow.ToLocalTime();
+
+            var cmdListImplementationDates = _context.ChangeManagements
+                .Where(d => d.DeletedAt == null && d.IsImplemented == false && d.TargetImplementation < now)
+                .Select(d => new
+                {
+                    title = d.CmdNo,
+                    start = d.TargetImplementation,
+                    end = d.TargetImplementation,
+                    areas = d.Id,
+                    color = "red",
+                    now
+                })
+                .ToList();
+
+            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
+        }
+
+        // CRUD
+
+        //Create
+        public ActionResult New()
+        {
+            ViewBag.Current = "New Change Document";
+
+            var userId = User.Identity.GetUserId();
+
+            IEnumerable<SelectListItem> users = _context.Users.Where(u => u.Id != userId).Select(u => new SelectListItem
+            {
+                Value = u.Id.ToString(),
+                Text = u.Firstname + " " + u.Lastname + " ~ " + u.JobRoles.JobRoleName
+            });
+
+            ViewBag.SignOff = users;
+
+            return View("NewCmd");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Save(ChangeManagementModels cmdModel)
+        {
+            var r = DateTime.UtcNow.ToLocalTime().Hour + DateTime.UtcNow.ToLocalTime().Minute.ToString() +
+                    DateTime.UtcNow.ToLocalTime().Second;
+
+            cmdModel.CmdNo = "CMD-" + DateTime.Now.Year + "-" + r;
+            cmdModel.CreatedAt = DateTime.Now;
+            cmdModel.UpdatedAt = DateTime.Now;
+            cmdModel.DeletedAt = null;
+            cmdModel.ImplementedAt = null;
+            cmdModel.RequestorId = User.Identity.GetUserId();
+            cmdModel.IsImplemented = false;
+            _context.ChangeManagements.Add(cmdModel);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("New");
+        }
+
+        //Read
+        public ActionResult All()
+        {
+            ViewBag.Current = "Manage Change Document";
+
+            return View("AllCmd");
+        }
+
+        public ActionResult GetAll()
+        {
+            var userId = User.Identity.GetUserId();
+            var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
+
+            var cmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+            if (userInfo != null && userInfo.JobRoles.CanImplement == false)
+            {
+                var cmdIdListForApproval = new List<int>();
+
+                foreach (var cmdListItem in cmdList)
+                {
+                    if (cmdListItem.IsApproved) continue;
+
+                    var jsonSignOff = cmdListItem.SignOff;
+                    dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
+
+                    foreach (var dynObjItem in dynObj)
+                    {
+                        if (!dynObjItem["Id"].ToString().Equals(userId)) continue;
+                        if (dynObjItem["Approved"].ToString().Equals("true")) continue;
+                        cmdIdListForApproval.Add(cmdListItem.Id);
+                        break;
+                    }
+                }
+
+                var cmdListForApproval = _context.ChangeManagements.Where(c => cmdIdListForApproval.Contains(c.Id) && c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+                return Json(cmdListForApproval, JsonRequestBehavior.AllowGet);
+            }
+
+            var cmdIdListReadyForImplementation = new List<int>();
+
+            foreach (var cmdListItem in cmdList)
+            {
+                if (cmdListItem.IsApproved)
+                {
+                    cmdIdListReadyForImplementation.Add(cmdListItem.Id);
+                    continue;
+                }
+
+                var jsonSignOff = cmdListItem.SignOff;
+                dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
+
+                foreach (var dynObjItem in dynObj)
+                {
+                    if (!dynObjItem["Id"].ToString().Equals(userId)) continue;
+                    cmdIdListReadyForImplementation.Add(cmdListItem.Id);
+                    break;
+                }
+            }
+
+            var cmdListForImplementation = _context.ChangeManagements.Where(c => cmdIdListReadyForImplementation.Contains(c.Id) && c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+            return Json(cmdListForImplementation, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Find(int id)
         {
             var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
@@ -161,6 +289,7 @@ namespace ChangeManagementSystem.Controllers
             return Json(cmdRecord, JsonRequestBehavior.AllowGet);
         }
 
+        //Update
         [ValidateAntiForgeryToken]
         public ActionResult Update(ChangeManagementModels cmdModel, int id)
         {
@@ -184,6 +313,7 @@ namespace ChangeManagementSystem.Controllers
             return RedirectToAction("All");
         }
 
+        //Delete
         public ActionResult Delete(int id)
         {
             var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
@@ -199,12 +329,49 @@ namespace ChangeManagementSystem.Controllers
             return RedirectToAction("All");
         }
 
+        //Approve
+        public ActionResult Approve(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            string updatedJson = "";
+            var cmdRecord = _context.ChangeManagements.SingleOrDefault(u => u.Id == id);
+
+            if (cmdRecord != null)
+            {
+                var jsonSignOff = cmdRecord.SignOff;
+                dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
+
+                foreach (var dynObjItem in dynObj)
+                {
+                    if (!dynObjItem["Id"].ToString().Equals(userId)) continue;
+                    dynObjItem["Approved"] = "true";
+                    updatedJson = JsonConvert.SerializeObject(dynObj);
+                    break;
+                }
+
+                cmdRecord.SignOff = updatedJson;
+            }
+
+            _context.Entry(cmdRecord).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            if (cmdRecord != null && !cmdRecord.SignOff.Contains("\"Approved\":\"false\""))
+            {
+                cmdRecord.IsApproved = true;
+                _context.Entry(cmdRecord).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("All");
+        }
+
+        //Implement
         public ActionResult Implement(int id)
         {
             var userId = User.Identity.GetUserId();
             var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
 
-            if (userInfo != null && !userInfo.JobRoles.CanImplement)
+            if (userInfo != null && userInfo.JobRoles.CanImplement == false)
             {
                 ModelState.AddModelError("unauthorize", "Not authorized");
                 return RedirectToAction("All");
@@ -213,6 +380,8 @@ namespace ChangeManagementSystem.Controllers
 
             if (cmdRecord != null)
             {
+                if (cmdRecord.IsApproved == false)
+                    return RedirectToAction("All");
                 cmdRecord.IsImplemented = true;
                 cmdRecord.ImplementedAt = DateTime.Now;
             }
@@ -223,6 +392,7 @@ namespace ChangeManagementSystem.Controllers
             return RedirectToAction("All");
         }
 
+        //Export
         public ActionResult ExportCmd(int id)
         {
             var from = DateTime.Parse("10/01/2011");
@@ -320,119 +490,6 @@ namespace ChangeManagementSystem.Controllers
             stream.Seek(0, SeekOrigin.Begin);
             return File(stream, "application/pdf",
                 DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToLocalTime().ToShortTimeString() + ".pdf");
-        }
-
-        public ActionResult History()
-        {
-            ViewBag.Current = "Change Document History";
-
-            return View("HistoryCmd");
-        }
-
-        public ActionResult GetAllHistory()
-        {
-            var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented && c.DeletedAt == null).ToList();
-
-            return Json(cmdListHistory, JsonRequestBehavior.AllowGet);
-        }
-
-        [AllowAnonymous]
-        public ActionResult GetCmdPercentage()
-        {
-            var now = DateTime.UtcNow.ToLocalTime();
-
-            var cmdPercentagePerStatus = _context.ChangeManagements
-                .Select(d => new
-                {
-                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count),
-                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count),
-                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now).ToList().Count * 100.00) / (_context.ChangeManagements.Where(a => a.DeletedAt == null).ToList().Count)
-                }).FirstOrDefault();
-
-            return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
-        }
-
-        [AllowAnonymous]
-        public ActionResult GetCmdPercentagePerMonth(int month)
-        {
-            var now = DateTime.UtcNow.ToLocalTime();
-            var year = now.Year;
-
-            var cmdPercentagePerStatus = _context.ChangeManagements
-                .Select(d => new
-                {
-                    implemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented && p.ImplementedAt.Value.Month == month && p.ImplementedAt.Value.Year == year).ToList().Count),
-                    notImplemented = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation > now && p.TargetImplementation.Month == month && p.TargetImplementation.Year == year).ToList().Count),
-                    pastTheDeadline = (_context.ChangeManagements.Where(p => p.DeletedAt == null && p.IsImplemented == false && p.TargetImplementation < now && p.TargetImplementation.Month == month && p.TargetImplementation.Year == year).ToList().Count)
-                }).FirstOrDefault();
-
-            return Json(cmdPercentagePerStatus, JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult Calendar()
-        {
-            ViewBag.Current = "Change Document Calendar";
-
-            return View("CalendarCmd");
-        }
-
-        [AllowAnonymous]
-        public ActionResult GetChangesImplemented()
-        {
-            var cmdListImplementationDates = _context.ChangeManagements
-                .Where(d => d.DeletedAt == null && d.IsImplemented)
-                .Select(d => new
-                {
-                    title = d.CmdNo,
-                    start = d.ImplementedAt,
-                    end = d.ImplementedAt,
-                    areas = d.Id,
-                    color = "green"
-                })
-                .ToList();
-
-            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
-        }
-
-        [AllowAnonymous]
-        public ActionResult GetChangesUnImplemented()
-        {
-            var now = DateTime.UtcNow.ToLocalTime();
-
-            var cmdListImplementationDates = _context.ChangeManagements
-                .Where(d => d.DeletedAt == null && d.IsImplemented == false && d.TargetImplementation > now)
-                .Select(d => new
-                {
-                    title = d.CmdNo,
-                    start = d.TargetImplementation,
-                    end = d.TargetImplementation,
-                    areas = d.Id,
-                    color = "orange"
-                })
-                .ToList();
-
-            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
-        }
-
-        [AllowAnonymous]
-        public ActionResult GetChangesPastTheDeadline()
-        {
-            var now = DateTime.UtcNow.ToLocalTime();
-
-            var cmdListImplementationDates = _context.ChangeManagements
-                .Where(d => d.DeletedAt == null && d.IsImplemented == false && d.TargetImplementation < now)
-                .Select(d => new
-                {
-                    title = d.CmdNo,
-                    start = d.TargetImplementation,
-                    end = d.TargetImplementation,
-                    areas = d.Id,
-                    color = "red",
-                    now
-                })
-                .ToList();
-
-            return Json(cmdListImplementationDates, JsonRequestBehavior.AllowGet);
         }
     }
 }

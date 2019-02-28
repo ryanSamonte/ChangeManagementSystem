@@ -70,6 +70,8 @@
         var t1 = $("#signOffTable").DataTable();
 
         $("#insertSignOff").on("click", function () {
+            var isApproved = false;
+
             if ($("#SignOff").val() === "") {
                 console.log("");
             } else {
@@ -79,6 +81,7 @@
                     "<td><span class='tableContent'>" + selectedItemText.substring(0, selectedItemText.indexOf("~")) + "</span></td>",
                     "<td><span class='tableContent'>" + selectedItemText.substring(selectedItemText.indexOf("~") + 1, selectedItemText.length) + "</span></td>",
                     "<td><span class='tableContent td-id-cont'>" + document.getElementById('SignOff').selectedOptions[0].value + "</span></td>",
+                    "<td><span class='tableContent td-id-cont'>" + false + "</span></td>",
                     "<div class='btn-group'>" +
                     "<span data-placement='top' data-toggle='tooltip' title='Remove Row'>" +
                     "<button type='button' id='removeBtnSignOff' class='btn btn-danger btn-table btn-fill btn-sm' data-toggle='' data-target='' style='width:100%;'><i class='pe-7s-close' style='font-size:20px;'></i></button>" +

@@ -303,7 +303,7 @@
                 }
             },
             callback: function (result) {
-                if (result == true) {
+                if (result === true) {
                     $.ajax({
                         method: "POST",
                         url: $("#deleteCmdUrl").data("request-url") + "?id=" + id,
@@ -354,6 +354,44 @@
             }
         });
     });
+
+    $(document).on("click", "#btnApprove", function () {
+        var id = $(this).attr("data-id");
+        var table = $("#cmdList").DataTable();
+
+        bootbox.confirm({
+            title: "Approve this Change Management Record",
+            size: "medium",
+            message: "Are you sure you want to approve this Change Document?",
+            buttons: {
+                confirm: {
+                    label: "Yes",
+                    className: "btn btn-fill btn-success"
+                },
+                cancel: {
+                    label: "No",
+                    className: "btn btn-fill btn-danger"
+                }
+            },
+            callback: function (result) {
+                if (result === true) {
+                    $.ajax({
+                        method: "POST",
+                        url: $("#approveCmdUrl").data("request-url") + "?id=" + id,
+                        success: function (da) {
+                            redrawDt();
+                            table.destroy();
+                            getList();
+                        },
+                        error: function (da) {
+                            alert("Error encountered!");
+                        }
+                    });
+                } else {
+                }
+            }
+        });
+    });
 });
 
 function tableToJSON(tblObj) {
@@ -383,9 +421,6 @@ function getLoggedUserInfo() {
 }
 
 function getList() {
-    var userPrivilege = $("#test").val();
-    console.log(userPrivilege);
-
     var table = $("#cmdList").DataTable({
         ajax: {
             url: $("#getAllCmdUrl").data("request-url"),
@@ -417,9 +452,31 @@ function getList() {
                 }
             },
             {
-                data: "Id",
+                data: "IsApproved",
                 render: function (data) {
+                    return data === true ? "<span class='label label-success'>For Implementation</span>" : "<span class='label label-danger'>Pending Approval</span>";
+                }
+            },
+            {
+                data: "Id",
+                render: function (data, type, full, meta) {
                     return canImplement === true ?
+                        (full.IsApproved === true ?
+                        "<div class='btn-group'>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
+                        "</span>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='Edit Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-warning btn-table editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit'><i class='pe-7s-note'></i></button>" +
+                        "</span>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='Set as Implemented'>" +
+                        "<button type='button' class='btn btn-fill btn-success btn-table implementButton' data-id=" + data + " name='implementButton' id='btnImplement'><i class='pe-7s-check'></i></button>" +
+                        "</span>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
+                        "</span>" +
+                        "</div>"
+                        :
                         "<div class='btn-group'>" +
                         "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                         "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
@@ -430,13 +487,11 @@ function getList() {
                         "<span data-placement='top' data-toggle='tooltip' title='Approve this Change Document'>" +
                         "<button type='button' class='btn btn-fill btn-approve btn-table approveButton' data-id=" + data + " data-toggle='modal' data-target='#approveCmdInfoModal' name='approveButton' id='btnApprove'><i class='pe-7s-like2'></i></button>" +
                         "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Set as Implemented'>" +
-                        "<button type='button' class='btn btn-fill btn-success btn-table implementButton' data-id=" + data + " name='implementButton' id='btnImplement'><i class='pe-7s-check'></i></button>" +
-                        "</span>" +
                         "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
                         "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
                         "</span>" +
                         "</div>"
+                        )
                         :
                         "<div class='btn-group'>" +
                         "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
