@@ -41,7 +41,7 @@
 
     <div class="row" style="margin-bottom: 30px;">
         <div class="col-md-6">
-            <div class="card" style="margin-bottom: 30px;min-height: 425px;">
+            <div class="card" id="donutChartCont" style="margin-bottom: 30px;min-height: 425px; display: none;">
                 <div class="header">
                     <h4 class="title">Change Document Record</h4>
                 </div>
@@ -60,7 +60,7 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card" style="margin-bottom: 0px;">
+            <div class="card" id="barChartCont" style="margin-bottom: 0px; display: none;">
                 <div class="header">
                     <h4 class="title">Change Document Every Month</h4>
                 </div>
@@ -313,6 +313,8 @@
             });
 
             function OnSuccess(response) {
+                $("#donutChartCont").css("display", "block");
+
                 var jsonStringified = JSON.stringify(response);
 
                 var percentageDetails = JSON.parse(jsonStringified);
@@ -369,7 +371,7 @@
             }
 
             function OnError(response) {
-                alert("No data available!");
+                $("#donutChartCont").hide();
             }
         }
 
@@ -386,9 +388,15 @@
             });
 
             function OnSuccess(response) {
+                $("#barChartCont").css("display", "block");
+
                 var jsonStringified = JSON.stringify(response);
 
                 var percentageDetails = JSON.parse(jsonStringified);
+
+                if (percentageDetails.implemented === 0 && percentageDetails.notImplemented === 0 && percentageDetails.pastTheDeadline === 0) {
+                    $("#barChartCont").hide();
+                }
 
                 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                 var data = {
@@ -423,7 +431,7 @@
             }
 
             function OnError(response) {
-                alert("No data available!");
+                $("#barChartCont").hide();
             }
         }
 
@@ -440,9 +448,15 @@
             });
 
             function OnSuccess(response) {
+                $("#barChartCont").css("display", "block");
+
                 var jsonStringified = JSON.stringify(response);
 
                 var percentageDetails = JSON.parse(jsonStringified);
+
+                if (percentageDetails.implemented === 0 && percentageDetails.notImplemented === 0 && percentageDetails.pastTheDeadline === 0) {
+                    $("#barChartCont").hide();
+                }
 
                 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                 var data = {
@@ -477,7 +491,7 @@
             }
 
             function OnError(response) {
-                alert("Error !");
+                $("#barChartCont").hide();
             }
         });
     </script>

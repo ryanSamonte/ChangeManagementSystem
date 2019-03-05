@@ -87,7 +87,7 @@
 
                             <div class="row">
                                 <div class="col">
-                                    <div class="content table-responsive table-full-width">
+                                    <div class="content table-responsive table-full-width" id="table-cont">
                                         <table class="table table-hover table-striped text-center" id="affectedAreasTable">
                                             <thead class="text-center">
                                                 <tr>
@@ -100,6 +100,7 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
+                                    <label id='affectedAreaErrorNew' class='error' style="display: none;">Affected area is required</label>
                                 </div>
                             </div>
                             <hr style="border-bottom: 1px solid black;" />
@@ -127,8 +128,7 @@
                             <div class="row" style="margin-top: 15px;">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="signOffName">Printed Name</label>
-                                        @*<input type="text" class="form-control form-control-sm" id="signOffName" name="signOffName">*@
+                                        <label for="insertSignOff">Printed Name</label>
                                         @if (ViewData["SignOff"] != null)
                                         {
                                             @Html.DropDownList("SignOff", (IEnumerable<SelectListItem>)ViewBag.SignOff, new { @class = "form-control" })
@@ -165,6 +165,7 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
+                                    <label id='signOffErrorNew' class='error' style="display: none;">Sign-off info is required</label>
                                 </div>
                             </div>
                             <hr style="border-bottom: 1px solid black;" />

@@ -6,10 +6,10 @@ namespace ChangeManagementSystem.Migrations
     {
         public override void Up()
         {
-            Sql("INSERT INTO JobRoleModels VALUES('Business Analyst', false)");
-            Sql("INSERT INTO JobRoleModels VALUES('Business Applications Development Manager', false)");
-            Sql("INSERT INTO JobRoleModels VALUES('Software Development Supervisor', false)");
-            Sql("INSERT INTO JobRoleModels VALUES('Head: IT and ISD', true)");
+            Sql("INSERT INTO JobRoleModels VALUES('Business Analyst')");
+            Sql("INSERT INTO JobRoleModels VALUES('Business Applications Development Manager')");
+            Sql("INSERT INTO JobRoleModels VALUES('Software Development Supervisor')");
+            Sql("INSERT INTO JobRoleModels VALUES('Head: IT and ISD')");
         }
 
         public override void Down()

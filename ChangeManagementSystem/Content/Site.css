@@ -2,6 +2,12 @@
     text-transform: none !important;
     font-size: 12px !important;
     color: red !important;
+    font-weight: normal !important;
+}
+
+.passwordOne {
+    font-weight: bold;
+    margin-left: 20px;
 }
 
 .implementedChart {
@@ -114,7 +120,7 @@ textarea {
 }
 
 .td-id-cont {
-    display: none;
+    visibility: hidden;
 }
 
 .btn-approve.btn-fill {
@@ -152,7 +158,4 @@ textarea {
 .deny-radio {
     color: red;
     font-weight: bold;
-}
-
-.btn-disabled {
 }

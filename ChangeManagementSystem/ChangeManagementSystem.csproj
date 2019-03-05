@@ -350,7 +350,7 @@
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Cmd\AllCmd.cshtml" />
+    <Content Include="Views\Cmd\AllCmdCreated.cshtml" />
     <Content Include="Views\Cmd\NewCmd.cshtml" />
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <Content Include="Views\Cmd\HistoryCmd.cshtml" />
@@ -358,6 +358,7 @@
     <Content Include="Views\Cmd\CalendarCmd.cshtml" />
     <Content Include="Views\Application\AllApplication.cshtml" />
     <Content Include="Views\Roles\AllRoles.cshtml" />
+    <Content Include="Views\Cmd\AllCmdApproval.cshtml" />
     <None Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,8 +1,11 @@
 ﻿$(document).ready(function () {
     var canImplement = true;
+
     getLoggedUserInfo();
 
     getList();
+
+    getListApproval();
 
     getHistoryList();
 
@@ -18,7 +21,7 @@
 
         $("input[id=highRadio]:checked").val() === "on" ? changeEvaluation = 1 : ($("input[id=mediumRadio]:checked").val() === "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
-        if ($("#newChangeDocumentForm").valid()) {
+        if ($("#newChangeDocumentForm").valid() && $("#affectedAreasTable").DataTable().rows().count() > 0 && $("#signOffTable").DataTable().rows().count() > 0) {
             $.ajax({
                 method: "POST", //HTTP POST Method
                 url: $("#insertNewCmdUrl").data("request-url"),
@@ -62,7 +65,12 @@
                 }
             });
         }
-
+        if ($("#affectedAreasTable").DataTable().rows().count() === 0) {
+            $("#affectedAreaErrorNew").show();
+        }
+        if ($("#signOffTable").DataTable().rows().count() === 0) {
+            $("#signOffErrorNew").show();
+        }
         return false;
     });
 
@@ -184,8 +192,9 @@
 
                 var i;
                 var result = {};
+                var objectInResponse;
                 for (i = 0; i < affectedAreaDetails.length; i++) {
-                    var objectInResponse = affectedAreaDetails[i];
+                    objectInResponse = affectedAreaDetails[i];
                     var application = objectInResponse.Application;
                     var database = objectInResponse.Database;
                     var server = objectInResponse.Server;
@@ -207,13 +216,22 @@
                 var j;
                 var resultSignOff = {};
                 for (j = 0; j < signOffDetails.length; j++) {
-                    var objectInResponse = signOffDetails[j];
+                    objectInResponse = signOffDetails[j];
                     var name = objectInResponse.Name;
                     var role = objectInResponse.Role;
+                    var id = objectInResponse.Id;
+                    var approve = objectInResponse.Approved;
 
                     t1.row.add([
-                        "<td><span class='tableContent'>" + name + "</span></td>",
-                        "<td><span class='tableContent'>" + role + "</span></td>"
+                    "<td><span class='tableContent'>" + name + "</span></td>",
+                    "<td><span class='tableContent'>" + role + "</span></td>",
+                    "<td><span class='tableContent td-id-cont'>" + id + "</span></td>",
+                    "<td><span class='tableContent td-id-cont'>" + approve + "</span></td>",
+                    "<div class='btn-group'>" +
+                    "<span data-placement='top' data-toggle='tooltip' title='Remove Row'>" +
+                    "<button type='button' id='removeBtnSignOffEdit' class='btn btn-danger btn-table btn-fill btn-sm' data-toggle='' data-target='' style='width:100%;'><i class='pe-7s-close' style='font-size:20px;'></i></button>" +
+                    "</span>" +
+                    "</div>"
                     ]).draw(false);
                 }
             },
@@ -232,7 +250,7 @@
         $("input[id=correctivePatchRadioEdit]:checked").val() === "on" ? type = 1 : type = 2;
         $("input[id=highRadioEdit]:checked").val() === "on" ? changeEvaluation = 1 : ($("input[id=mediumRadioEdit]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
-        if ($("#editChangeDocumentForm").valid()) {
+        if ($("#editChangeDocumentForm").valid() && $("#affectedAreasTableEdit").DataTable().rows().count() > 0 && $("#signOffTableEdit").DataTable().rows().count() > 0) {
             $.ajax({
                 method: "POST", //HTTP POST Method
                 url: $("#updateCmdUrl").data("request-url") + "?id=" + id,
@@ -280,6 +298,12 @@
                     });
                 }
             });
+        }
+        if ($("#affectedAreasTableEdit").DataTable().rows().count() === 0) {
+            $("#affectedAreaErrorEdit").show();
+        }
+        if ($("#signOffTableEdit").DataTable().rows().count() === 0) {
+            $("#signOffErrorEdit").show();
         }
 
         return false;
@@ -381,7 +405,7 @@
                         success: function (da) {
                             redrawDt();
                             table.destroy();
-                            getList();
+                            getListApproval();
                         },
                         error: function (da) {
                             alert("Error encountered!");
@@ -428,6 +452,57 @@ function getList() {
         },
         columns: [
             {
+                data: "ChangeType",
+                render: function (data) {
+                    return data === 1 ? "Corrective Patch" : "New Function";
+                }
+            },
+            {
+                data: "ChangeEvaluation",
+                render: function (data) {
+                    return data === 1 ? "High" : (data === 2 ? "Medium" : "Low");
+                }
+            },
+            {
+                data: "TargetImplementation",
+                render: function (data) {
+                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy hh:MM tt");
+                }
+            },
+            {
+                data: "IsApproved",
+                render: function (data) {
+                    return data === true ? "<span class='label label-success'>Ready for Implementation</span>" : "<span class='label label-danger'>Pending for Approval</span>";
+                }
+            },
+            {
+                data: "Id",
+                render: function (data, type, full, meta) {
+                    return "<div class='btn-group'>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
+                        "</span>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='Edit Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-warning btn-table editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit'><i class='pe-7s-note'></i></button>" +
+                        "</span>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
+                        "</span>" +
+                        "</div>";
+                }
+            }
+        ]
+    });
+}
+
+function getListApproval() {
+    var table = $("#cmdListApproval").DataTable({
+        ajax: {
+            url: $("#getAllCmdApprovalUrl").data("request-url"),
+            dataSrc: ""
+        },
+        columns: [
+            {
                 data: "ApplicationUser.Lastname",
                 render: function (data, type, full, meta) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
@@ -454,7 +529,7 @@ function getList() {
             {
                 data: "IsApproved",
                 render: function (data) {
-                    return data === true ? "<span class='label label-success'>For Implementation</span>" : "<span class='label label-danger'>Pending Approval</span>";
+                    return data === true ? "<span class='label label-success'>Ready for Implementation</span>" : "<span class='label label-danger'>Pending for Approval</span>";
                 }
             },
             {
@@ -466,14 +541,8 @@ function getList() {
                         "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                         "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
                         "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Edit Change Document Info'>" +
-                        "<button type='button' class='btn btn-fill btn-warning btn-table editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit'><i class='pe-7s-note'></i></button>" +
-                        "</span>" +
                         "<span data-placement='top' data-toggle='tooltip' title='Set as Implemented'>" +
                         "<button type='button' class='btn btn-fill btn-success btn-table implementButton' data-id=" + data + " name='implementButton' id='btnImplement'><i class='pe-7s-check'></i></button>" +
-                        "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
-                        "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
                         "</span>" +
                         "</div>"
                         :
@@ -481,14 +550,8 @@ function getList() {
                         "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                         "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
                         "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Edit Change Document Info'>" +
-                        "<button type='button' class='btn btn-fill btn-warning btn-table editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit'><i class='pe-7s-note'></i></button>" +
-                        "</span>" +
                         "<span data-placement='top' data-toggle='tooltip' title='Approve this Change Document'>" +
                         "<button type='button' class='btn btn-fill btn-approve btn-table approveButton' data-id=" + data + " data-toggle='modal' data-target='#approveCmdInfoModal' name='approveButton' id='btnApprove'><i class='pe-7s-like2'></i></button>" +
-                        "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
-                        "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
                         "</span>" +
                         "</div>"
                         )
@@ -497,14 +560,8 @@ function getList() {
                         "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                         "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
                         "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Edit Change Document Info'>" +
-                        "<button type='button' class='btn btn-fill btn-warning btn-table editButton' data-id=" + data + " data-toggle='modal' data-target='#editCmdInfoModal' name='editButton' id='btnEdit'><i class='pe-7s-note'></i></button>" +
-                        "</span>" +
                         "<span data-placement='top' data-toggle='tooltip' title='Approve this Change Document'>" +
                         "<button type='button' class='btn btn-fill btn-approve btn-table approveButton' data-id=" + data + " data-toggle='modal' data-target='#approveCmdInfoModal' name='approveButton' id='btnApprove'><i class='pe-7s-like2'></i></button>" +
-                        "</span>" +
-                        "<span data-placement='top' data-toggle='tooltip' title='Delete Change Document Info'>" +
-                        "<button type='button' class='btn btn-fill btn-danger btn-table deleteButton' data-id=" + data + " name='deleteButton' id='btnDelete'><i class='pe-7s-trash'></i></button>" +
                         "</span>" +
                         "</div>";
                 }
@@ -545,9 +602,9 @@ function getHistoryList() {
                 }
             },
             {
-                data: "ImplementedAt",
+                data: "IsApproved",
                 render: function (data) {
-                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy hh:MM tt");
+                    return data === true ? "<span class='label label-success'>Ready for Implementation</span>" : "<span class='label label-danger'>Pending for Approval by Other Signee/s</span>";
                 }
             },
             {

@@ -10,7 +10,7 @@
 <div class="container-fluid">
     @Html.ValidationMessage("registerError")
     @Html.ValidationMessage("modelError")
-    @Html.ValidationSummary("", new { @class = "text-danger" })
+    @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
     <div class="row">
         <div class="col">
             <div class="card">
@@ -57,7 +57,7 @@
                                     <div class="form-group">
                                         <label for="Lastname">Lastname</label>
                                         <input type="text" class="form-control form-control-sm" id="Lastname" name="Lastname">
-                                        @Html.ValidationMessageFor(m => m.Lastname, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(m => m.Lastname, "", new { @class = "" })
                                     </div>
                                 </div>
 

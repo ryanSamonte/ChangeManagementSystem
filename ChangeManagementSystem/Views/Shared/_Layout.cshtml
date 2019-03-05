@@ -69,11 +69,31 @@
                         </div>
                     </li>
 
-                    <li class="@(ViewBag.Current == "Manage Change Document" ? "active" : "")">
-                        <a href="@Url.Action("All", "Cmd")">
+                    <li class="@(ViewBag.Current == "Manage Change Document Created" ? "active" : (ViewBag.Current == "Approve/Implement Change Document" ? "active" : ""))" id="viewNav">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#viewCmdCollapse" aria-expanded="false">
                             <i class="pe-7s-folder"></i>
-                            <p>View CMD</p>
+                            <p>
+                                View CMD
+                                <b class="caret"></b>
+                            </p>
                         </a>
+                        <div class="collapse" id="viewCmdCollapse">
+                            <ul class="nav">
+                                <li class="@(ViewBag.Current == "Manage Change Document Created" ? "active collapse-item" : "collapse-item")">
+                                    <a href="@Url.Action("Created", "Cmd")">
+                                        <i class="pe-7s-print collapse-i"></i>
+                                        <p class="collapse-p">Created</p>
+                                    </a>
+                                </li>
+
+                                <li class="@(ViewBag.Current == "Approve/Implement Change Document" ? "nav-item active collapse-item-one" : "collapse-item-one")">
+                                    <a class="" href="@Url.Action("Approval", "Cmd")">
+                                        <i class="pe-7s-pen collapse-i"></i>
+                                        <p class="collapse-p">Approval</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
 
                     <li class="@(ViewBag.Current == "Change Document History" ? "active" : "")">

@@ -17,6 +17,18 @@
         return false;
     }, "Invalid Date!");
 
+    $.validator.addMethod("pwcheck", function (value) {
+        return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
+            && /[a-z]/.test(value) // has a lowercase letter
+            && /\d/.test(value); // has a digit
+    });
+
+    $.validator.addMethod("emptyTable", function (value) {
+        if ($("#affectedAreasTable").DataTable().rows().count() === 0)
+            return true;
+        return false;
+    }, "Empty Table!");
+
     $("#newChangeDocumentForm").validate({
         onkeyup: false,
         onsubmit: false,
@@ -40,6 +52,9 @@
             TargetImplementation: {
                 required: true,
                 futureDate: true
+            },
+            affectedAreasTable: {
+                emptyTable: true
             }
         },
 
@@ -63,6 +78,9 @@
             TargetImplementation: {
                 required: "Implementation date is required",
                 futureDate: "Invalid date or time input"
+            },
+            affectedAreasTable: {
+                emptyTable: "Empty Table!"
             }
         },
 
@@ -136,9 +154,78 @@
         }
     });
 
+    $("#newJobRoleForm").validate({
+        onkeyup: false,
+        onsubmit: false,
+        rules: {
+            JobRoleName: {
+                required: true
+            },
+
+            actionRadio: {
+                required: true
+            }
+        },
+
+        messages: {
+            JobRoleName: {
+                required: "Job role name is required"
+            },
+
+            actionRadio: {
+                required: "Privilege action is required"
+            }
+        },
+
+        highlight: function (input) {
+            $(input).addClass("error");
+        },
+        unhighlight: function (input) {
+            $(input).removeClass("error");
+        },
+        errorPlacement: function (error, element) {
+            $(element).parents(".form-group").append(error);
+        }
+    });
+
+    $("#editJobRoleForm").validate({
+        onkeyup: false,
+        onsubmit: false,
+        rules: {
+            JobRoleNameEdit: {
+                required: true
+            },
+
+            actionRadioEdit: {
+                required: true
+            }
+        },
+
+        messages: {
+            JobRoleNameEdit: {
+                required: "Job role name is required"
+            },
+
+            actionRadioEdit: {
+                required: "Privilege action is required"
+            }
+        },
+
+        highlight: function (input) {
+            $(input).addClass("error");
+        },
+        unhighlight: function (input) {
+            $(input).removeClass("error");
+        },
+        errorPlacement: function (error, element) {
+            $(element).parents(".form-group").append(error);
+        }
+    });
+
     $("#newUserAccountForm").validate({
         onkeyup: false,
         onsubmit: false,
+        wrapper: "div",
         rules: {
             Lastname: {
                 required: true
@@ -153,7 +240,9 @@
             },
 
             Password: {
-                required: true
+                required: true,
+                pwcheck: true,
+                minlength: 6
             },
 
             ConfirmPassword: {
@@ -184,7 +273,9 @@
             },
 
             Password: {
-                required: "Password is required"
+                required: "Password is required",
+                pwcheck: "Password must contain the following:</br><span class='passwordOne'>-lowercase letter</span></br><span class='passwordOne'>-uppercase letter</span></br><span class='passwordOne'>-special character (@ | . | _ | *)</span></br><span class='passwordOne'>-number</span>",
+                minlength: "Minimum length is six (6) characters"
             },
 
             ConfirmPassword: {

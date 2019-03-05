@@ -76,7 +76,32 @@ namespace ChangeManagementSystem.Controllers
 
         public ActionResult GetAllHistory()
         {
-            var cmdListHistory = _context.ChangeManagements.Where(c => c.IsImplemented && c.DeletedAt == null).ToList();
+            var userId = User.Identity.GetUserId();
+
+            var cmdList = _context.ChangeManagements.Where(c => c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+            var cmdIdListApproved = new List<int>();
+
+            foreach (var cmdListItem in cmdList)
+            {
+                var jsonSignOff = cmdListItem.SignOff;
+                dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
+
+                foreach (var dynObjItem in dynObj)
+                {
+                    if (!dynObjItem["Id"].ToString().Equals(userId)) continue;
+                    if (dynObjItem["Approved"].ToString().Equals("false")) continue;
+                    if (dynObjItem["Id"].ToString().Equals(userId) ||
+                        (dynObjItem["Id"].ToString().Equals(userId) && (cmdListItem.IsApproved ||
+                            cmdListItem.IsImplemented)))
+                    {
+                        cmdIdListApproved.Add(cmdListItem.Id);
+                        break;
+                    }
+                }
+            }
+
+            var cmdListHistory = _context.ChangeManagements.Where(c => cmdIdListApproved.Contains(c.Id) && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
 
             return Json(cmdListHistory, JsonRequestBehavior.AllowGet);
         }
@@ -217,14 +242,40 @@ namespace ChangeManagementSystem.Controllers
         }
 
         //Read
-        public ActionResult All()
+        public ActionResult Created()
         {
-            ViewBag.Current = "Manage Change Document";
+            ViewBag.Current = "Manage Change Document Created";
 
-            return View("AllCmd");
+            var userId = User.Identity.GetUserId();
+
+            IEnumerable<SelectListItem> users = _context.Users.Where(u => u.Id != userId).Select(u => new SelectListItem
+            {
+                Value = u.Id.ToString(),
+                Text = u.Firstname + " " + u.Lastname + " ~ " + u.JobRoles.JobRoleName
+            });
+
+            ViewBag.SignOff = users;
+
+            return View("AllCmdCreated");
         }
 
-        public ActionResult GetAll()
+        public ActionResult Approval()
+        {
+            ViewBag.Current = "Approve/Implement Change Document";
+
+            return View("AllCmdApproval");
+        }
+
+        public ActionResult GetAllCreated()
+        {
+            var userId = User.Identity.GetUserId();
+
+            var cmdList = _context.ChangeManagements.Where(c => c.RequestorId == userId && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+            return Json(cmdList, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetAllForApproval()
         {
             var userId = User.Identity.GetUserId();
             var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
@@ -272,6 +323,7 @@ namespace ChangeManagementSystem.Controllers
                 foreach (var dynObjItem in dynObj)
                 {
                     if (!dynObjItem["Id"].ToString().Equals(userId)) continue;
+                    if (dynObjItem["Approved"].ToString().Equals("true")) continue;
                     cmdIdListReadyForImplementation.Add(cmdListItem.Id);
                     break;
                 }
@@ -297,6 +349,8 @@ namespace ChangeManagementSystem.Controllers
 
             if (cmdRecord != null)
             {
+                if (cmdRecord.RequestorId != User.Identity.GetUserId())
+                    return RedirectToAction("Created");
                 cmdRecord.ChangeObjective = cmdModel.ChangeObjective;
                 cmdRecord.ChangeType = cmdModel.ChangeType;
                 cmdRecord.ChangeRequirements = cmdModel.ChangeRequirements;
@@ -305,12 +359,12 @@ namespace ChangeManagementSystem.Controllers
                 cmdRecord.TargetImplementation = cmdModel.TargetImplementation;
                 cmdRecord.SignOff = cmdModel.SignOff;
                 cmdRecord.UpdatedAt = DateTime.Now;
+
+                _context.Entry(cmdRecord).State = EntityState.Modified;
+                _context.SaveChanges();
             }
 
-            _context.Entry(cmdRecord).State = EntityState.Modified;
-            _context.SaveChanges();
-
-            return RedirectToAction("All");
+            return RedirectToAction("Created");
         }
 
         //Delete
@@ -320,20 +374,22 @@ namespace ChangeManagementSystem.Controllers
 
             if (cmdRecord != null)
             {
+                if (cmdRecord.RequestorId != User.Identity.GetUserId())
+                    return RedirectToAction("Created");
                 cmdRecord.DeletedAt = DateTime.Now;
+
+                _context.Entry(cmdRecord).State = EntityState.Modified;
+                _context.SaveChanges();
             }
 
-            _context.Entry(cmdRecord).State = EntityState.Modified;
-            _context.SaveChanges();
-
-            return RedirectToAction("All");
+            return RedirectToAction("Created");
         }
 
         //Approve
         public ActionResult Approve(int id)
         {
             var userId = User.Identity.GetUserId();
-            string updatedJson = "";
+            var updatedJson = "";
             var cmdRecord = _context.ChangeManagements.SingleOrDefault(u => u.Id == id);
 
             if (cmdRecord != null)
@@ -355,14 +411,13 @@ namespace ChangeManagementSystem.Controllers
             _context.Entry(cmdRecord).State = EntityState.Modified;
             _context.SaveChanges();
 
-            if (cmdRecord != null && !cmdRecord.SignOff.Contains("\"Approved\":\"false\""))
-            {
-                cmdRecord.IsApproved = true;
-                _context.Entry(cmdRecord).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
+            if (cmdRecord == null || cmdRecord.SignOff.Contains("\"Approved\":\"false\""))
+                return RedirectToAction("Approval");
+            cmdRecord.IsApproved = true;
+            _context.Entry(cmdRecord).State = EntityState.Modified;
+            _context.SaveChanges();
 
-            return RedirectToAction("All");
+            return RedirectToAction("Approval");
         }
 
         //Implement
@@ -374,14 +429,14 @@ namespace ChangeManagementSystem.Controllers
             if (userInfo != null && userInfo.JobRoles.CanImplement == false)
             {
                 ModelState.AddModelError("unauthorize", "Not authorized");
-                return RedirectToAction("All");
+                return RedirectToAction("Approval");
             }
             var cmdRecord = _context.ChangeManagements.FirstOrDefault(c => c.Id == id);
 
             if (cmdRecord != null)
             {
                 if (cmdRecord.IsApproved == false)
-                    return RedirectToAction("All");
+                    return RedirectToAction("Approval");
                 cmdRecord.IsImplemented = true;
                 cmdRecord.ImplementedAt = DateTime.Now;
             }
@@ -389,7 +444,7 @@ namespace ChangeManagementSystem.Controllers
             _context.Entry(cmdRecord).State = EntityState.Modified;
             _context.SaveChanges();
 
-            return RedirectToAction("All");
+            return RedirectToAction("Approval");
         }
 
         //Export
@@ -443,12 +498,6 @@ namespace ChangeManagementSystem.Controllers
             dynamic dynObj = JsonConvert.DeserializeObject(jsonAffectedArea);
             dynamic dynObjSignOff = JsonConvert.DeserializeObject(jsonSignOff);
 
-            var appValue = "";
-            var dbValue = "";
-            var serverValue = "";
-
-            var signoffInfoValue = "";
-
             rd.SetDataSource(cmdModel);
 
             foreach (var dynObjItem in dynObj)
@@ -458,9 +507,9 @@ namespace ChangeManagementSystem.Controllers
                 serverList.Add(dynObjItem["Server"].ToString());
             }
 
-            appValue = string.Join("\n\n", appList);
-            dbValue = string.Join("\n\n", dbList);
-            serverValue = string.Join("\n\n", serverList);
+            var appValue = string.Join("\n\n", appList);
+            var dbValue = string.Join("\n\n", dbList);
+            var serverValue = string.Join("\n\n", serverList);
 
             foreach (var dynObjSignOffItem in dynObjSignOff)
             {
@@ -471,7 +520,7 @@ namespace ChangeManagementSystem.Controllers
                 signoffInfoList.Add("Date:\n");
             }
 
-            signoffInfoValue = string.Join("\n", signoffInfoList);
+            var signoffInfoValue = string.Join("\n", signoffInfoList);
 
             rd.SetParameterValue("Application", appValue);
             rd.SetParameterValue("Database", dbValue);
