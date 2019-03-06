@@ -159,3 +159,12 @@
 
 <div id="implementCmdUrl" data-request-url="@Url.Action("Implement", "Cmd")"></div>
 <div id="approveCmdUrl" data-request-url="@Url.Action("Approve", "Cmd")"></div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/form-validation")
+    @Scripts.Render("~/bundles/character-counter")
+    @Scripts.Render("~/bundles/bootbox")
+    @Scripts.Render("~/bundles/bootstrapnotify")
+    @Scripts.Render("~/bundles/ChangeManagementViewModel")
+}

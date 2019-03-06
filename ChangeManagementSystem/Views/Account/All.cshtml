@@ -1,7 +1,5 @@
 ﻿@model ChangeManagementSystem.Models.RegisterViewModel
 
-@*@model ChangeManagementSystem.Models.ChangeManagementModels*@
-
 @{
     ViewBag.Title = "Index";
 }
@@ -10,7 +8,6 @@
 <div class="container-fluid">
     @Html.ValidationMessage("registerError")
     @Html.ValidationMessage("modelError")
-    @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
     <div class="row">
         <div class="col">
             <div class="card">
@@ -108,16 +105,6 @@
                                         }
                                     </div>
                                 </div>
-
-                                @*<div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="AccountRole">Account Role</label>
-                                            @if (ViewData["AccountRole"] != null)
-                                            {
-                                                @Html.DropDownList("AccountRole", (IEnumerable<SelectListItem>)ViewBag.AccountRole, new { @class = "form-control" })
-                                            }
-                                        </div>
-                                    </div>*@
                             </div>
                         </div>
                     </form>
@@ -130,3 +117,12 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/form-validation")
+    @Scripts.Render("~/bundles/character-counter")
+    @Scripts.Render("~/bundles/bootbox")
+    @Scripts.Render("~/bundles/bootstrapnotify")
+    @Scripts.Render("~/bundles/AccountViewModel")
+}

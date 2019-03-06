@@ -66,11 +66,14 @@ namespace ChangeManagementSystem
             bundles.Add(new ScriptBundle("~/bundles/form-validation").Include(
                       "~/Scripts/Function/form-validation.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/cmd-crud").Include(
-                      "~/Scripts/Data/cmd-crud.js"));
+            bundles.Add(new ScriptBundle("~/bundles/ChangeManagementViewModel").Include(
+                      "~/ViewModels/ChangeManagementViewModel.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/role-crud").Include(
-                      "~/Scripts/Data/role-crud.js"));
+            bundles.Add(new ScriptBundle("~/bundles/JobRoleViewModel").Include(
+                      "~/ViewModels/JobRoleViewModel.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/AccountViewModel").Include(
+                      "~/ViewModels/AccountViewModel.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",

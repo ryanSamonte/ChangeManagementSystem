@@ -300,3 +300,12 @@
 </div>
 
 <div id="deleteCmdUrl" data-request-url="@Url.Action("Delete", "Cmd")"></div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/form-validation")
+    @Scripts.Render("~/bundles/character-counter")
+    @Scripts.Render("~/bundles/bootbox")
+    @Scripts.Render("~/bundles/bootstrapnotify")
+    @Scripts.Render("~/bundles/ChangeManagementViewModel")
+}

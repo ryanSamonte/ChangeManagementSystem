@@ -59,6 +59,41 @@ namespace ChangeManagementSystem.Controllers
             return Json(cmdCount, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetForApprovalCount()
+        {
+            var userId = User.Identity.GetUserId();
+            var userInfo = _context.Users.SingleOrDefault(u => u.Id == userId);
+
+            var cmdList = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null).OrderBy(c => c.TargetImplementation).ToList();
+
+            var cmdForApprovalCount = new List<int>();
+
+            foreach (var cmdListItem in cmdList)
+            {
+                if (cmdListItem.IsApproved) continue;
+
+                var jsonSignOff = cmdListItem.SignOff;
+                dynamic dynObj = JsonConvert.DeserializeObject(jsonSignOff);
+
+                foreach (var dynObjItem in dynObj)
+                {
+                    if (!dynObjItem["Id"].ToString().Equals(userId)) continue;
+                    if (dynObjItem["Approved"].ToString().Equals("true")) continue;
+                    cmdForApprovalCount.Add(cmdListItem.Id);
+                    break;
+                }
+            }
+
+            return Json(cmdForApprovalCount.Count, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetForImplementationCount()
+        {
+            var cmdListReadyForImplementation = _context.ChangeManagements.Where(c => c.IsImplemented != true && c.DeletedAt == null && c.IsApproved).OrderBy(c => c.TargetImplementation).ToList().Count;
+
+            return Json(cmdListReadyForImplementation, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult GetImplementedCmdCount()
         {
             var implementedCmdCount =

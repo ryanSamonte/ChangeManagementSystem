@@ -38,8 +38,7 @@ namespace ChangeManagementSystem.Controllers
             }
         }
 
-        //[Authorize(Roles = AccountRoleName.Administrator)]
-        [AllowAnonymous]
+        [Authorize(Roles = AccountRoleName.Administrator)]
         public ActionResult All()
         {
             ViewBag.Current = "Manage User Account";
@@ -63,7 +62,6 @@ namespace ChangeManagementSystem.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         public JsonResult GetAll()
         {
             var userAccountList = _context.Users.ToList();
