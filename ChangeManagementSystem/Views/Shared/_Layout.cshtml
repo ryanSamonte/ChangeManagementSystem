@@ -96,11 +96,31 @@
                         </div>
                     </li>
 
-                    <li class="@(ViewBag.Current == "Change Document History" ? "active" : "")">
-                        <a href="@Url.Action("History", "Cmd")">
+                    <li class="@(ViewBag.Current == "Change Document Created" ? "active" : (ViewBag.Current == "Approved/Implemented Change Document" ? "active" : ""))" id="viewNav">
+                        <a class="nav-link collapsed" data-toggle="collapse" href="#viewCmdHistoryCollapse" aria-expanded="false">
                             <i class="pe-7s-box1"></i>
-                            <p>CMD History</p>
+                            <p>
+                                View History
+                                <b class="caret"></b>
+                            </p>
                         </a>
+                        <div class="collapse" id="viewCmdHistoryCollapse">
+                            <ul class="nav">
+                                <li class="@(ViewBag.Current == "Change Document Created" ? "active collapse-item" : "collapse-item")">
+                                    <a href="@Url.Action("CreatedHistory", "Cmd")">
+                                        <i class="pe-7s-print collapse-i"></i>
+                                        <p class="collapse-p">Created</p>
+                                    </a>
+                                </li>
+
+                                <li class="@(ViewBag.Current == "Approved/Implemented Change Document" ? "nav-item active collapse-item-one" : "collapse-item-one")">
+                                    <a class="" href="@Url.Action("ApprovalHistory", "Cmd")">
+                                        <i class="pe-7s-pen collapse-i"></i>
+                                        <p class="collapse-p">Approval</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
 
                     <li class="@(ViewBag.Current == "Change Document Calendar" ? "active" : "")">
@@ -204,13 +224,18 @@
                                     New App
                                 </a>
                             </li>
-                            <li class="@(ViewBag.Current == "Manage Change Document" ? "active" : "")">
-                                <a href="@Url.Action("All", "Cmd")">
-                                    View All
+                            <li class="@(ViewBag.Current == "Manage Change Document Created" ? "active" : "")">
+                                <a href="@Url.Action("Created", "Cmd")">
+                                    Created
                                 </a>
                             </li>
-                            <li class="@(ViewBag.Current == "Change Document History" ? "active" : "")">
-                                <a href="@Url.Action("History", "Cmd")">
+                            <li class="@(ViewBag.Current == "Approve/Implement Change Document" ? "active" : "")">
+                                <a class="" href="@Url.Action("Approval", "Cmd")">
+                                    Approval
+                                </a>
+                            </li>
+                            <li class="@(ViewBag.Current == "Change Document Created" ? "active" : "")">
+                                <a href="@Url.Action("CreatedHistory", "Cmd")">
                                     CMD History
                                 </a>
                             </li>
@@ -239,7 +264,7 @@
                     </nav>
                     <p class="copyright pull-right">
                         &copy;
-                        <script>document.write(new Date().getFullYear())</script> Change Management System
+                        <script>document.write(new Date().getFullYear())</script> CMS
                     </p>
                 </div>
             </footer>
@@ -384,7 +409,7 @@
 
         function getUserPrivilege() {
             $.ajax({
-                url: '@Url.Action("GetLoggedUserInfo", "Cmd")',
+                url: '@Url.Action("GetLoggedUserInfo", "DataRetrieval")',
                 type: "GET",
                 success: function (data) {
                     var jsonStringified = JSON.stringify(data);

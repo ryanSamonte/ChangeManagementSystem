@@ -7,13 +7,15 @@
 
     getListApproval();
 
-    getHistoryList();
+    getHistoryListCreated();
+
+    getHistoryListApproval();
 
     getLatestCmdList();
 
     $(document).on("click", "#btnSave", function () {
-        var changeEvaluation = 0;
-        var type = 0;
+        var changeEvaluation;
+        var type;
 
         $("input[id=correctivePatchRadio]:checked").val() === "on" ? type = 1 : type = 2;
 
@@ -31,9 +33,9 @@
                     ChangeEvaluation: changeEvaluation,
                     TargetImplementation: $("#targetImplementation").val(),
                     __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#newChangeDocumentForm").val(),
-                    SignOff: JSON.stringify(tableToJSON($("#signOffTable"))),
+                    SignOff: JSON.stringify(tableToJSON($("#signOffTable")))
                 },
-                success: function (da) {
+                success: function () {
                     $.notify({
                         icon: "pe-7s-check",
                         message: "Change Management Document successfully recorded!"
@@ -48,7 +50,7 @@
 
                     clearInputsNewCmd();
                 },
-                error: function (da) {
+                error: function () {
                     $.notify({
                         icon: "pe-7s-close-circle",
                         message: "Error"
@@ -100,9 +102,9 @@
                 $("#changeRequirementView").val(cmdDetails.ChangeRequirements);
 
                 var i;
-                var result = {};
+                var objectInResponse;
                 for (i = 0; i < affectedAreaDetails.length; i++) {
-                    var objectInResponse = affectedAreaDetails[i];
+                    objectInResponse = affectedAreaDetails[i];
                     var application = objectInResponse.Application;
                     var database = objectInResponse.Database;
                     var server = objectInResponse.Server;
@@ -113,7 +115,7 @@
                         server
                     ]).draw(false);
                 }
-                $("#requestEvaluationView").val((cmdDetails.ChangeEvaluation == 1 ? "High" : (cmdDetails.ChangeEvaluation == 2 ? "Medium" : "Low")));
+                $("#requestEvaluationView").val((cmdDetails.ChangeEvaluation === 1 ? "High" : (cmdDetails.ChangeEvaluation === 2 ? "Medium" : "Low")));
 
                 var nowDate = new Date(parseInt(cmdDetails.TargetImplementation.substr(6)));
                 var targetImplementationDate = nowDate.format("ddd mmm dd, yyyy hh:MM tt");
@@ -130,9 +132,8 @@
                 $("#requestorView").val(cmdDetails.ApplicationUser.Firstname + " " + cmdDetails.ApplicationUser.Lastname);
 
                 var j;
-                var resultSignOff = {};
                 for (j = 0; j < signOffDetails.length; j++) {
-                    var objectInResponse = signOffDetails[j];
+                    objectInResponse = signOffDetails[j];
                     var name = objectInResponse.Name;
                     var role = objectInResponse.Role;
                     t1.row.add([
@@ -190,7 +191,6 @@
                 $("#changeRequirementEdit").val(cmdDetails.ChangeRequirements);
 
                 var i;
-                var result = {};
                 var objectInResponse;
                 for (i = 0; i < affectedAreaDetails.length; i++) {
                     objectInResponse = affectedAreaDetails[i];
@@ -213,7 +213,6 @@
                 $("#targetImplementationTemp").val(targetImplementationDate);
 
                 var j;
-                var resultSignOff = {};
                 for (j = 0; j < signOffDetails.length; j++) {
                     objectInResponse = signOffDetails[j];
                     var name = objectInResponse.Name;
@@ -243,11 +242,10 @@
     $(document).on("click", "#btnUpdate", function () {
         var id = $(this).attr("data-edit-id");
 
-        var changeEvaluation = 0;
-        var type = 0;
-
+        var changeEvaluation;
+        var type;
         $("input[id=correctivePatchRadioEdit]:checked").val() === "on" ? type = 1 : type = 2;
-        $("input[id=highRadioEdit]:checked").val() === "on" ? changeEvaluation = 1 : ($("input[id=mediumRadioEdit]:checked").val() == "on" ? changeEvaluation = 2 : changeEvaluation = 3);
+        $("input[id=highRadioEdit]:checked").val() === "on" ? changeEvaluation = 1 : ($("input[id=mediumRadioEdit]:checked").val() === "on" ? changeEvaluation = 2 : changeEvaluation = 3);
 
         if ($("#editChangeDocumentForm").valid() && $("#affectedAreasTableEdit").DataTable().rows().count() > 0 && $("#signOffTableEdit").DataTable().rows().count() > 0) {
             $.ajax({
@@ -261,9 +259,9 @@
                     ChangeEvaluation: changeEvaluation,
                     TargetImplementation: $("#targetImplementationEdit").val(),
                     SignOff: JSON.stringify(tableToJSON($("#signOffTableEdit"))),
-                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#editChangeDocumentForm").val(),
+                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']", "#editChangeDocumentForm").val()
                 },
-                success: function (da) {
+                success: function () {
                     var table = $("#cmdList").DataTable();
 
                     $.notify({
@@ -283,7 +281,7 @@
                     table.destroy();
                     getList();
                 },
-                error: function (da) {
+                error: function () {
                     $.notify({
                         icon: "pe-7s-close-circle",
                         message: "Error"
@@ -330,17 +328,16 @@
                     $.ajax({
                         method: "POST",
                         url: $("#deleteCmdUrl").data("request-url") + "?id=" + id,
-                        success: function (da) {
+                        success: function () {
                             var table = $("#cmdList").DataTable();
                             redrawDt();
                             table.destroy();
                             getList();
                         },
-                        error: function (da) {
+                        error: function () {
                             alert("Error encountered!");
                         }
                     });
-                } else {
                 }
             }
         });
@@ -368,17 +365,16 @@
                     $.ajax({
                         method: "POST",
                         url: $("#implementCmdUrl").data("request-url") + "?id=" + id,
-                        success: function (da) {
+                        success: function () {
                             var table = $("#cmdListApproval").DataTable();
                             redrawDt();
                             table.destroy();
                             getListApproval();
                         },
-                        error: function (da) {
+                        error: function () {
                             alert("Error encountered!");
                         }
                     });
-                } else {
                 }
             }
         });
@@ -386,8 +382,6 @@
 
     $(document).on("click", "#btnApprove", function () {
         var id = $(this).attr("data-id");
-        var table = $("#cmdList").DataTable();
-
         bootbox.confirm({
             title: "Approve this Change Management Record",
             size: "medium",
@@ -407,17 +401,16 @@
                     $.ajax({
                         method: "POST",
                         url: $("#approveCmdUrl").data("request-url") + "?id=" + id,
-                        success: function (da) {
+                        success: function () {
                             var table = $("#cmdListApproval").DataTable();
                             redrawDt();
                             table.destroy();
                             getListApproval();
                         },
-                        error: function (da) {
+                        error: function () {
                             alert("Error encountered!");
                         }
                     });
-                } else {
                 }
             }
         });
@@ -427,7 +420,7 @@
 function tableToJSON(tblObj) {
     var data = [];
     var $headers = $(tblObj).find("th");
-    var $rows = $(tblObj).find("tbody tr").each(function (index) {
+    $(tblObj).find("tbody tr").each(function (index) {
         var $cells = $(this).find(".tableContent");
         data[index] = {};
         $cells.each(function (cellIndex) {
@@ -451,7 +444,7 @@ function getLoggedUserInfo() {
 }
 
 function getList() {
-    var table = $("#cmdList").DataTable({
+    $("#cmdList").DataTable({
         ajax: {
             url: $("#getAllCmdUrl").data("request-url"),
             dataSrc: ""
@@ -483,7 +476,7 @@ function getList() {
             },
             {
                 data: "Id",
-                render: function (data, type, full, meta) {
+                render: function (data) {
                     return "<div class='btn-group'>" +
                         "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
                         "<button type='button' class='btn btn-fill btn-primary btn-table viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
@@ -502,7 +495,7 @@ function getList() {
 }
 
 function getListApproval() {
-    var table = $("#cmdListApproval").DataTable({
+    $("#cmdListApproval").DataTable({
         ajax: {
             url: $("#getAllCmdApprovalUrl").data("request-url"),
             dataSrc: ""
@@ -510,7 +503,7 @@ function getListApproval() {
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function (data, type, full, meta) {
+                render: function (data, type, full) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
             },
@@ -540,7 +533,7 @@ function getListApproval() {
             },
             {
                 data: "Id",
-                render: function (data, type, full, meta) {
+                render: function (data, type, full) {
                     return canImplement === true ?
                         (full.IsApproved === true ?
                         "<div class='btn-group'>" +
@@ -576,29 +569,23 @@ function getListApproval() {
     });
 }
 
-function getHistoryList() {
-    var table = $("#cmdHistoryList").DataTable({
+function getHistoryListCreated() {
+    $("#cmdListCreatedHistory").DataTable({
         ajax: {
-            url: $("#getAllCmdHistoryUrl").data("request-url"),
+            url: $("#getAllCmdCreatedHistoryUrl").data("request-url"),
             dataSrc: ""
         },
         columns: [
             {
-                data: "ApplicationUser.Lastname",
-                render: function (data, type, full, meta) {
-                    return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
-                }
-            },
-            {
                 data: "ChangeType",
                 render: function (data) {
-                    return data == 1 ? "Corrective Patch" : "New Function";
+                    return data === 1 ? "Corrective Patch" : "New Function";
                 }
             },
             {
                 data: "ChangeEvaluation",
                 render: function (data) {
-                    return data == 1 ? "High" : (data == 2 ? "Medium" : "Low");
+                    return data === 1 ? "High" : (data === 2 ? "Medium" : "Low");
                 }
             },
             {
@@ -609,8 +596,59 @@ function getHistoryList() {
             },
             {
                 data: "IsApproved",
+                render: function (data, type, full) {
+                    return full.IsApproved === true && full.IsImplemented === false ? "<span class='label label-success'>Ready for Implementation</span>" : (full.IsApproved === false && full.IsImplemented === false ? "<span class='label label-danger'>Pending for Approval by Other Signee/s</span>" : "<span class='label label-primary'>Implemented</span>");
+                }
+            },
+            {
+                data: "Id",
                 render: function (data) {
-                    return data === true ? "<span class='label label-success'>Ready for Implementation</span>" : "<span class='label label-danger'>Pending for Approval by Other Signee/s</span>";
+                    return "<div class='btn-group'>" +
+                        "<span data-placement='top' data-toggle='tooltip' title='View Change Document Info'>" +
+                        "<button type='button' class='btn btn-fill btn-table btn-primary viewButton' data-id=" + data + " data-toggle='modal' data-target='#viewCmdInfoModal' name='viewButton' id='btnView'><i class='pe-7s-search'></i></button>" +
+                        "</span>" +
+                        "</div>";
+                }
+            }
+        ]
+    });
+}
+
+function getHistoryListApproval() {
+    $("#cmdListApprovalHistory").DataTable({
+        ajax: {
+            url: $("#getAllCmdApprovalHistoryUrl").data("request-url"),
+            dataSrc: ""
+        },
+        columns: [
+            {
+                data: "ApplicationUser.Lastname",
+                render: function (data, type, full) {
+                    return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
+                }
+            },
+            {
+                data: "ChangeType",
+                render: function (data) {
+                    return data === 1 ? "Corrective Patch" : "New Function";
+                }
+            },
+            {
+                data: "ChangeEvaluation",
+                render: function (data) {
+                    return data === 1 ? "High" : (data === 2 ? "Medium" : "Low");
+                }
+            },
+            {
+                data: "TargetImplementation",
+                render: function (data) {
+                    return new Date(parseInt(data.substr(6))).format("ddd mmm dd, yyyy hh:MM tt");
+                }
+            },
+            {
+                data: "IsApproved",
+                render: function (data, type, full) {
+                    return full.IsApproved === true && full.IsImplemented === false ? "<span class='label label-success'>Ready for Implementation</span>" : (full.IsApproved === false && full.IsImplemented === false ? "<span class='label label-danger'>Pending for Approval by Other Signee/s</span>" : "<span class='label label-primary'>Implemented</span>");
                 }
             },
             {
@@ -628,7 +666,7 @@ function getHistoryList() {
 }
 
 function getLatestCmdList() {
-    var table = $("#latestCmdTable").DataTable({
+    $("#latestCmdTable").DataTable({
         "paging": false,
         "ordering": false,
         "info": false,
@@ -640,7 +678,7 @@ function getLatestCmdList() {
         columns: [
             {
                 data: "ApplicationUser.Lastname",
-                render: function (data, type, full, meta) {
+                render: function (data, type, full) {
                     return full.ApplicationUser.Firstname + " " + full.ApplicationUser.Lastname;
                 }
             },

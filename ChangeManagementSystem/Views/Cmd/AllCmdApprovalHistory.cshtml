@@ -4,26 +4,29 @@
     ViewBag.Title = "Index";
 }
 
-<div id="getAllCmdHistoryUrl" data-request-url="@Url.Action("GetAllHistory", "Cmd")"></div>
+<div id="getLoggedUserUrl" data-request-url="@Url.Action("GetLoggedUserInfo", "DataRetrieval")"></div>
+
+<div id="getAllCmdApprovalHistoryUrl" data-request-url="@Url.Action("GetAllForApprovalHistory", "DataRetrieval")"></div>
 
 <div id="exportCmdUrl" data-request-url="@Url.Action("ExportCmd", "Cmd")"></div>
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col">
             <div class="card">
                 <div class="header">
-                    <h4 class="title">Change Management Document History</h4>
-                    <p class="category">View Change Management Document History</p>
+                    <h4 class="title">Change Management Document Records</h4>
+                    <p class="category">View Approved or Implemented Change Management Document</p>
                 </div>
                 <div class="content table-responsive table-full-width">
-                    <table class="table table-hover table-striped text-center" id="cmdHistoryList">
+                    <table class="table table-hover table-striped text-center" id="cmdListApprovalHistory">
                         <thead class="text-center">
                             <tr>
                                 <th class="text-center">Requestor</th>
                                 <th class="text-center">Change Type</th>
                                 <th class="text-center">Evaluation</th>
                                 <th class="text-center">Target Date</th>
-                                <th class="text-center">Current Status</th>
+                                <th class="text-center">Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -52,7 +55,7 @@
                         @Html.AntiForgeryToken()
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="changeObjectiveView">Objective</label>
                                         <textarea class="form-control form-control-sm" id="changeObjectiveView" name="changeObjectiveView" rows="3" readonly></textarea>
@@ -60,10 +63,8 @@
                                 </div>
                             </div>
 
-                            <hr style="border-bottom: 1px solid black;" />
-
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="changeTypeView">Type</label>
                                         <select class="form-control form-control-sm" id="changeTypeView" name="changeTypeView" disabled>
@@ -74,23 +75,19 @@
                                 </div>
                             </div>
 
-                            <hr style="border-bottom: 1px solid black;" />
-
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="changeRequirementView">Management Requirement</label>
                                         <textarea class="form-control form-control-sm" id="changeRequirementView" name="changeRequirementView" rows="3" readonly></textarea>
                                     </div>
                                 </div>
                             </div>
-
                             <hr style="border-bottom: 1px solid black;" />
-
                             <label style="color: #333; font-size: 15px;">Affected Areas</label>
                             <div class="row" style="margin-top: 15px;">
-                                <div class="col-md-12">
-                                    <div class="content table-responsive">
+                                <div class="col">
+                                    <div class="content table-responsive table-full-width">
                                         <table class="table table-hover table-striped text-center" id="affectedAreasTableView">
                                             <thead class="text-center">
                                                 <tr>
@@ -104,41 +101,27 @@
                                     </div>
                                 </div>
                             </div>
-
                             <hr style="border-bottom: 1px solid black;" />
-
                             <div class="row">
-                                <div class="col-md-12" style="margin-bottom: 25px;">
+                                <div class="col-md-6" style="margin-bottom: 25px;">
                                     <div class="form-group">
                                         <label for="requestEvaluationView">Request Evaluation</label>
                                         <input type="text" class="form-control form-control-sm" id="requestEvaluationView" name="requestEvaluationView" readonly>
                                     </div>
                                 </div>
-                            </div>
-
-                            <hr style="border-bottom: 1px solid black;" />
-
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="targetImplementationView">Target Implementation Date and Time</label>
                                         <input type="text" class="form-control form-control-sm" id="targetImplementationView" name="targetImplementationView" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="implementedAtView">Date Implemented</label>
-                                        <input type="text" class="form-control form-control-sm" id="implementedAtView" name="implementedAtView" readonly>
-                                    </div>
-                                </div>
                             </div>
-
                             <hr style="border-bottom: 1px solid black;" />
                             <label style="color: #333; font-size: 15px;">Change Management Sign-off</label>
                             <br /><br />
                             <label style="color: #333; font-size: 13px;">Requestor:</label>
                             <div class="row" style="margin-top: 15px;">
-                                <div class="col-md-12">
+                                <div class="col">
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-sm" id="requestorView" name="requestorView" readonly>
                                     </div>
@@ -147,8 +130,8 @@
                             <br />
                             <label style="color: #333; font-size: 13px;">Reviewed by:</label>
                             <div class="row" style="margin-top: 15px;">
-                                <div class="col-md-12">
-                                    <div class="content table-responsive">
+                                <div class="col">
+                                    <div class="content table-responsive table-full-width">
                                         <table class="table table-hover table-striped text-center" id="signOffTableView">
                                             <thead class="text-center">
                                                 <tr>
@@ -173,3 +156,7 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/ChangeManagementViewModel")
+}

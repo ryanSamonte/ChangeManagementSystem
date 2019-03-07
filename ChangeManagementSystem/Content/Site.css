@@ -5,6 +5,29 @@
     font-weight: normal !important;
 }
 
+#loginForm {
+    background-image: url("img/login-bg.jpg");
+    background-repeat: no-repeat;
+    -ms-background-size: contain;
+    background-size: contain;
+}
+
+.login-icon {
+    width: 85px;
+}
+
+.login-heading {
+    text-transform: uppercase;
+    font-family: 'Arial';
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.text-danger-custom {
+    color: #a7000a;
+    font-weight: bold;
+}
+
 .passwordOne {
     font-weight: bold;
     margin-left: 20px;

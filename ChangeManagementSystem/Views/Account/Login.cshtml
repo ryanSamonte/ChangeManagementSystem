@@ -12,37 +12,32 @@
             <div class="row">
                 <div class="col-md-3"><br></div>
                 <div class="col-md-6">
-                    <section id="loginForm" style="margin-top: 100px;">
+                    <section style="margin-top: 100px;">
+                        @*<h2><span><img class="login-icon" src="../../Content/img/favicon.png" /></span>LOG IN<span class="login-heading">Change Management System</span></h2>*@
+
                         <h2>LOG IN</h2>
                         @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                         {
 
-                            @Html.ValidationMessage("loginError", new { @class = "text-danger" })
-                            @Html.ValidationMessage("modelError", new { @class = "text-danger" })
+                            @Html.ValidationMessage("loginError", new { @class = "text-danger-custom" })
+                            @Html.ValidationMessage("modelError", new { @class = "text-danger-custom" })
                             @Html.AntiForgeryToken();
                             <hr>
                             <div class="form-group">
                                 @Html.LabelFor(m => m.Username, new { @class = "col-md-2 control-label" })
                                 <div class="col-md-10">
                                     @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger-custom" })
                                 </div>
                             </div>
                             <div class="form-group">
                                 @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
                                 <div class="col-md-10">
                                     @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger-custom" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-md-offset-2 col-md-10">
-                                    <div class="checkbox">
-                                        @Html.CheckBoxFor(m => m.RememberMe)
-                                        @Html.LabelFor(m => m.RememberMe)
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">
                                     <input type="submit" value="Log in" class="btn btn-info btn-fill pull-right" />

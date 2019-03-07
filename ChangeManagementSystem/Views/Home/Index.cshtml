@@ -158,7 +158,7 @@
         </div>
     </div>
 
-    <div id="incomingCmdImplementationUrl" data-request-url="@Url.Action("GetAllIncoming", "Cmd")"></div>
+    <div id="incomingCmdImplementationUrl" data-request-url="@Url.Action("GetAllIncoming", "DataRetrieval")"></div>
     <div class="row">
         <div class="col">
             <div class="card" style="min-height: 370px; margin-bottom: 0px;">
@@ -334,7 +334,7 @@
 
         function getCmdCount() {
             $.ajax({
-                url: '@Url.Action("GetCmdCount", "Cmd")',
+                url: '@Url.Action("GetCmdCount", "DataRetrieval")',
                 type: "GET",
                 success: function (data) {
                     var jsonStringified = JSON.stringify(data);
@@ -350,7 +350,7 @@
 
         function getForApprovalCount() {
             $.ajax({
-                url: '@Url.Action("GetForApprovalCount", "Cmd")',
+                url: '@Url.Action("GetForApprovalCount", "DataRetrieval")',
                 type: "GET",
                 success: function (data) {
                     var jsonStringified = JSON.stringify(data);
@@ -363,7 +363,7 @@
 
         function getForImplementationCount() {
             $.ajax({
-                url: '@Url.Action("GetForImplementationCount", "Cmd")',
+                url: '@Url.Action("GetForImplementationCount", "DataRetrieval")',
                 type: "GET",
                 success: function (data) {
                     var jsonStringified = JSON.stringify(data);
@@ -376,7 +376,7 @@
 
         function getImplementedCmdCount() {
             $.ajax({
-                url: '@Url.Action("GetImplementedCmdCount", "Cmd")',
+                url: '@Url.Action("GetImplementedCmdCount", "DataRetrieval")',
                 type: "GET",
                 success: function (data) {
                     var jsonStringified = JSON.stringify(data);
@@ -393,7 +393,7 @@
         function fillInPieChart() {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetCmdPercentage", "Cmd")',
+                url: '@Url.Action("GetCmdPercentage", "DataRetrieval")',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: OnSuccess,
@@ -468,7 +468,7 @@
 
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetCmdPercentagePerMonth", "Cmd")?month=' + currentMonth,
+                url: '@Url.Action("GetCmdPercentagePerMonth", "DataRetrieval")?month=' + currentMonth,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: OnSuccess,
@@ -528,7 +528,7 @@
 
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetCmdPercentagePerMonth", "Cmd")?month=' + month,
+                url: '@Url.Action("GetCmdPercentagePerMonth", "DataRetrieval")?month=' + month,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: OnSuccess,

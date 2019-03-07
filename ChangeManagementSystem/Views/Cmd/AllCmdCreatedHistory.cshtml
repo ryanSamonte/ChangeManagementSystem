@@ -6,7 +6,7 @@
 
 <div id="getLoggedUserUrl" data-request-url="@Url.Action("GetLoggedUserInfo", "DataRetrieval")"></div>
 
-<div id="getAllCmdApprovalUrl" data-request-url="@Url.Action("GetAllForApproval", "Cmd")"></div>
+<div id="getAllCmdCreatedHistoryUrl" data-request-url="@Url.Action("GetAllCreatedHistory", "DataRetrieval")"></div>
 
 <div id="exportCmdUrl" data-request-url="@Url.Action("ExportCmd", "Cmd")"></div>
 
@@ -16,13 +16,12 @@
             <div class="card">
                 <div class="header">
                     <h4 class="title">Change Management Document Records</h4>
-                    <p class="category">Approve or Implement Change Management Document</p>
+                    <p class="category">View Change Management Document History</p>
                 </div>
                 <div class="content table-responsive table-full-width">
-                    <table class="table table-hover table-striped text-center" id="cmdListApproval">
+                    <table class="table table-hover table-striped text-center" id="cmdListCreatedHistory">
                         <thead class="text-center">
                             <tr>
-                                <th class="text-center">Requestor</th>
                                 <th class="text-center">Change Type</th>
                                 <th class="text-center">Evaluation</th>
                                 <th class="text-center">Target Date</th>
@@ -157,14 +156,6 @@
     </div>
 </div>
 
-<div id="implementCmdUrl" data-request-url="@Url.Action("Implement", "Cmd")"></div>
-<div id="approveCmdUrl" data-request-url="@Url.Action("Approve", "Cmd")"></div>
-
 @section scripts{
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/form-validation")
-    @Scripts.Render("~/bundles/character-counter")
-    @Scripts.Render("~/bundles/bootbox")
-    @Scripts.Render("~/bundles/bootstrapnotify")
     @Scripts.Render("~/bundles/ChangeManagementViewModel")
 }

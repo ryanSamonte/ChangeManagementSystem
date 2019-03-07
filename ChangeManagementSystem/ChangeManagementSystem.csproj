@@ -162,6 +162,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\DataRetrievalController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.cs" />
     <Compile Include="Migrations\201901090730292_AddIsImplementedColumnIntoCMDTable.Designer.cs">
@@ -246,6 +247,7 @@
     <Content Include="Content\demo.css" />
     <Content Include="Content\fullcalendar.css" />
     <Content Include="Content\img\favicon.png" />
+    <Content Include="Content\img\login-bg.jpg" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\light-bootstrap-dashboard.css" />
     <Content Include="Content\pe-icon-7-stroke.css" />
@@ -330,12 +332,13 @@
     <Content Include="Views\Cmd\AllCmdCreated.cshtml" />
     <Content Include="Views\Cmd\NewCmd.cshtml" />
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
-    <Content Include="Views\Cmd\HistoryCmd.cshtml" />
     <Content Include="Views\Account\All.cshtml" />
     <Content Include="Views\Cmd\CalendarCmd.cshtml" />
     <Content Include="Views\Application\AllApplication.cshtml" />
     <Content Include="Views\Roles\AllRoles.cshtml" />
     <Content Include="Views\Cmd\AllCmdApproval.cshtml" />
+    <Content Include="Views\Cmd\AllCmdApprovalHistory.cshtml" />
+    <Content Include="Views\Cmd\AllCmdCreatedHistory.cshtml" />
     <None Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

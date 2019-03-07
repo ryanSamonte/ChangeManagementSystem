@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href="~/Content/img/favicon.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>CMS | @(ViewBag.Current)</title>
+    <title>CMS | @ViewBag.Current</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
 
@@ -20,14 +20,13 @@
     <!-- <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" /> -->
 </head>
 @*<body style="background-color: #536BCD; color: #fff;">*@
-<body style="background-color: #2471d1; color: #fff;">
+<body id="loginForm" style="background-color: #2471d1; color: #fff;">
     @RenderBody()
 </body>
-    @Scripts.Render("~/Scripts/datatables.min.js")
-    @*@Scripts.Render("~/bundles/jquery")*@
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/bootstrapnotify")
-    @Scripts.Render("~/bundles/lightbootstrap")
-    @Scripts.Render("~/Scripts/site.js")
-    @RenderSection("scripts", required: false)
+
+@Scripts.Render("~/bundles/datatable")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/popper")
+@Scripts.Render("~/bundles/lightbootstrap")
+@RenderSection("scripts", required: false)
 </html>
